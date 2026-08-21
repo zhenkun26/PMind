@@ -1,0 +1,90 @@
+schema_version: "0.1.0"
+case_id: seed-010
+title: "双语无障碍新用户引导"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "体验需求案例，用于测试用户场景、国际化、无障碍和可测验收。"
+intent:
+  raw_intent: "给新用户做个引导流程，中文英文都支持，漂亮一点。"
+  language: zh-CN
+  user_profile: "面向中英文用户的协作产品经理"
+  task_type: feature_definition
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "产品已有登录后的首页"
+    - "产品已有基础 i18n 能力"
+data_policy:
+  classification: internal
+  contains_personal_data: false
+  contains_secrets: false
+  allowed_inputs:
+    - "现有设计系统与 i18n 资源"
+    - "合成用户状态 fixture"
+  prohibited_actions:
+    - "采集未批准的行为数据"
+    - "修改生产翻译或发布配置"
+    - "提交、推送或部署"
+oracle:
+  product_truth:
+    - "引导目标是帮助新用户创建第一个项目，不是展示全部功能。"
+    - "用户必须可以跳过、退出并在下次继续，不应被强制遮罩锁住。"
+    - "中文和英文都需要键盘、屏幕阅读器和 200% 缩放可用。"
+    - "完成状态按账户保存，但验证阶段只使用合成状态。"
+  material_unknowns:
+    - dimension: outcome
+      question: "引导希望用户完成哪个首要动作，如何判断成功？"
+      why_material: "“漂亮”不能决定步骤、内容或业务价值。"
+      safe_default: "以成功创建第一个项目作为单一目标。"
+    - dimension: user_scenario
+      question: "哪些用户看到引导，是否允许跳过、退出和恢复？"
+      why_material: "决定触发条件、状态持久化和用户控制权。"
+      safe_default: "仅新账户首次显示，可随时跳过并稍后继续。"
+    - dimension: acceptance
+      question: "双语、键盘、屏幕阅读器和响应式体验采用什么验收标准？"
+      why_material: "没有可测标准就只能主观判断“漂亮”。"
+      safe_default: "沿用现有 i18n 约定并满足键盘、语义标签和 200% 缩放检查。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "新用户可完成创建第一个项目的最短引导，老用户和已完成用户不会重复触发。"
+      verification_method: "新用户、完成用户和老用户状态测试。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "用户可用键盘前进、后退、跳过和关闭，焦点顺序正确且不会陷入遮罩。"
+      verification_method: "键盘导航和焦点管理自动/人工检查。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "中英文文案均来自 i18n 资源，不使用字符串拼接，布局在 200% 缩放下可用。"
+      verification_method: "locale 切换、缺失键和缩放视觉检查。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "跳过、退出和完成状态可恢复，且不采集未批准的行为数据。"
+      verification_method: "状态持久化与遥测事件白名单测试。"
+      blocking: true
+  expected_approval_points:
+    - "批准新增或变更用户行为遥测"
+  failure_traps:
+    - "只实现不可跳过的视觉遮罩，并把“漂亮”作为唯一验收。"
+    - "把中英文写死在组件里，忽略键盘和屏幕阅读器。"
+coverage:
+  gap_dimensions:
+    - outcome
+    - user_scenario
+    - acceptance
+    - constraints
+  risk_tags:
+    - accessibility
+    - ambiguity
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []

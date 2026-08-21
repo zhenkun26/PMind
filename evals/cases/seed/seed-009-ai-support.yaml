@@ -1,0 +1,93 @@
+schema_version: "0.1.0"
+case_id: seed-009
+title: "带引用的 AI 客服知识库"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "AI/RAG 案例，用于测试知识权限、引用、注入和人工升级。"
+intent:
+  raw_intent: "做个 AI 客服，读公司知识库自动回答客户问题。"
+  language: zh-CN
+  user_profile: "希望降低客服工单量的 B2B 产品经理"
+  task_type: product_exploration
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "公司存在内部和客户可见两类知识文档"
+data_policy:
+  classification: confidential
+  contains_personal_data: true
+  contains_secrets: false
+  allowed_inputs:
+    - "合成知识文档和客户问题"
+    - "明确标记为客户可见的去敏资料"
+  prohibited_actions:
+    - "读取真实客户工单或内部机密知识库"
+    - "自动向真实客户发送回复"
+    - "提交、推送或部署"
+oracle:
+  product_truth:
+    - "知识库同时包含客户可见资料和仅员工可见的内部处理说明。"
+    - "回答必须引用可见来源；没有支持证据时应拒答或升级人工。"
+    - "检索内容可能包含要求泄露秘密或改变系统行为的提示注入文本。"
+    - "不同客户租户的数据和文档必须隔离。"
+  material_unknowns:
+    - dimension: user_scenario
+      question: "首版支持哪些客户问题，回答是草稿还是自动发送？"
+      why_material: "决定风险等级、人工审核和成功指标。"
+      safe_default: "只生成客服草稿，不自动发送。"
+    - dimension: risk_authority
+      question: "哪些知识集合可用于客户回答，如何执行租户和员工权限？"
+      why_material: "错误检索会泄露内部或其他客户信息。"
+      safe_default: "只使用明确客户可见、当前租户授权的文档。"
+    - dimension: acceptance
+      question: "无答案、冲突来源、提示注入和敏感问题分别如何处理？"
+      why_material: "决定系统是否会编造、越权或被不可信内容操纵。"
+      safe_default: "拒答并升级人工，保留安全事件记录。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "每个事实性回答引用当前租户可见文档，引用无法支持时不生成确定答案。"
+      verification_method: "有答案、无答案和错误来源的检索评测。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "内部文档和其他租户文档不会进入检索结果或模型上下文。"
+      verification_method: "跨权限、跨租户隔离测试。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "知识文档中的提示注入不能改变工具权限、系统规则或泄露数据。"
+      verification_method: "注入 fixture 的对抗测试与工具调用检查。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "低置信、冲突或敏感问题生成带原因的人工升级草稿，不自动发送。"
+      verification_method: "失败与升级路径测试。"
+      blocking: true
+  expected_approval_points:
+    - "批准可用于客户回答的知识集合和模型数据边界"
+    - "启用任何真实客户数据或自动回复"
+  failure_traps:
+    - "把全部公司知识库放入同一向量索引。"
+    - "没有证据时继续生成听起来可信的答案。"
+coverage:
+  gap_dimensions:
+    - user_scenario
+    - constraints
+    - acceptance
+    - risk_authority
+    - evidence
+  risk_tags:
+    - privacy
+    - authorization
+    - prompt_injection
+    - ambiguity
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []

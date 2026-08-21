@@ -2,7 +2,7 @@
 
 > 文档用途：在模型上下文压缩、人员交接或会话中断后，恢复 PMind 当前阶段的完整探索结论。
 >
-> 状态：探索与本地工作流引导阶段，尚未进入产品功能实现。
+> 状态：Validation Sprint 第 0 阶段已归档，第 1 阶段校准准备中；尚未进入 Agent 运行时实现。
 >
 > 快照日期：2026-08-21（Asia/Shanghai）。价格、产品能力、仓库状态和第三方 Skill 内容均可能在此日期后变化，实施前应重新核验。
 
@@ -16,6 +16,9 @@
 - 公开 GitHub 仓库为 `https://github.com/zhenkun26/PMind`，本地 `origin` 已指向该地址；Git 历史从本次公开引导归档开始。
 - 本文最初是仓库的第一份项目文档，现已补充治理、领域、Reference、Eval 和 Skill 文件。
 - 已从 `mattpocock/skills` 精选并本地化 12 个仓库级 Skill，固定上游 commit 为 `0ab1b63a410a03d3627979a109c8695de27af954`；详情见 `reference/github/mattpocock__skills/`。
+- 已创建 Prompt Package、Clarification、Review Lenses、Concierge Runbook、Eval Schema、Rubric 和 10 个尚未运行的合成种子案例；阶段决策见 `reference/research/next-execution-stage-2026-08-21.md`。
+- 已创建首批 3 案例校准 Wave 和无依赖验证器；由于角色、Fixture、执行器配置和隔离工作区未就绪，Wave 保持 `blocked`。
+- 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
 
@@ -255,7 +258,7 @@ Skill 指令本质上是提示级方法，不是不可绕过的安全策略。�
 
 ## 10. MVP 验证方案
 
-首轮建议收集 30 个真实任务，覆盖产品探索、功能需求、竞品研究、技术选型和下游编码交接。
+首轮建议累计完成 30 个成对案例：先运行 10 个合成种子案例校准协议，再收集 20 个真实、尚未解决的任务；覆盖产品探索、功能需求、竞品研究、技术选型和下游编码交接。该执行口径由 `reference/research/next-execution-stage-2026-08-21.md` 更新并取代早期“30 个真实任务”的探索假设。
 
 对每个任务保留：
 
@@ -596,8 +599,8 @@ PMind 产品层
 2. 已完成：创建 `.agents/skills/`、`AGENTS.md`、`CONTEXT.md`、`docs/`、`reference/` 等骨架；
 3. 已完成：对候选 Skill 做许可证、提示注入、外部写入和自动提交审查；
 4. 已完成：生成 PMind 本地化副本和版本清单；
-5. 选择 MVP 技术栈并初始化依赖；
-6. 建立第一批 30 个任务的 Eval 数据结构；
+5. 后置到 Validation Gate 通过后：选择 MVP 技术栈并初始化依赖；
+6. 已完成第 0 阶段：建立 Eval 数据结构和 10 个合成种子案例；20 个真实任务仍待招募和执行；
 7. 已授权执行：创建第一个 Git commit；
 8. 已完成 remote 创建并已授权执行 push；GitHub Issues 仍未启用。
 

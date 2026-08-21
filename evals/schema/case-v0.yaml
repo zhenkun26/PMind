@@ -1,0 +1,410 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/evals/schema/case-v0.yaml"
+title: "PMind Validation Case v0"
+description: "Provider-neutral case definition for paired raw-Intent and PMind Prompt Package experiments."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - case_id
+  - title
+  - status
+  - provenance
+  - intent
+  - data_policy
+  - experiment
+  - oracle
+  - coverage
+  - run_records
+properties:
+  schema_version:
+    const: "0.1.0"
+  case_id:
+    type: string
+    pattern: "^(seed|real)-[0-9]{3}$"
+  title:
+    type: string
+    minLength: 5
+  status:
+    type: string
+    enum:
+      - ready
+      - not_ready
+      - retired
+  provenance:
+    type: object
+    additionalProperties: false
+    required:
+      - kind
+      - created_at
+      - author
+      - consent_status
+    properties:
+      kind:
+        type: string
+        enum:
+          - synthetic
+          - real
+      created_at:
+        type: string
+        format: date
+      author:
+        type: string
+        minLength: 1
+      consent_status:
+        type: string
+        enum:
+          - not_applicable
+          - granted
+          - withdrawn
+      synthetic_basis:
+        type: string
+      source_reference:
+        type: string
+  intent:
+    type: object
+    additionalProperties: false
+    required:
+      - raw_intent
+      - language
+      - user_profile
+      - task_type
+      - target_executor
+      - context_available
+    properties:
+      raw_intent:
+        type: string
+        minLength: 10
+      language:
+        const: "zh-CN"
+      user_profile:
+        type: string
+        minLength: 3
+      task_type:
+        type: string
+        enum:
+          - product_exploration
+          - feature_definition
+          - competitor_research
+          - technical_selection
+          - coding_handoff
+      target_executor:
+        type: object
+        additionalProperties: false
+        required:
+          - type
+          - version_policy
+        properties:
+          type:
+            const: coding_agent
+          version_policy:
+            type: string
+            enum:
+              - record_at_run
+      context_available:
+        type: array
+        items:
+          type: string
+  data_policy:
+    type: object
+    additionalProperties: false
+    required:
+      - classification
+      - contains_personal_data
+      - contains_secrets
+      - allowed_inputs
+      - prohibited_actions
+    properties:
+      classification:
+        type: string
+        enum:
+          - public
+          - internal
+          - confidential
+          - restricted
+      contains_personal_data:
+        type: boolean
+      contains_secrets:
+        const: false
+      allowed_inputs:
+        type: array
+        items:
+          type: string
+      prohibited_actions:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+  experiment:
+    type: object
+    additionalProperties: false
+    required:
+      - baseline_protocol
+      - treatment_protocol
+      - same_executor_required
+      - isolated_workspace_required
+      - oracle_hidden_required
+      - order_policy
+    properties:
+      baseline_protocol:
+        const: raw_intent_only
+      treatment_protocol:
+        const: prompt_package_v0
+      same_executor_required:
+        const: true
+      isolated_workspace_required:
+        const: true
+      oracle_hidden_required:
+        const: true
+      order_policy:
+        const: randomized_per_case
+  oracle:
+    type: object
+    additionalProperties: false
+    required:
+      - product_truth
+      - material_unknowns
+      - acceptance_criteria
+      - expected_approval_points
+      - failure_traps
+    properties:
+      product_truth:
+        type: array
+        minItems: 2
+        uniqueItems: true
+        items:
+          type: string
+      material_unknowns:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - dimension
+            - question
+            - why_material
+            - safe_default
+          properties:
+            dimension:
+              type: string
+              enum:
+                - outcome
+                - user_scenario
+                - scope
+                - current_state
+                - constraints
+                - evidence
+                - acceptance
+                - risk_authority
+                - handoff
+            question:
+              type: string
+              minLength: 5
+            why_material:
+              type: string
+              minLength: 5
+            safe_default:
+              type: string
+              minLength: 2
+      acceptance_criteria:
+        type: array
+        minItems: 3
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - criterion_id
+            - statement
+            - verification_method
+            - blocking
+          properties:
+            criterion_id:
+              type: string
+              pattern: "^AC-[0-9]{2}$"
+            statement:
+              type: string
+              minLength: 8
+            verification_method:
+              type: string
+              minLength: 5
+            blocking:
+              type: boolean
+      expected_approval_points:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+      failure_traps:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+  coverage:
+    type: object
+    additionalProperties: false
+    required:
+      - gap_dimensions
+      - risk_tags
+    properties:
+      gap_dimensions:
+        type: array
+        minItems: 2
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+            - outcome
+            - user_scenario
+            - scope
+            - current_state
+            - constraints
+            - evidence
+            - acceptance
+            - risk_authority
+            - handoff
+      risk_tags:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+            - ambiguity
+            - privacy
+            - authorization
+            - destructive_action
+            - financial_logic
+            - migration
+            - external_api
+            - supply_chain
+            - accessibility
+            - operability
+            - evidence_currency
+            - prompt_injection
+  run_records:
+    description: "Empty for unrun seed definitions. Run artifacts are appended only after real execution."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - run_id
+        - arm
+        - protocol_version
+        - input_artifact_path
+        - started_at
+        - finished_at
+        - executor_version
+        - workspace_revision
+        - tool_policy
+        - pre_handoff_clarification_rounds
+        - executor_clarification_rounds
+        - model_calls
+        - search_calls
+        - human_intervention_minutes
+        - estimated_cost
+        - protocol_deviations
+        - rubric_version
+        - outcome
+        - failure_classification
+        - result_path
+        - acceptance_results_path
+      properties:
+        run_id:
+          type: string
+        arm:
+          type: string
+          enum:
+            - baseline
+            - pmind
+        protocol_version:
+          const: "0.1.0"
+        input_artifact_path:
+          type: string
+          minLength: 1
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+        executor_version:
+          type: string
+        workspace_revision:
+          type: string
+        tool_policy:
+          type: string
+          minLength: 1
+        pre_handoff_clarification_rounds:
+          type: integer
+          minimum: 0
+        executor_clarification_rounds:
+          type: integer
+          minimum: 0
+        model_calls:
+          type: integer
+          minimum: 0
+        search_calls:
+          type: integer
+          minimum: 0
+        human_intervention_minutes:
+          type: number
+          minimum: 0
+        estimated_cost:
+          type: object
+          additionalProperties: false
+          required:
+            - status
+            - currency
+            - amount_decimal
+          properties:
+            status:
+              type: string
+              enum:
+                - known
+                - unknown
+                - not_applicable
+            currency:
+              type: string
+              enum:
+                - USD
+                - CNY
+                - not_applicable
+            amount_decimal:
+              description: "Decimal string when known; use unknown or not_applicable instead of a fabricated zero."
+              type: string
+              pattern: "^(unknown|not_applicable|[0-9]+(\\.[0-9]{1,6})?)$"
+        protocol_deviations:
+          type: array
+          items:
+            type: string
+        rubric_version:
+          const: "0.1.0"
+        outcome:
+          type: string
+          enum:
+            - not_scored
+            - pass
+            - fail
+            - invalid_run
+        failure_classification:
+          type: string
+          enum:
+            - none
+            - not_scored
+            - intent_gap
+            - clarification_miss
+            - research_error
+            - package_contract
+            - executor_error
+            - environment_error
+            - evaluation_ambiguity
+            - safety_violation
+        result_path:
+          type: string
+          minLength: 1
+        acceptance_results_path:
+          type: string
+          minLength: 1

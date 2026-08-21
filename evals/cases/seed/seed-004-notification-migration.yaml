@@ -1,0 +1,92 @@
+schema_version: "0.1.0"
+case_id: seed-004
+title: "通知设置数据迁移"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "数据迁移案例，用于测试现状发现、幂等、分批和回滚。"
+intent:
+  raw_intent: "把旧通知设置迁到新结构，上线时自动迁，别影响用户。"
+  language: zh-CN
+  user_profile: "负责存量 SaaS 的产品技术负责人"
+  task_type: coding_handoff
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "旧结构按 channel 保存开关"
+    - "新结构计划按 event 保存 channel 列表"
+data_policy:
+  classification: confidential
+  contains_personal_data: false
+  contains_secrets: false
+  allowed_inputs:
+    - "匿名化的旧新 Schema"
+    - "合成通知设置 fixture"
+  prohibited_actions:
+    - "连接或迁移生产数据库"
+    - "执行不可回退的数据删除"
+    - "提交、推送或部署"
+oracle:
+  product_truth:
+    - "存量约两百万条设置记录，发布期间不能长时间锁表。"
+    - "迁移必须保留用户显式关闭通知的选择，不能用新默认覆盖。"
+    - "应用会经历新旧版本短暂并存，读取路径需要兼容。"
+    - "验证阶段只设计和测试迁移，不运行生产 DDL 或数据回填。"
+  material_unknowns:
+    - dimension: current_state
+      question: "旧字段、新字段、数据量和新旧版本并存窗口分别是什么？"
+      why_material: "决定映射、锁表风险和兼容读取策略。"
+      safe_default: "先生成只读盘点和映射，不执行迁移。"
+    - dimension: constraints
+      question: "允许停机多久，批次、重试和回滚目标是什么？"
+      why_material: "决定在线迁移、批量大小和恢复设计。"
+      safe_default: "采用可暂停的小批次、幂等迁移和双读兼容方案。"
+    - dimension: acceptance
+      question: "如何证明所有用户偏好语义保持一致？"
+      why_material: "总行数一致不能证明通知偏好没有被改变。"
+      safe_default: "用映射真值表、抽样和全量计数共同验证。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "迁移映射保留每个用户显式开启和关闭的通知语义。"
+      verification_method: "旧新 Schema 映射的表驱动测试。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "迁移可分批、可暂停、可重试，重复运行不会产生不同结果。"
+      verification_method: "中断、恢复和重复执行测试。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "新旧应用版本并存期间读取结果一致，且不会长时间锁表。"
+      verification_method: "兼容读取集成测试与迁移计划审查。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "提供执行前 dry-run、验证查询和明确回滚/前滚恢复步骤。"
+      verification_method: "只读 dry-run 输出与恢复演练文档检查。"
+      blocking: true
+  expected_approval_points:
+    - "批准最终字段映射和默认值"
+    - "批准任何生产 DDL、回填或旧字段删除"
+  failure_traps:
+    - "在应用启动时同步扫描并更新全部记录。"
+    - "只比较迁移前后行数，不验证用户偏好语义。"
+coverage:
+  gap_dimensions:
+    - current_state
+    - constraints
+    - acceptance
+    - risk_authority
+  risk_tags:
+    - migration
+    - operability
+    - destructive_action
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []

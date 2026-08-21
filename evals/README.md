@@ -1,11 +1,19 @@
 # PMind Eval Baseline
 
+- Current schema: `evals/schema/case-v0.yaml` (`0.1.0`)
+- Current rubric: `evals/rubrics/first-pass-success-v0.md` (`0.1.0`)
+- Seed set: 10 synthetic, ready, unrun cases under `evals/cases/seed/`
+- Calibration: `evals/calibration/wave-01.yaml` is blocked until roles,
+  fixtures, executor settings, and isolated workspaces are ready
+- Runtime framework: intentionally not selected
+
 PMind will be evaluated by downstream delivery outcomes, not by whether an
 optimized prompt sounds polished.
 
 ## Initial experiment
 
-Collect at least 30 real tasks. For each task preserve:
+Collect at least 30 paired cases: 10 synthetic calibration cases followed by
+20 real, previously unsolved tasks. For each case preserve:
 
 - raw Intent and target Downstream Executor;
 - baseline handoff without PMind;
@@ -14,6 +22,14 @@ Collect at least 30 real tasks. For each task preserve:
 - downstream output and human corrections;
 - latency, model / search cost, and number of clarification and rework rounds;
 - acceptance result and failure reason.
+
+The experiment is paired:
+
+- baseline receives the immutable raw Intent;
+- PMind receives a Prompt Package produced under `docs/product/` contracts;
+- both arms use the same executor, workspace revision, tools and time policy;
+- a case facilitator retains the oracle and answers only questions actually asked;
+- the executor never receives oracle fields or the other arm's result.
 
 ## Primary metrics
 
@@ -33,5 +49,25 @@ Collect at least 30 real tasks. For each task preserve:
 - Model, prompt, Skill, Reference, and dataset versions must be recorded.
 - Failed and ambiguous cases remain in the dataset as regression evidence.
 
-The executable Eval schema and runner will be selected with the application
-stack; no framework is assumed at this stage.
+## Current assets
+
+- `docs/product/prompt-package-v0.md`: semantic Handoff contract;
+- `docs/product/clarification-policy-v0.md`: gap and stopping policy;
+- `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
+- `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
+- `evals/schema/case-v0.yaml`: provider-neutral case definition;
+- `evals/rubrics/first-pass-success-v0.md`: binary primary outcome and diagnostic scores;
+- `evals/cases/seed/`: calibration cases. All have empty `run_records` until actually run.
+- `evals/schema/calibration-wave-v0.yaml`: calibration readiness contract;
+- `evals/calibration/wave-01.yaml`: first three-case Wave and honest blockers;
+- `scripts/validate_evals.rb`: dependency-free structural and cross-field checks.
+
+The executable runner will be selected only after the manual protocol and
+Rubric are calibrated. No framework is assumed or installed at this stage.
+
+Run the current deterministic checks with:
+
+```sh
+ruby scripts/validate_evals.rb
+ruby test/validate_evals_test.rb
+```

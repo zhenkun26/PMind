@@ -1,0 +1,91 @@
+schema_version: "0.1.0"
+case_id: seed-001
+title: "后台用户列表 CSV 导出"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "常见的模糊后台功能需求，用于测试范围、隐私和验收澄清。"
+intent:
+  raw_intent: "给后台用户列表加一个 CSV 导出按钮，尽快做完。"
+  language: zh-CN
+  user_profile: "使用编码 Agent 的 SaaS 产品经理"
+  task_type: coding_handoff
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "已有后台用户列表页面"
+data_policy:
+  classification: internal
+  contains_personal_data: true
+  contains_secrets: false
+  allowed_inputs:
+    - "去标识化的用户字段示例"
+    - "授权读取的本地代码库"
+  prohibited_actions:
+    - "读取或导出真实生产用户数据"
+    - "提交、推送或部署"
+oracle:
+  product_truth:
+    - "导出结果必须与当前筛选条件和排序一致。"
+    - "只允许具有 user_export 权限的运营管理员导出。"
+    - "密码摘要、认证 token、内部风控标签不得出现在导出文件。"
+    - "目标数据量可能达到十万行，不能依赖浏览器一次性加载全部记录。"
+  material_unknowns:
+    - dimension: scope
+      question: "需要导出哪些字段，是否严格沿用当前筛选和排序？"
+      why_material: "决定导出 Schema、查询方式和隐私范围。"
+      safe_default: "只导出当前页面已展示的非敏感字段，并沿用筛选条件。"
+    - dimension: risk_authority
+      question: "哪些角色可以导出，是否需要审计记录？"
+      why_material: "导出包含个人数据，必须限制权限并可追溯。"
+      safe_default: "默认禁止导出，直到确认权限与审计要求。"
+    - dimension: acceptance
+      question: "最大数据量、编码和文件命名有什么要求？"
+      why_material: "决定流式实现和大数据量验收方式。"
+      safe_default: "采用 UTF-8 with BOM、流式生成并记录明确上限。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "导出文件仅包含已批准字段，且不含密码摘要、token 或风控标签。"
+      verification_method: "字段白名单单元测试与生成文件检查。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "无 user_export 权限的用户收到拒绝响应且不会生成文件。"
+      verification_method: "授权与未授权角色的访问测试。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "导出十万行时使用流式或后台任务机制，不把全量数据载入浏览器内存。"
+      verification_method: "大数据量集成测试与内存行为检查。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "导出内容与请求时的筛选条件一致，并产生不含敏感值的审计事件。"
+      verification_method: "筛选组合测试与审计记录检查。"
+      blocking: true
+  expected_approval_points:
+    - "确认允许导出的个人数据字段与角色"
+    - "任何真实生产数据访问"
+  failure_traps:
+    - "直接在前端下载当前 API 返回的全部用户对象。"
+    - "只实现按钮，不定义权限、数据量和审计。"
+coverage:
+  gap_dimensions:
+    - scope
+    - constraints
+    - acceptance
+    - risk_authority
+  risk_tags:
+    - ambiguity
+    - privacy
+    - authorization
+    - operability
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []

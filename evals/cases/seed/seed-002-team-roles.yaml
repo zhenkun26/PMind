@@ -1,0 +1,90 @@
+schema_version: "0.1.0"
+case_id: seed-002
+title: "团队管理员与成员权限"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "权限需求案例，用于测试角色边界、继承和锁死风险。"
+intent:
+  raw_intent: "给团队版加管理员和普通成员权限，管理员什么都能做。"
+  language: zh-CN
+  user_profile: "准备推出团队版的 AI 产品负责人"
+  task_type: feature_definition
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "产品已经存在团队 owner 角色"
+data_policy:
+  classification: internal
+  contains_personal_data: false
+  contains_secrets: false
+  allowed_inputs:
+    - "现有角色与权限相关代码"
+    - "合成团队和成员 fixture"
+  prohibited_actions:
+    - "修改真实账户权限"
+    - "提交、推送或部署"
+oracle:
+  product_truth:
+    - "现有 owner 负责账单、删除团队和所有权转移，admin 不应自动继承这三项能力。"
+    - "团队必须始终至少保留一个 owner。"
+    - "普通成员可读共享项目，但默认不能邀请成员或修改角色。"
+    - "服务端授权是强制边界，隐藏按钮不能替代授权检查。"
+  material_unknowns:
+    - dimension: scope
+      question: "owner、admin、member 分别能执行哪些资源动作？"
+      why_material: "“管理员什么都能做”会与现有 owner 和高风险动作冲突。"
+      safe_default: "admin 不拥有账单、团队删除和所有权转移权限。"
+    - dimension: current_state
+      question: "现有权限是在服务端、客户端还是两处检查，数据如何关联团队？"
+      why_material: "决定授权边界、兼容路径和需要修改的位置。"
+      safe_default: "以服务端检查为准，客户端只做体验层隐藏。"
+    - dimension: risk_authority
+      question: "谁可以提升或降低角色，最后一个 owner 如何处理？"
+      why_material: "错误规则会导致越权或团队失去管理者。"
+      safe_default: "只有 owner 可改角色，且禁止降级最后一个 owner。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "服务端对 owner、admin、member 的每项受控动作执行显式授权检查。"
+      verification_method: "角色-动作权限矩阵的允许与拒绝测试。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "admin 无法管理账单、删除团队或转移所有权。"
+      verification_method: "三个高风险动作的服务端拒绝测试。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "系统拒绝降级或删除最后一个 owner，并返回可操作错误。"
+      verification_method: "最后一个 owner 边界测试。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "现有 owner 行为保持兼容，角色变更产生审计记录。"
+      verification_method: "回归测试与审计事件检查。"
+      blocking: true
+  expected_approval_points:
+    - "确认最终角色-动作权限矩阵"
+    - "任何真实账户角色变更"
+  failure_traps:
+    - "仅在前端隐藏按钮，没有服务端授权。"
+    - "把 admin 等同于 owner，扩大账单和删除权限。"
+coverage:
+  gap_dimensions:
+    - scope
+    - current_state
+    - constraints
+    - risk_authority
+    - acceptance
+  risk_tags:
+    - authorization
+    - ambiguity
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []

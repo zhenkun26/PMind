@@ -1,0 +1,174 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/evals/schema/calibration-wave-v0.yaml"
+title: "PMind Calibration Wave v0"
+description: "Readiness manifest for a blinded three-case seed calibration wave."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - wave_id
+  - status
+  - can_start
+  - protocols
+  - executor_config
+  - roles
+  - cases
+  - start_gates
+  - blocked_reasons
+properties:
+  schema_version:
+    const: "0.1.0"
+  wave_id:
+    type: string
+    pattern: "^calibration-[0-9]{3}$"
+  status:
+    type: string
+    enum:
+      - blocked
+      - ready
+      - in_progress
+      - completed
+      - invalid
+  can_start:
+    type: boolean
+  protocols:
+    type: object
+    additionalProperties: false
+    required:
+      - case_schema_version
+      - prompt_package_version
+      - rubric_version
+      - runbook_version
+    properties:
+      case_schema_version:
+        const: "0.1.0"
+      prompt_package_version:
+        const: "0.1.0"
+      rubric_version:
+        const: "0.1.0"
+      runbook_version:
+        const: "0.1.0"
+  executor_config:
+    type: object
+    additionalProperties: false
+    required:
+      - status
+    properties:
+      status:
+        type: string
+        enum:
+          - unfrozen
+          - frozen
+      executor_type:
+        type: string
+      model_version:
+        type: string
+      reasoning_settings:
+        type: string
+      tool_policy:
+        type: string
+      time_limit_minutes:
+        type: integer
+        minimum: 1
+  roles:
+    type: object
+    additionalProperties: false
+    required:
+      - facilitator
+      - pmind_operator
+      - reviewer_1
+      - reviewer_2
+    properties:
+      facilitator:
+        $ref: "#/$defs/role"
+      pmind_operator:
+        $ref: "#/$defs/role"
+      reviewer_1:
+        $ref: "#/$defs/role"
+      reviewer_2:
+        $ref: "#/$defs/role"
+  cases:
+    type: array
+    minItems: 3
+    maxItems: 3
+    uniqueItems: true
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - case_id
+        - arm_order
+        - fixture
+      properties:
+        case_id:
+          type: string
+          pattern: "^seed-[0-9]{3}$"
+        arm_order:
+          type: string
+          enum:
+            - baseline_then_pmind
+            - pmind_then_baseline
+        fixture:
+          type: object
+          additionalProperties: false
+          required:
+            - status
+            - required_artifacts
+          properties:
+            status:
+              type: string
+              enum:
+                - missing
+                - ready
+            required_artifacts:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              items:
+                type: string
+            workspace_base_revision:
+              type: string
+  start_gates:
+    type: object
+    additionalProperties: false
+    required:
+      - contracts_valid
+      - rubric_frozen
+      - roles_assigned
+      - fixtures_ready
+      - executor_frozen
+      - isolated_workspaces_ready
+    properties:
+      contracts_valid:
+        type: boolean
+      rubric_frozen:
+        type: boolean
+      roles_assigned:
+        type: boolean
+      fixtures_ready:
+        type: boolean
+      executor_frozen:
+        type: boolean
+      isolated_workspaces_ready:
+        type: boolean
+  blocked_reasons:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+$defs:
+  role:
+    type: object
+    additionalProperties: false
+    required:
+      - status
+    properties:
+      status:
+        type: string
+        enum:
+          - unassigned
+          - assigned
+      assignee_ref:
+        description: "Opaque local identifier; do not store personal data that is unnecessary for the experiment."
+        type: string
+        minLength: 1

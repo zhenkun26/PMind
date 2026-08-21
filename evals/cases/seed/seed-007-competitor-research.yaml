@@ -1,0 +1,87 @@
+schema_version: "0.1.0"
+case_id: seed-007
+title: "AI PRD 工具竞品研究"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "竞品研究案例，用于测试比较口径、证据时效和从事实到建议的推导。"
+intent:
+  raw_intent: "研究一下 AI PRD 工具的竞品，告诉我应该抄哪些功能。"
+  language: zh-CN
+  user_profile: "准备验证 AI 产品经理工具的创始人"
+  task_type: competitor_research
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "目标方向与产品经理工作相关"
+data_policy:
+  classification: public
+  contains_personal_data: false
+  contains_secrets: false
+  allowed_inputs:
+    - "竞品官网、官方文档、定价页和公开产品资料"
+  prohibited_actions:
+    - "登录、抓取付费或受限竞品内容"
+    - "复制受版权保护的完整内容或代码"
+    - "提交、推送或发布报告"
+oracle:
+  product_truth:
+    - "研究目的是为 PMind 的首个验证版本排序能力，而不是制作无边界市场报告。"
+    - "首批目标用户是已使用编码 Agent 的产品经理、创始人和技术负责人。"
+    - "当前决策关注澄清、证据、可执行 Handoff 和 Eval，不关注完整项目管理套件。"
+    - "竞品能力与价格可能变化，必须记录来源和检索日期。"
+  material_unknowns:
+    - dimension: outcome
+      question: "这次竞品研究要支持哪个产品决策和目标用户？"
+      why_material: "没有决策问题就无法确定竞品集合和比较维度。"
+      safe_default: "只比较对首次 Prompt Package 验证有直接影响的能力。"
+    - dimension: scope
+      question: "比较直接 AI PRD 工具，还是也包含通用助手和产品管理平台？"
+      why_material: "不同类别的价值链和价格不可直接横向比较。"
+      safe_default: "每类选少量代表，并明确类别差异。"
+    - dimension: acceptance
+      question: "最终需要功能清单、机会地图还是首版优先级建议？"
+      why_material: "决定研究输出是否能直接用于产品决策。"
+      safe_default: "输出证据表、差异化机会和最多三个验证优先项。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "竞品按明确类别和同一比较维度分析，不混淆功能事实、营销表述与推断。"
+      verification_method: "比较矩阵和结论标签检查。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "每个时效性功能或价格结论均包含官方来源和检索日期。"
+      verification_method: "引用抽查并打开原始页面核对。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "建议最多三个首版能力，并分别映射目标用户问题、PMind 定位和验证指标。"
+      verification_method: "建议-证据-指标追踪表检查。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "报告不建议直接复制受保护内容或无差异复刻竞品。"
+      verification_method: "版权、差异化和措辞审查。"
+      blocking: true
+  expected_approval_points: []
+  failure_traps:
+    - "罗列大量功能，却不说明支持什么产品决策。"
+    - "使用过时二手文章推断当前能力和价格。"
+coverage:
+  gap_dimensions:
+    - outcome
+    - scope
+    - evidence
+    - acceptance
+  risk_tags:
+    - evidence_currency
+    - ambiguity
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []

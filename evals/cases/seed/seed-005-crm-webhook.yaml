@@ -1,0 +1,94 @@
+schema_version: "0.1.0"
+case_id: seed-005
+title: "客户创建后同步 CRM Webhook"
+status: ready
+provenance:
+  kind: synthetic
+  created_at: "2026-08-21"
+  author: PMind Validation Sprint
+  consent_status: not_applicable
+  synthetic_basis: "外部 API 案例，用于测试数据范围、认证、幂等和失败处理。"
+intent:
+  raw_intent: "客户创建后把数据实时同步到 CRM，失败自动重试。"
+  language: zh-CN
+  user_profile: "B2B SaaS 集成产品经理"
+  task_type: coding_handoff
+  target_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  context_available:
+    - "系统已有 customer.created 领域事件"
+data_policy:
+  classification: confidential
+  contains_personal_data: true
+  contains_secrets: false
+  allowed_inputs:
+    - "合成客户数据"
+    - "CRM 官方 API 文档"
+    - "本地 mock server"
+  prohibited_actions:
+    - "向真实 CRM 发送客户数据"
+    - "读取或记录真实 API 密钥"
+    - "提交、推送或部署"
+oracle:
+  product_truth:
+    - "只允许同步客户名称、业务邮箱和内部 customer_id。"
+    - "CRM 可能超时、限流或返回 4xx；永久失败不能无限重试。"
+    - "customer.created 事件可能重复投递。"
+    - "认证密钥必须来自密钥管理，不得写入日志或配置样例。"
+  material_unknowns:
+    - dimension: scope
+      question: "允许同步哪些字段，创建后需要在多长时间内到达 CRM？"
+      why_material: "决定个人数据范围、payload 和异步架构。"
+      safe_default: "最小字段白名单，并采用异步最终一致。"
+    - dimension: evidence
+      question: "目标 CRM、API 版本、认证方式和限流规则是什么？"
+      why_material: "当前官方契约决定请求、错误和重试策略。"
+      safe_default: "只定义 provider-neutral 接口，不调用未知 API。"
+    - dimension: acceptance
+      question: "重复事件、4xx、429、5xx 和超时分别如何处理？"
+      why_material: "“失败自动重试”可能造成重复数据或无限请求。"
+      safe_default: "幂等键；仅对可重试错误指数退避；永久失败进入死信队列。"
+  acceptance_criteria:
+    - criterion_id: AC-01
+      statement: "Webhook payload 只包含批准字段，并使用 customer_id 作为幂等关联标识。"
+      verification_method: "Schema 合同测试与字段白名单检查。"
+      blocking: true
+    - criterion_id: AC-02
+      statement: "重复 customer.created 事件不会在 CRM 创建重复客户。"
+      verification_method: "重复事件的 mock API 集成测试。"
+      blocking: true
+    - criterion_id: AC-03
+      statement: "429、5xx 和超时按有上限的退避策略重试，永久 4xx 不重试并可追踪。"
+      verification_method: "各状态码与超时的错误路径测试。"
+      blocking: true
+    - criterion_id: AC-04
+      statement: "日志和错误记录不包含 API 密钥或未批准客户字段。"
+      verification_method: "日志捕获测试与敏感字段扫描。"
+      blocking: true
+  expected_approval_points:
+    - "批准个人数据字段和目标 CRM"
+    - "配置真实 CRM 凭证并启用生产发送"
+  failure_traps:
+    - "在用户请求线程中同步调用 CRM 且无限重试。"
+    - "把完整客户对象和密钥写入请求日志。"
+coverage:
+  gap_dimensions:
+    - scope
+    - evidence
+    - constraints
+    - acceptance
+    - risk_authority
+  risk_tags:
+    - external_api
+    - privacy
+    - authorization
+    - operability
+experiment:
+  baseline_protocol: raw_intent_only
+  treatment_protocol: prompt_package_v0
+  same_executor_required: true
+  isolated_workspace_required: true
+  oracle_hidden_required: true
+  order_policy: randomized_per_case
+run_records: []
