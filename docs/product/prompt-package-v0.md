@@ -13,6 +13,8 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 
 对应的机器可读结构位于 `schemas/prompt-package-v0.yaml`，只读校验入口为 `scripts/validate_prompt_package.rb`。Markdown 定义产品语义，Schema 和业务校验器负责拒绝结构、引用、Review Lens、Approval Point 与 Handoff 状态之间的矛盾；校验通过不替代事实核验或下游 Eval。
 
+若 Package 来自结构化 Clarification Session，还应运行 `ruby scripts/validate_clarification_session.rb SESSION --prompt-package PACKAGE`。该交叉校验要求逐字保留原始 Intent、用户问题与回答、假设、未知项、决策和高风险动作；它不允许编译器静默删除不利信息或伪造会话中不存在的决定。
+
 ## 规范用语
 
 - **必须**：缺失即不能通过 Quality Gate。

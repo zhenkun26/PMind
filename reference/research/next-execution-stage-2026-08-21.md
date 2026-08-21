@@ -288,3 +288,5 @@ PMind 的下一阶段不应是“搭建完整多 Agent 产品”，而应是一�
 随后完成测量契约加固：Case Schema 从 `0.1.0` 升级到 `0.2.0`，10 个未运行种子案例完成无数据迁移；运行记录新增 Executor Profile、模型/推理设置、Workspace Set 收据摘要、工作区结果 revision、返工和分段耗时字段。新增 Acceptance Result Schema `0.1.0`，只允许 `consensus`、`needs_adjudication`、`adjudicated` 三态，并由验证器根据 blocking Criteria、Material Re-specification、Safety Violation 与可用性推导 First-pass Delivery Success。当前仍为 0 条运行和 0 条验收结果，不构成效果数据。
 
 下一轮把 Prompt Package v0 的 Markdown 语义落成 `schemas/prompt-package-v0.yaml` 和依赖无关的只读校验器。它交叉检查稳定 ID、事实/Evidence/Assumption 引用、六个 Review Lenses、风险与 Approval Point 覆盖，以及 `approved` / `required` / `rejected` / `not_applicable` 到 Handoff 允许/禁止动作的映射。合成测试夹具不进入校准数据；该能力只使未来 Package 可机器验收，不代表已经生成真实 Package 或解除 Wave 启动门禁。
+
+本轮继续把 Clarification Policy 落成 `schemas/clarification-session-v0.yaml` 和依赖无关的只读校验器。它检查不可变 Intake 摘要、完整九维 gap map、问题优先级、1–3 问连续轮次、默认三轮限制、五态 Compile Gate，以及 Session 到 Prompt Package 的原始 Intent、问答、假设、未知项、决策与高风险 Approval Point lineage。配套 Session 与 Package 仍是合成测试夹具；没有代替用户回答、生成真实 Package、执行模型调用或产生产品效果数据。

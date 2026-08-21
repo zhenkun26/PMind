@@ -36,6 +36,14 @@ Validate a Prompt Package without installing dependencies or modifying it:
 ruby scripts/validate_prompt_package.rb path/to/package.yaml
 ```
 
+Validate Clarification Session state, then optionally verify that a compiled
+Prompt Package preserves its auditable lineage:
+
+```sh
+ruby scripts/validate_clarification_session.rb path/to/session.yaml
+ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-package path/to/package.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -57,3 +65,6 @@ Executor Profile and four-role separation gates before any run may start.
   consensus or a distinct third-reviewer adjudication.
 - A Prompt Package cannot mark Handoff ready while a blocking unknown, Review
   Lens block, unresolved reference, or authorization contradiction remains.
+- A Clarification Session cannot become ready to compile while a critical gap,
+  question-priority violation, unresolved conflict, or unmarked high-risk action
+  remains.

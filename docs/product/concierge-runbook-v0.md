@@ -48,6 +48,14 @@
 
 产出：Clarification 记录、决策、假设和未知项。
 
+将记录保存为 `schemas/clarification-session-v0.yaml` 对应的 YAML 后，运行只读状态校验：
+
+```sh
+ruby scripts/validate_clarification_session.rb path/to/session.yaml
+```
+
+只有状态为 `ready_to_compile` 且校验通过的 Session 才能进入 Compile；`blocked` 必须保留阻塞原因，不能用操作者推断补齐。
+
 ### 4. Research：按需取证
 
 只有外部事实会改变方案、风险或验收时才研究。
@@ -97,6 +105,15 @@ GitHub/Skill/框架研究至少记录 URL、检索日期、版本/commit、许�
 - 不包含内部思维链或未获授权的敏感数据。
 
 产出：版本化 Prompt Package。
+
+编译后同时校验 Package 结构和 Session → Package lineage：
+
+```sh
+ruby scripts/validate_prompt_package.rb path/to/package.yaml
+ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-package path/to/package.yaml
+```
+
+lineage 校验通过只证明会话中可审计信息被保留，不证明外部事实正确或下游效果达标。
 
 ### 8. Quality Gate 与 Handoff
 

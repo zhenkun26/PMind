@@ -33,3 +33,8 @@
 
 - [2026-08-21T20:35:00+08:00] validator edit L0: one patch declared two update operations for the same file and was rejected before changing it, fix: combine all validator hunks under one update operation, prevention: use one `Update File` section per target in each patch
 - [2026-08-21T20:48:00+08:00] receipt-integrity edit L0: a multi-file patch used a stale test hunk context and was rejected before changing files, fix: re-read the exact helper layout and apply smaller target-specific patches, prevention: refresh nearby context after adding tests before batching follow-up edits
+
+## 2026-08-21 — Validate Clarification Session lineage
+
+- [2026-08-21T22:00:00+08:00] Clarification Session tests L0: the initial test draft attempted assignment through `Hash#dig`, which Ruby does not allow, fix: assign through the parent Hash returned by `dig` or direct indexing, prevention: reserve `dig` for reads and use explicit parent indexing for every nested mutation
+- [2026-08-21T22:20:00+08:00] Clarification documentation edit L0: a multi-file patch expected an unwrapped sentence that is split across Markdown lines and was rejected before changing files, fix: re-read exact sections and apply smaller file-specific hunks, prevention: refresh wrapped prose context before batching documentation updates

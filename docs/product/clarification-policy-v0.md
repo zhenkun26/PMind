@@ -8,6 +8,8 @@
 
 Clarification 只用于减少会实质改变 Prompt Package 或下游交付结果的信息缺口。PMind 不把对话变成长问卷，也不为了显得全面而询问低价值问题。
 
+机器可读状态契约位于 `schemas/clarification-session-v0.yaml`，只读校验入口为 `scripts/validate_clarification_session.rb`。校验器检查会话状态和 lineage，不自动提问、代替用户回答或生成 Prompt Package。
+
 ## 信息缺口维度
 
 | 维度 | 需要判断的内容 | 常见阻塞信号 |
@@ -44,6 +46,8 @@ Clarification 只用于减少会实质改变 Prompt Package 或下游交付结�
 
 该分数不是统计模型，不应伪装成精确概率；它用于让操作者解释为什么先问这个问题。
 
+每次 gap 状态变化后必须重新计算所有尚未回答问题的分数。`compile_gate.next_question_ids` 必须按分数和安全/授权优先的 tie-break 排序，并且只能选取当前最高优先级序列的前 1–3 项。
+
 ## 每轮对话规则
 
 - 每轮提出 1–3 个最高优先级问题。
@@ -52,6 +56,8 @@ Clarification 只用于减少会实质改变 Prompt Package 或下游交付结�
 - 能从用户已授权的本地上下文或可信来源确定的事实不重复询问。
 - 产品偏好、风险接受度、预算和授权不能用外部研究代替用户回答。
 - 默认最多 3 轮；超过 3 轮需要说明继续询问能改变的具体决策，并让用户选择继续或按假设生成。
+
+机器契约强制每轮只能包含 1–3 个问题；第 4 轮及以后必须同时记录用户授权和继续询问的具体理由。
 
 ## 问题格式
 
@@ -83,6 +89,16 @@ Clarification 只用于减少会实质改变 Prompt Package 或下游交付结�
 - 需要敏感数据但没有合法、授权的处理方式；
 - 下游执行者或关键输入完全未知，导致输出契约无法定义。
 
+## Session 状态
+
+- `intake`：只保存不可变 Intake，还没有 gap map、问题轮次或 Compile Gate 结论。
+- `gap_scan`：九个 gap 维度完整，尚未开始问答，并选出首轮 1–3 个问题。
+- `clarifying`：已有连续轮次记录，仍保留下一轮 1–3 个最高优先级问题。
+- `ready_to_compile`：没有阻塞 gap 或冲突，所有高风险动作都已标记为需要 Approval Point，可以开始编译 Package。
+- `blocked`：保留最小阻塞原因或冲突，不生成可执行 Handoff。
+
+`raw_intent_sha256` 用于发现 Intake 原文漂移。`outcome`、`scope`、`acceptance`、`risk_authority` 和 `handoff` 中任何 `unknown` 都必须是阻塞项，不能通过状态字段绕过。
+
 ## 用户跳过、拒答与不知道
 
 - 用户可以跳过任何非安全问题。
@@ -111,3 +127,10 @@ Clarification 只用于减少会实质改变 Prompt Package 或下游交付结�
 - 是否遗漏安全/授权问题；
 - 是否把未知写成事实；
 - 是否在停止条件满足后仍继续追问。
+
+可用以下命令只读校验单个 Session；加入 `--prompt-package` 后，还会检查原始 Intent、任务类型、时间、用户问答、假设、未知项、决策和高风险 Approval Point 是否完整传入 Package：
+
+```sh
+ruby scripts/validate_clarification_session.rb path/to/session.yaml
+ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-package path/to/package.yaml
+```
