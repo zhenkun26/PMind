@@ -63,7 +63,7 @@ CLI 必须同时通过：
 6. 候选 Package 的结构化 Quality Gate 状态；
 7. 确认、修改、拒绝三种选择。
 
-确认选项只允许后续步骤基于当前精确候选内容创建最终 Package，不允许立即 Handoff，也不批准任何高风险动作。当前 CLI 不接收或保存选择；后续必须用独立 Confirmation Receipt 绑定这三份精确输入。
+当 `handoff.ready: true` 时，确认选项只允许后续步骤基于当前精确候选内容创建最终 Package；当 `handoff.ready: false` 时，“确认理解”只能记录用户认可当前理解，不能授权创建可交接 Package，修正 Quality Gate 后必须重新提案。两种情况都不允许立即 Handoff，也不批准任何高风险动作。当前 CLI 不接收或保存选择；后续必须按 [Prompt Package Compilation Confirmation Receipt v0](prompt-package-compilation-confirmation-receipt-v0.md) 用独立 Receipt 绑定这三份精确输入。
 
 文案不得展示文件路径、摘要、Session/Package/Proposal ID、原始 Intent、问题原答、Evidence 来源、source refs、字段路径、Review owner、decision maker ref 或内部评分。范围、方案、取舍、验收、未知项和审批 scope 属于有意展示的候选业务内容，全部通过共享 Markdown 安全层。
 
@@ -72,7 +72,7 @@ CLI 必须同时通过：
 | `handoff.ready` | 文案 | 当前允许动作 |
 | --- | --- | --- |
 | `true` | 候选结构化 Quality Gate 标记为可交接 | 仍只能审阅和确认，不得自动 Handoff |
-| `false` | 候选 Package 尚未通过 Quality Gate | 可审阅修改，不得创建可交接 Package |
+| `false` | 候选 Package 尚未通过 Quality Gate | 可确认当前理解或请求修改，但不得创建可交接 Package；修正后重新提案 |
 
 Session 必须始终为 `ready_to_compile`；非 ready Session、仅有普通 ready Session 而没有 revision metadata、或 lineage 不一致的 Package 都不得进入本预演。
 

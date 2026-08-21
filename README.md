@@ -25,6 +25,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Clarification Confirmation Receipt contract](docs/product/clarification-confirmation-receipt-v0.md)
 - [Clarification Revision Lineage Verification contract](docs/product/clarification-revision-lineage-v0.md)
 - [Prompt Package Compilation Proposal contract](docs/product/prompt-package-compilation-proposal-v0.md)
+- [Prompt Package Compilation Confirmation Receipt contract](docs/product/prompt-package-compilation-confirmation-receipt-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -91,6 +92,13 @@ without creating or handing off the Package:
 ruby scripts/preview_prompt_package_compilation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml
 ```
 
+Validate the user's exact compilation choice against all three bound source
+files, without creating or handing off the final Package:
+
+```sh
+ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -130,3 +138,6 @@ Executor Profile and four-role separation gates before any run may start.
 - A Compilation Proposal binds one exact ready Session revision and draft
   Package, but its pending confirmation never creates a Package, authorizes
   Handoff, or changes any high-risk Approval Point.
+- A Compilation Confirmation Receipt permits future local Package creation
+  only for `confirmed` plus a Handoff-ready draft; every choice keeps Handoff
+  and high-risk authorization false.

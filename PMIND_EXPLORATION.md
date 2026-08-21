@@ -27,6 +27,7 @@
 - 已新增 Clarification Confirmation Receipt v0、四文件只读预演和 confirmed-only revision creator：确认回执用字节级摘要绑定原 Session、Answer Receipt 与 Proposal，区分确认、修改和拒绝；只有明确确认可在新路径生成带 lineage 的 `0600` Session 文件，永不覆盖输入，也不推导高风险授权。
 - 已新增 Clarification Revision Lineage Verification v0：五文件只读 verifier 会重跑完整确认链、确定性重建期望 revision、独立校验 persisted Session，再逐字段比较 metadata 与业务内容；YAML 排版变化可接受，来源或内容篡改会拒绝。成功文案不泄漏路径、摘要、内部 ID 或原答。
 - 已新增 Prompt Package Compilation Proposal v0：三文件只读 preview 会校验 persisted ready Session revision、候选 Package 及其 Session→Package lineage，再按字节摘要绑定 pending Proposal，展示范围、方案、验收、未知项、审批边界和三种选择；它不保存选择、不创建最终 Package、不 Handoff，也不推导授权。
+- 已新增 Prompt Package Compilation Confirmation Receipt v0：四文件只读 preview 会重跑完整 Compilation Proposal 链路，再校验用户选择、三份来源字节摘要、时间与数据策略；只有 confirmed + Handoff-ready 候选可授权后续本地创建，任何状态都不创建 Package、不 Handoff、不改变 Approval Point。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
@@ -671,5 +672,6 @@ Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.
 确认回执契约位于 docs/product/clarification-confirmation-receipt-v0.md；先用 ruby scripts/preview_clarification_confirmation.rb SESSION RECEIPT PROPOSAL CONFIRMATION 校验精确文件绑定和用户选择。只有 confirmed Receipt 才可运行 ruby scripts/create_clarification_revision.rb SESSION RECEIPT PROPOSAL CONFIRMATION OUTPUT；OUTPUT 必须是不存在的新路径，创建仍不代表高风险授权。
 持久化后必须用 ruby scripts/verify_clarification_revision_lineage.rb SESSION RECEIPT PROPOSAL CONFIRMATION OUTPUT 独立重放来源链；只有逐字段一致的 revision 才可继续 Clarification 或进入 Prompt Package 编译准备。验证通过不证明事实正确、风险获批或效果成立。
 编译准备先生成候选 Package，再用 ruby scripts/preview_prompt_package_compilation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL 重跑结构与 Session→Package lineage，并展示 pending 确认文案。成功不保存用户选择、不创建最终 Package、不授权 Handoff 或高风险动作；下一步需独立 Compilation Confirmation Receipt。
+用户选择写入独立 Compilation Confirmation Receipt 后，用 ruby scripts/preview_prompt_package_compilation_confirmation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION 做四文件只读预演。只有 confirmed + Handoff-ready 才能允许后续 creator；未就绪确认、修改或拒绝都不允许创建，所有状态继续禁止自动 Handoff 和推导高风险授权。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```

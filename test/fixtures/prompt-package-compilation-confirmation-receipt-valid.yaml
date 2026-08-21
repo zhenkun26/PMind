@@ -1,0 +1,22 @@
+schema_version: "0.1.0"
+compilation_confirmation_id: compile-confirmation-20260821-001
+captured_at: "2026-08-21T12:06:00+08:00"
+language: zh-CN
+session_id: session-20260821-002
+source_session_revision_number: 1
+source_session_status: ready_to_compile
+source_session_file_sha256: 6d78c8afe7d001cbe51e70d02c295cf1822abbba6c5706c2a2cafe6d42f93b49
+package_id: pkg-20260821-001
+draft_package_file_sha256: 2d847f1a2564a29fa366b56a82ded87fb3beebff6187275ee9f019860da9137f
+compilation_proposal_id: compile-proposal-20260821-001
+compilation_proposal_file_sha256: e5d4f9e3fd1fd4db5915ae83b8a3b7d736aa16f2753207286be6dd94bc98b5b3
+draft_package_handoff_ready: true
+confirmation_decision: confirmed
+package_creation_authorized: true
+handoff_authorized: false
+high_risk_authorization_inferred: false
+user_response: "确认这份候选 Package，允许后续受控步骤创建最终 Package。"
+user_response_sha256: 23e3448037bb39065be092896cad38dc7bc4caf02c083db7d6f6828ac94854e8
+data_classification: public
+contains_personal_data: false
+contains_secrets: false

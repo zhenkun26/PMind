@@ -166,7 +166,15 @@ lineage 校验通过只证明会话中可审计信息被保留，不证明外部
 ruby scripts/preview_prompt_package_compilation.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml
 ```
 
-只向用户展示 stdout 中的范围、推荐方案、主要取舍、blocking 验收、未知项、审批边界和候选质量门状态。当前步骤不保存“确认 / 修改 / 拒绝”选择，不创建最终 Package，也不授权 Handoff；必须由后续独立 Confirmation Receipt 绑定三份精确输入后才能继续。
+只向用户展示 stdout 中的范围、推荐方案、主要取舍、blocking 验收、未知项、审批边界和候选质量门状态。当前步骤不保存“确认 / 修改 / 拒绝”选择，不创建最终 Package，也不授权 Handoff。
+
+用户选择必须写入符合 [Prompt Package Compilation Confirmation Receipt v0](prompt-package-compilation-confirmation-receipt-v0.md) 的独立 Receipt，再与三份精确来源做四文件只读预演：
+
+```sh
+ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml
+```
+
+只有 `confirmed`、候选 `handoff.ready: true` 且 `package_creation_authorized: true` 的组合才允许后续本地 creator 继续。未就绪候选的确认只能记录理解一致；修改和拒绝均必须停止。任何结果都不授权 Handoff 或改变 Approval Point，本阶段也尚未创建最终 Package。
 
 ### 8. Quality Gate 与 Handoff
 

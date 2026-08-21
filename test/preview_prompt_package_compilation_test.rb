@@ -40,6 +40,9 @@ class PreviewPromptPackageCompilationTest < Minitest::Test
       assert copy, preview.errors.join("\n")
       assert_includes copy, "尚未通过结构化 Quality Gate"
       assert_includes copy, "不得创建可交接 Package"
+      assert_includes copy, "不允许创建可交接 Package"
+      assert_includes copy, "修正 Quality Gate 后必须重新提案"
+      refute_includes copy, "允许后续受控步骤基于这份候选内容创建最终 Package"
     end
   end
 

@@ -177,14 +177,7 @@ module PMind
       append_approvals(lines, package_document.fetch("approval_points"))
       append_privacy_notice(lines, proposal_document)
       append_quality_gate(lines, package_document.dig("handoff", "ready"))
-      lines.concat([
-                     "",
-                     "## 请选择",
-                     "",
-                     "1. 确认：允许后续受控步骤基于这份候选内容创建最终 Package；不等于 Handoff 或高风险授权。",
-                     "2. 修改：指出范围、方案、验收、未知项或审批边界中需要调整的内容。",
-                     "3. 拒绝：停止本次编译，保留 Session revision，不创建最终 Package。"
-                   ])
+      append_choices(lines, package_document.dig("handoff", "ready"))
       lines.join("\n")
     end
 
@@ -255,6 +248,22 @@ module PMind
                   "候选 Package 尚未通过结构化 Quality Gate；可以审阅，但不得创建可交接 Package。"
                 end
       lines.concat(["", "## 候选质量门", "", message])
+    end
+
+    def append_choices(lines, ready)
+      confirmed_copy = if ready == true
+                         "确认：允许后续受控步骤基于这份候选内容创建最终 Package；不等于 Handoff 或高风险授权。"
+                       else
+                         "确认理解：记录对当前内容的认可，但不允许创建可交接 Package；修正 Quality Gate 后必须重新提案。"
+                       end
+      lines.concat([
+                     "",
+                     "## 请选择",
+                     "",
+                     "1. #{confirmed_copy}",
+                     "2. 修改：指出范围、方案、验收、未知项或审批边界中需要调整的内容。",
+                     "3. 拒绝：停止本次编译，保留 Session revision，不创建最终 Package。"
+                   ])
     end
 
     def parse_time(value)
