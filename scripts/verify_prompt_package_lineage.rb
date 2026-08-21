@@ -7,7 +7,7 @@ require_relative "markdown_safety"
 
 module PMind
   class PromptPackageLineageVerifier
-    attr_reader :errors, :prompt_package, :expected_package, :package_bytes
+    attr_reader :errors, :prompt_package, :expected_package, :package_bytes, :input_digests
 
     def initialize(root)
       @root = File.realpath(root)
@@ -15,18 +15,22 @@ module PMind
       @prompt_package = nil
       @expected_package = nil
       @package_bytes = nil
+      @input_digests = nil
     end
 
     def verify_files(session_path, draft_path, proposal_path, confirmation_path, package_path)
       errors.clear
       @prompt_package, @package_bytes = load_yaml_file_with_bytes(package_path)
       @expected_package = nil
+      @input_digests = nil
       return nil unless prompt_package
 
       builder = PromptPackageCreator.new(@root)
       @expected_package = builder.build_files(session_path, draft_path, proposal_path, confirmation_path)
       errors.concat(builder.errors)
       return nil unless expected_package
+
+      @input_digests = builder.input_digests.dup
 
       package_validator = PromptPackageValidator.new(@root)
       unless package_validator.validate(prompt_package, package_path)

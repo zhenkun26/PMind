@@ -27,19 +27,21 @@ module PMind
       "external_service_write" => "修改外部服务"
     }.freeze
 
-    attr_reader :errors, :prompt_package, :proposal
+    attr_reader :errors, :prompt_package, :proposal, :input_digests
 
     def initialize(root)
       @root = File.realpath(root)
       @errors = []
       @prompt_package = nil
       @proposal = nil
+      @input_digests = nil
     end
 
     def preview_files(session_path, draft_path, compilation_proposal_path, compilation_confirmation_path, package_path, handoff_proposal_path)
       errors.clear
       @prompt_package = nil
       @proposal = nil
+      @input_digests = nil
 
       verifier = PromptPackageLineageVerifier.new(@root)
       lineage_copy = verifier.verify_files(
@@ -52,11 +54,15 @@ module PMind
       errors.concat(verifier.errors)
       return nil unless lineage_copy
 
-      proposal_document = load_yaml_file(handoff_proposal_path)
+      proposal_document, proposal_bytes = load_yaml_file(handoff_proposal_path)
       return nil unless proposal_document
 
       @prompt_package = verifier.prompt_package
       @proposal = proposal_document
+      @input_digests = verifier.input_digests.merge(
+        "final_package_file_sha256" => Digest::SHA256.hexdigest(verifier.package_bytes),
+        "handoff_proposal_file_sha256" => Digest::SHA256.hexdigest(proposal_bytes)
+      )
       proposal_valid = validate_proposal_schema(proposal_document, handoff_proposal_path)
       return nil unless proposal_valid
 
@@ -77,15 +83,17 @@ module PMind
     private
 
     def load_yaml_file(path)
-      YAML.safe_load(
-        File.binread(File.expand_path(path)),
+      bytes = File.binread(File.expand_path(path))
+      document = YAML.safe_load(
+        bytes,
         permitted_classes: [],
         permitted_symbols: [],
         aliases: false
       )
+      [document, bytes]
     rescue Errno::ENOENT, Errno::EACCES, Psych::Exception => e
       errors << "#{path}: cannot load YAML (#{e.message})"
-      nil
+      [nil, nil]
     end
 
     def validate_proposal_schema(document, path)

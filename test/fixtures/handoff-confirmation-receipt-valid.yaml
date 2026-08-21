@@ -1,0 +1,24 @@
+schema_version: "0.1.0"
+handoff_confirmation_id: handoff-confirmation-20260821-001
+captured_at: "2026-08-21T12:12:00+08:00"
+language: zh-CN
+package_id: pkg-20260821-001
+source_session_file_sha256: 6d78c8afe7d001cbe51e70d02c295cf1822abbba6c5706c2a2cafe6d42f93b49
+draft_package_file_sha256: 2d847f1a2564a29fa366b56a82ded87fb3beebff6187275ee9f019860da9137f
+compilation_proposal_file_sha256: e5d4f9e3fd1fd4db5915ae83b8a3b7d736aa16f2753207286be6dd94bc98b5b3
+compilation_confirmation_receipt_file_sha256: 11f2483c272dac922ab707dd3fb979dcd42afba5633a936d88a080a1202169b5
+final_package_file_sha256: f9e0aae42a0a1c655a091193fa48ad42a2d27cfc26b214a68575ed29e7472120
+handoff_proposal_id: handoff-proposal-20260821-001
+handoff_proposal_file_sha256: 967fa62f268ed03b49b3f43ce19976ead286b746d12618d10bd583085f206d43
+package_handoff_ready: true
+recipient: coding_agent
+handoff_proposal_status: pending
+confirmation_decision: confirmed
+handoff_authorized: true
+external_effects_authorized: false
+high_risk_authorization_inferred: false
+user_response: "确认当前 Handoff 提案，允许后续受控步骤把这份精确 Package 交给指定编码执行器。"
+user_response_sha256: df5b75bf1780d6529200262d2f40d7632b7dbb1e0d2a5cf1cd978f3852f82bc6
+data_classification: public
+contains_personal_data: false
+contains_secrets: false

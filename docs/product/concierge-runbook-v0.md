@@ -195,6 +195,14 @@ ruby scripts/preview_handoff_proposal.rb path/to/session-revision.yaml path/to/d
 
 预演器必须重新执行最终 Package lineage replay，并用同一次读取的字节摘要绑定 Proposal。只向用户展示交接对象、范围、允许/禁止动作、未决项、停止条件、Approval Points 和确认/修改/拒绝选项；不得展示路径、摘要、内部 ID、原始 Intent、原答或 Evidence 来源。当前步骤不保存选择、不授权 Handoff/外部效果/高风险动作，也不执行交接。请求修改必须回到新的候选 Package 和编译确认链；下一步授权只能由独立 Handoff Confirmation Receipt 表达。
 
+用户选择必须写入符合 [Handoff Confirmation Receipt v0](handoff-confirmation-receipt-v0.md) 的独立 Receipt，再与六份精确来源做七文件只读预演：
+
+```sh
+ruby scripts/preview_handoff_confirmation.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml
+```
+
+只有 `confirmed` 才能令 `handoff_authorized: true`；修改和拒绝必须保持 false。无论用户选择为何，`external_effects_authorized` 与 `high_risk_authorization_inferred` 都必须为 false，Package 中的 Approval Points、禁止动作和停止条件继续有效。预演成功只验证授权事实，不执行 Handoff。当前尚未选定下游运行时或交接渠道，因此不得虚构一次真实交接；下一实现边界应是 confirmed-only、no-overwrite 的本地 Handoff Envelope，而不是直接调用外部 Agent。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -203,6 +211,7 @@ ruby scripts/preview_handoff_proposal.rb path/to/session-revision.yaml path/to/d
 - Handoff 只传递允许内容；禁止动作必须随 Package 一起传递。
 - Compilation Proposal 的确认不能代替 Quality Gate，也不能改变 Package 中已有 Approval Point 的状态。
 - Handoff Proposal 的 pending 预演不能代替明确 Handoff Confirmation，也不能携带任何外部效果或高风险授权。
+- Handoff Confirmation 只授权未来受控交接精确 Package；它不表示 Handoff 已发生，也不批准交接渠道可能产生的外部效果。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

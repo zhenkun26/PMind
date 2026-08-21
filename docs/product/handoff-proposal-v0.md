@@ -56,7 +56,7 @@ Session revision
 5. Approval Point scope 与当前状态；
 6. 确认、请求修改、拒绝三种选择。
 
-确认选项只表示“允许后续受控步骤记录 Handoff 决策”，当前预演不保存选择。请求修改须回到候选 Package 和新的编译确认链；拒绝保留已验证的最终 Package，但不得交接。
+确认选项只表示“允许后续受控步骤记录 Handoff 决策”，当前预演不保存选择。选择必须写入独立的 [Handoff Confirmation Receipt v0](handoff-confirmation-receipt-v0.md)。请求修改须回到候选 Package 和新的编译确认链；拒绝保留已验证的最终 Package，但不得交接。
 
 所有动态内容必须经过共享 Markdown 安全层。文案不得展示文件路径、摘要、Session/Package/Proposal/Confirmation ID、原始 Intent、Clarification 原答、Evidence 来源、source refs、Review owner、decision maker ref 或内部字段路径。
 
@@ -69,4 +69,4 @@ ruby scripts/preview_handoff_proposal.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yam
 - `0`：前五文件 lineage 完整，最终 Package 可交接，Proposal 精确绑定且保持 pending 零授权；安全文案写入 stdout；
 - `1`：任一文件不可读、来源链失败、绑定/时间/数据策略漂移、Package 未就绪或 Proposal 越权；错误写入 stderr。
 
-成功只表示用户可以审阅 Handoff 提案，不证明用户身份、事实正确、Approval Point 已批准、Handoff 已授权或发生、下游交付成功或 PMind 商业效果成立。下一边界是独立 Handoff Confirmation Receipt 及其明确授权语义。
+成功只表示用户可以审阅 Handoff 提案，不证明用户身份、事实正确、Approval Point 已批准、Handoff 已授权或发生、下游交付成功或 PMind 商业效果成立。下一步必须用 Handoff Confirmation Receipt 保存并复验用户的明确选择。

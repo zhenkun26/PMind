@@ -1,0 +1,99 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-confirmation-receipt-v0.yaml"
+title: "PMind Handoff Confirmation Receipt v0"
+description: "Immutable user choice bound to one exact six-file Handoff Proposal chain."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - handoff_confirmation_id
+  - captured_at
+  - language
+  - package_id
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_id
+  - handoff_proposal_file_sha256
+  - package_handoff_ready
+  - recipient
+  - handoff_proposal_status
+  - confirmation_decision
+  - handoff_authorized
+  - external_effects_authorized
+  - high_risk_authorization_inferred
+  - user_response
+  - user_response_sha256
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  handoff_confirmation_id:
+    type: string
+    pattern: "^handoff-confirmation-[0-9]{8}-[0-9]{3}$"
+  captured_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  package_id:
+    type: string
+    pattern: "^pkg-[0-9]{8}-[0-9]{3}$"
+  source_session_file_sha256:
+    $ref: "#/$defs/sha256"
+  draft_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  final_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_proposal_id:
+    type: string
+    pattern: "^handoff-proposal-[0-9]{8}-[0-9]{3}$"
+  handoff_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  package_handoff_ready:
+    const: true
+  recipient:
+    const: coding_agent
+  handoff_proposal_status:
+    const: pending
+  confirmation_decision:
+    type: string
+    enum:
+      - confirmed
+      - modify_requested
+      - rejected
+  handoff_authorized:
+    type: boolean
+  external_effects_authorized:
+    const: false
+  high_risk_authorization_inferred:
+    const: false
+  user_response:
+    type: string
+    minLength: 1
+    maxLength: 4000
+  user_response_sha256:
+    $ref: "#/$defs/sha256"
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
+  contains_personal_data:
+    type: boolean
+  contains_secrets:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"

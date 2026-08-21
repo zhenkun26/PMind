@@ -70,6 +70,14 @@ authorization to perform one.
 Avoid: “Handoff authorization” or “Handoff” when the user has only been shown
 the proposal.
 
+### Handoff Confirmation Receipt
+
+An immutable record of a user's choice about one exact Handoff Proposal. A
+confirmed Receipt authorizes a future controlled Handoff, but does not prove
+that the Handoff occurred or that any external effect was approved.
+
+Avoid: “completed Handoff” when only the choice has been recorded.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

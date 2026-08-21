@@ -14,19 +14,21 @@ module PMind
       "not_applicable" => "不适用"
     }.freeze
 
-    attr_reader :errors, :prompt_package, :source_session
+    attr_reader :errors, :prompt_package, :source_session, :input_digests
 
     def initialize(root)
       @root = File.realpath(root)
       @errors = []
       @prompt_package = nil
       @source_session = nil
+      @input_digests = nil
     end
 
     def create_files(session_path, draft_path, proposal_path, confirmation_path, output_path)
       errors.clear
       @prompt_package = nil
       @source_session = nil
+      @input_digests = nil
       absolute_output = File.expand_path(output_path)
       if File.exist?(absolute_output)
         errors << "#{output_path}: output already exists; refusing to overwrite"
@@ -44,6 +46,7 @@ module PMind
       errors.clear
       @prompt_package = nil
       @source_session = nil
+      @input_digests = nil
 
       preview = PromptPackageCompilationConfirmationPreview.new(@root)
       confirmation_copy = preview.preview_files(session_path, draft_path, proposal_path, confirmation_path)
@@ -59,6 +62,7 @@ module PMind
       end
 
       @source_session = preview.session
+      @input_digests = preview.input_digests.dup
       @prompt_package = build_package(preview.prompt_package, preview.session, preview.proposal, confirmation, preview.input_digests)
       return nil unless validate_generated_package(preview.session)
 
