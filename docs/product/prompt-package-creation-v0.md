@@ -64,7 +64,7 @@ Creator 不得修改 `package_id`、`created_at`、Intent、Scope、Evidence、R
 - Package Quality Gate 为可交接；
 - 当前只完成本地创建，尚未 Handoff；
 - Approval Point scope 与状态保持不变；
-- Handoff 前仍须独立重放 persisted Package lineage，而该 verifier 尚未实现。
+- Handoff 决策前仍须按 [Prompt Package Lineage Verification v0](prompt-package-lineage-v0.md) 独立重放 persisted Package lineage。
 
 动态 Approval Point scope 必须通过共享 Markdown 安全层。文案不得展示路径、摘要、Session/Package/Proposal/Confirmation ID、原始 Intent、问题原答、用户确认原文、Evidence 来源、source refs、Review owner 或 decision maker ref。
 
@@ -77,4 +77,4 @@ ruby scripts/create_prompt_package.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml C
 - `0`：完整来源链有效，状态允许创建，最终 Package 已以 `0600` 写入新路径，安全文案写入 stdout；
 - `1`：输入、状态、lineage、输出路径或写入无效，仅在 stderr 返回不回显用户内容的错误。
 
-最终 Package 在独立 lineage replay 通过前不得进入 Handoff。本契约不实现该 verifier，也不授权提交、推送、部署、发送消息、外部服务写入、费用、生产数据访问或权限提升。
+最终 Package 在独立 lineage replay 通过前不得进入 Handoff 决策。Creator 本身不执行该审计，也不授权提交、推送、部署、发送消息、外部服务写入、费用、生产数据访问或权限提升。

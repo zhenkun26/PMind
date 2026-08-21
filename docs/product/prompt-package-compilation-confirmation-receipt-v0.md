@@ -79,4 +79,4 @@ ruby scripts/preview_prompt_package_compilation_confirmation.rb SESSION_REVISION
 - `0`：四文件链路、选择、时间和数据策略有效，安全结果文案写入 stdout；
 - `1`：任一来源漂移、选择组合非法、摘要/时间/数据策略无效，仅在 stderr 返回不回显用户原文的错误。
 
-成功不表示最终 Package 已创建、Package 内容或外部事实正确、Handoff 已发生、高风险动作已批准、下游交付成功或 PMind 商业效果成立。需要创建时必须使用 confirmed-only、no-overwrite、本地 `0600` Creator；创建后仍须另行完成 persisted Package lineage replay。
+成功不表示最终 Package 已创建、Package 内容或外部事实正确、Handoff 已发生、高风险动作已批准、下游交付成功或 PMind 商业效果成立。需要创建时必须使用 confirmed-only、no-overwrite、本地 `0600` Creator；创建后仍须按 [Prompt Package Lineage Verification v0](prompt-package-lineage-v0.md) 独立重放 persisted Package。

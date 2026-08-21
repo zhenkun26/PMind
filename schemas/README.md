@@ -57,6 +57,12 @@ ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/new-sess
 ruby scripts/create_prompt_package.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
 ```
 
+只读重放四份已确认来源，并逐字段核对 persisted final Package 的 `compilation` metadata 与完整业务内容：
+
+```sh
+ruby scripts/verify_prompt_package_lineage.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh
@@ -70,6 +76,6 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-pac
 ruby scripts/validate_prompt_package.rb /absolute/or/relative/package.yaml
 ```
 
-退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb` 与 `create_prompt_package.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；两个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package，Creator 的成功也不授权 Handoff。
+退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb` 与 `create_prompt_package.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；两个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package，Creator 或 lineage verifier 的成功也不授权、执行 Handoff。
 
 `test/fixtures/` 下的 Clarification Session、Answer Receipt、Revision Proposal、Confirmation Receipt、Compilation Proposal、Compilation Confirmation Receipt 与 Prompt Package 只用于自动化测试，是合成示例，不是校准运行、真实用户交付物或 PMind 效果证据。

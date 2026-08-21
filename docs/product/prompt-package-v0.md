@@ -15,7 +15,7 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 
 若 Package 来自结构化 Clarification Session，还应运行 `ruby scripts/validate_clarification_session.rb SESSION --prompt-package PACKAGE`。该交叉校验要求逐字保留原始 Intent、用户问题与回答、假设、未知项、决策和高风险动作；它不允许编译器静默删除不利信息或伪造会话中不存在的决定。
 
-对 persisted ready Session revision 形成候选 Package 后，还应按 [Prompt Package Compilation Proposal v0](prompt-package-compilation-proposal-v0.md) 绑定两个精确文件并展示确认文案。只有明确确认且 Quality Gate 就绪的候选才可按 [Prompt Package Creation v0](prompt-package-creation-v0.md) 在新路径持久化；创建仍不等于 Handoff 已授权。
+对 persisted ready Session revision 形成候选 Package 后，还应按 [Prompt Package Compilation Proposal v0](prompt-package-compilation-proposal-v0.md) 绑定两个精确文件并展示确认文案。只有明确确认且 Quality Gate 就绪的候选才可按 [Prompt Package Creation v0](prompt-package-creation-v0.md) 在新路径持久化，并在 Handoff 决策前通过 [Prompt Package Lineage Verification v0](prompt-package-lineage-v0.md)；创建或验证仍不等于 Handoff 已授权。
 
 ## 规范用语
 

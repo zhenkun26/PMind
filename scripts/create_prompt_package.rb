@@ -14,17 +14,19 @@ module PMind
       "not_applicable" => "不适用"
     }.freeze
 
-    attr_reader :errors, :prompt_package
+    attr_reader :errors, :prompt_package, :source_session
 
     def initialize(root)
       @root = File.realpath(root)
       @errors = []
       @prompt_package = nil
+      @source_session = nil
     end
 
     def create_files(session_path, draft_path, proposal_path, confirmation_path, output_path)
       errors.clear
       @prompt_package = nil
+      @source_session = nil
       absolute_output = File.expand_path(output_path)
       if File.exist?(absolute_output)
         errors << "#{output_path}: output already exists; refusing to overwrite"
@@ -41,6 +43,7 @@ module PMind
     def build_files(session_path, draft_path, proposal_path, confirmation_path)
       errors.clear
       @prompt_package = nil
+      @source_session = nil
 
       preview = PromptPackageCompilationConfirmationPreview.new(@root)
       confirmation_copy = preview.preview_files(session_path, draft_path, proposal_path, confirmation_path)
@@ -55,6 +58,7 @@ module PMind
         return nil
       end
 
+      @source_session = preview.session
       @prompt_package = build_package(preview.prompt_package, preview.session, preview.proposal, confirmation, preview.input_digests)
       return nil unless validate_generated_package(preview.session)
 
@@ -144,7 +148,7 @@ module PMind
                      "",
                      "## 下一步",
                      "",
-                     "在 Handoff 前须独立重放已持久化 Package 的 lineage；该 verifier 尚未实现。本次创建不授权 Handoff，也不批准任何仍待处理的高风险动作。"
+                     "在 Handoff 决策前须独立重放已持久化 Package 的 lineage；只有验证通过才可继续。本次创建不授权 Handoff，也不批准任何仍待处理的高风险动作。"
                    ])
       lines.join("\n")
     end

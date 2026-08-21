@@ -69,6 +69,7 @@ The experiment is paired:
 - `docs/product/prompt-package-compilation-confirmation-receipt-v0.md`: exact compilation-choice capture, ready-aware creation permission, and safe outcome-copy contract;
 - `schemas/prompt-package-compilation-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject state, three source digests, privacy declarations, and no-Handoff boundary;
 - `docs/product/prompt-package-creation-v0.md`: confirmed-only final-Package persistence, exact draft preservation, and safe success-copy contract;
+- `docs/product/prompt-package-lineage-v0.md`: persisted final-Package replay, full content comparison, and safe audit-copy contract;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -97,6 +98,7 @@ The experiment is paired:
 - `scripts/preview_prompt_package_compilation.rb`: read-only Session/Package/Proposal binding, cross-lineage validation, and safe confirmation renderer.
 - `scripts/preview_prompt_package_compilation_confirmation.rb`: read-only four-file compilation choice binding and ready-aware outcome renderer.
 - `scripts/create_prompt_package.rb`: deterministic, confirmed-only, no-overwrite `0600` final-Package creator with compilation lineage.
+- `scripts/verify_prompt_package_lineage.rb`: read-only five-file replay verifier for final-Package metadata and full business content.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -113,6 +115,7 @@ ruby test/preview_clarification_answers_test.rb
 ruby test/preview_prompt_package_compilation_test.rb
 ruby test/preview_prompt_package_compilation_confirmation_test.rb
 ruby test/create_prompt_package_test.rb
+ruby test/verify_prompt_package_lineage_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

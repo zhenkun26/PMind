@@ -182,9 +182,10 @@ ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/session-
 ruby scripts/create_prompt_package.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
 ruby scripts/validate_prompt_package.rb path/to/final-package.yaml
 ruby scripts/validate_clarification_session.rb path/to/session-revision.yaml --prompt-package path/to/final-package.yaml
+ruby scripts/verify_prompt_package_lineage.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
 ```
 
-Creator 只增加 `compilation` lineage metadata，候选业务内容和四份来源必须保持不变。当前尚无 persisted Package lineage replay verifier，因此即使以上创建和校验通过，也必须停在 Handoff 之前；下一阶段完成独立重放后才能解除该门禁。
+Creator 只增加 `compilation` lineage metadata，候选业务内容和四份来源必须保持不变。[Prompt Package Lineage Verification v0](prompt-package-lineage-v0.md) 会重新构建期望 Package，并独立核对 metadata、完整业务内容与 Session→Package lineage。四项校验全部通过后只可进入受控 Handoff 决策；验证本身不执行 Handoff，也不改变 Approval Point、禁止动作或停止条件。
 
 ### 8. Quality Gate 与 Handoff
 
