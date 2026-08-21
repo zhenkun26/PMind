@@ -174,7 +174,17 @@ ruby scripts/preview_prompt_package_compilation.rb path/to/session-revision.yaml
 ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml
 ```
 
-只有 `confirmed`、候选 `handoff.ready: true` 且 `package_creation_authorized: true` 的组合才允许后续本地 creator 继续。未就绪候选的确认只能记录理解一致；修改和拒绝均必须停止。任何结果都不授权 Handoff 或改变 Approval Point，本阶段也尚未创建最终 Package。
+只有 `confirmed`、候选 `handoff.ready: true` 且 `package_creation_authorized: true` 的组合才允许本地 Creator 继续。未就绪候选的确认只能记录理解一致；修改和拒绝均必须停止。任何结果都不授权 Handoff 或改变 Approval Point。
+
+预演通过后，按 [Prompt Package Creation v0](prompt-package-creation-v0.md) 创建不存在的新路径：
+
+```sh
+ruby scripts/create_prompt_package.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
+ruby scripts/validate_prompt_package.rb path/to/final-package.yaml
+ruby scripts/validate_clarification_session.rb path/to/session-revision.yaml --prompt-package path/to/final-package.yaml
+```
+
+Creator 只增加 `compilation` lineage metadata，候选业务内容和四份来源必须保持不变。当前尚无 persisted Package lineage replay verifier，因此即使以上创建和校验通过，也必须停在 Handoff 之前；下一阶段完成独立重放后才能解除该门禁。
 
 ### 8. Quality Gate 与 Handoff
 

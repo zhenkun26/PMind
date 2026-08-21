@@ -26,6 +26,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Clarification Revision Lineage Verification contract](docs/product/clarification-revision-lineage-v0.md)
 - [Prompt Package Compilation Proposal contract](docs/product/prompt-package-compilation-proposal-v0.md)
 - [Prompt Package Compilation Confirmation Receipt contract](docs/product/prompt-package-compilation-confirmation-receipt-v0.md)
+- [Prompt Package Creation contract](docs/product/prompt-package-creation-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -93,11 +94,16 @@ ruby scripts/preview_prompt_package_compilation.rb path/to/new-session.yaml path
 ```
 
 Validate the user's exact compilation choice against all three bound source
-files, without creating or handing off the final Package:
+files, then create a new final Package only for the confirmed, ready state:
 
 ```sh
 ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml
+ruby scripts/create_prompt_package.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
 ```
+
+The creator replays the full chain, preserves the draft's business content,
+adds immutable compilation lineage, refuses overwrite, and creates the final
+file with `0600` permissions. It does not perform Handoff.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -141,3 +147,6 @@ Executor Profile and four-role separation gates before any run may start.
 - A Compilation Confirmation Receipt permits future local Package creation
   only for `confirmed` plus a Handoff-ready draft; every choice keeps Handoff
   and high-risk authorization false.
+- Final Package creation preserves every draft business field, adds only
+  immutable compilation lineage, and cannot overwrite a path or infer Handoff.
+  Independent persisted-Package lineage replay is still required before Handoff.

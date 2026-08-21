@@ -61,6 +61,43 @@ class ValidatePromptPackageTest < Minitest::Test
     assert_valid(document)
   end
 
+  def test_optional_compilation_lineage_is_valid_for_a_ready_package
+    document = package
+    document["compilation"] = compilation_metadata
+
+    assert_valid(document)
+  end
+
+  def test_compilation_lineage_requires_a_ready_package
+    document = package
+    document.fetch("handoff")["ready"] = false
+    document["compilation"] = compilation_metadata
+
+    assert_invalid(document, "persisted compilation lineage requires a Handoff-ready Package")
+  end
+
+  def test_compilation_cannot_predate_the_draft_package
+    document = package
+    document["compilation"] = compilation_metadata.merge("created_at" => "2026-08-21T09:59:59+08:00")
+
+    assert_invalid(document, "compilation created_at cannot predate the draft Package")
+  end
+
+  def test_compilation_lineage_cannot_infer_handoff_authorization
+    document = package
+    document["compilation"] = compilation_metadata.merge("handoff_authorization_inferred" => true)
+
+    assert_invalid(document, "expected constant false")
+  end
+
+  def test_malformed_handoff_with_compilation_is_rejected_without_crashing
+    document = package
+    document["handoff"] = "invalid"
+    document["compilation"] = compilation_metadata
+
+    assert_invalid(document, "expected object")
+  end
+
   def test_approved_action_cannot_remain_prohibited
     document = package
     approval = document.fetch("approval_points").first
@@ -239,5 +276,22 @@ class ValidatePromptPackageTest < Minitest::Test
 
   def deep_copy(value)
     Marshal.load(Marshal.dump(value))
+  end
+
+  def compilation_metadata
+    {
+      "created_at" => "2026-08-21T12:06:00+08:00",
+      "source_session_id" => "session-20260821-001",
+      "source_session_revision_number" => 1,
+      "source_session_file_sha256" => "a" * 64,
+      "draft_package_file_sha256" => "b" * 64,
+      "compilation_proposal_id" => "compile-proposal-20260821-001",
+      "compilation_proposal_file_sha256" => "c" * 64,
+      "compilation_confirmation_id" => "compile-confirmation-20260821-001",
+      "compilation_confirmation_receipt_file_sha256" => "d" * 64,
+      "confirmation_decision" => "confirmed",
+      "handoff_authorization_inferred" => false,
+      "high_risk_authorization_inferred" => false
+    }
   end
 end

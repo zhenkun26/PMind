@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "optparse"
+require "time"
 require "yaml"
 require_relative "validate_evals"
 
@@ -60,6 +61,7 @@ module PMind
       validate_references(document, path)
       validate_reviews(document, path)
       validate_approvals(document, path)
+      validate_compilation(document, path)
       validate_handoff(document, path)
       errors.empty?
     end
@@ -204,6 +206,21 @@ module PMind
       end
     end
 
+    def validate_compilation(document, path)
+      compilation = document["compilation"]
+      return unless compilation.is_a?(Hash)
+
+      handoff = document["handoff"].is_a?(Hash) ? document["handoff"] : {}
+      unless handoff["ready"] == true
+        errors << "#{path}: persisted compilation lineage requires a Handoff-ready Package"
+      end
+      package_time = parse_time(document["created_at"])
+      compilation_time = parse_time(compilation["created_at"])
+      if package_time && compilation_time && compilation_time < package_time
+        errors << "#{path}: compilation created_at cannot predate the draft Package"
+      end
+    end
+
     def validate_approval_action(approval, authorized, prohibited, path)
       action = approval["action"]
       case approval["status"]
@@ -256,6 +273,12 @@ module PMind
 
     def present?(value)
       value.is_a?(String) && !value.empty?
+    end
+
+    def parse_time(value)
+      Time.iso8601(value)
+    rescue ArgumentError, TypeError
+      nil
     end
   end
 end

@@ -15,7 +15,7 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 
 若 Package 来自结构化 Clarification Session，还应运行 `ruby scripts/validate_clarification_session.rb SESSION --prompt-package PACKAGE`。该交叉校验要求逐字保留原始 Intent、用户问题与回答、假设、未知项、决策和高风险动作；它不允许编译器静默删除不利信息或伪造会话中不存在的决定。
 
-对 persisted ready Session revision 形成候选 Package 后，还应按 [Prompt Package Compilation Proposal v0](prompt-package-compilation-proposal-v0.md) 绑定两个精确文件并展示确认文案。候选 `handoff.ready: true`、结构校验通过或 Proposal 预演成功都不等于用户已确认、最终 Package 已创建或 Handoff 已授权。
+对 persisted ready Session revision 形成候选 Package 后，还应按 [Prompt Package Compilation Proposal v0](prompt-package-compilation-proposal-v0.md) 绑定两个精确文件并展示确认文案。只有明确确认且 Quality Gate 就绪的候选才可按 [Prompt Package Creation v0](prompt-package-creation-v0.md) 在新路径持久化；创建仍不等于 Handoff 已授权。
 
 ## 规范用语
 
@@ -55,6 +55,7 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 | `risks` | 是 | 风险、影响、概率和缓解；可以为空数组 |
 | `approval_points` | 是 | 需要人类明确授权的动作；可以为空数组 |
 | `eval_plan` | 是 | Quality Gate 和下游结果的验证方法 |
+| `compilation` | 否 | 最终 Package 的确认创建时间、四份来源绑定和零推断授权声明；候选 Package 不包含 |
 | `handoff` | 是 | 交接对象、允许/禁止动作和未决事项 |
 
 ## 字段契约
@@ -168,6 +169,10 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 - `prohibited_actions`：默认包含提交、推送、部署、发送消息和修改外部服务，除非存在已批准 Approval Point；
 - `open_items`：不阻塞但需告知执行器的未知项；
 - `stop_conditions`：执行器必须停止并返回用户的条件。
+
+### `compilation`
+
+该字段只由 confirmed-only Creator 添加。它保存 Session revision、候选 Package、Compilation Proposal 与 Compilation Confirmation Receipt 的精确文件摘要和内部 ID，用于后续独立 lineage replay。字段存在时 Package 必须保持 `handoff.ready: true`；其创建时间不得早于候选 Package，且 Handoff/高风险授权推断必须固定为 false。该 metadata 不得替代 Approval Point 或改变任何业务字段。
 
 ## Quality Gate
 

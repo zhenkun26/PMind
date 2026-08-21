@@ -10,7 +10,7 @@
 - `clarification-session-v0.yaml`：覆盖不可变 Intake、九维 gap map、问题优先级、1–3 问轮次、假设/未知项/决策、Compile Gate 和可选 revision lineage；
 - `prompt-package-compilation-confirmation-receipt-v0.yaml`：覆盖用户对精确 Session revision、候选 Package 和 Compilation Proposal 的确认、修改或拒绝选择；
 - `prompt-package-compilation-proposal-v0.yaml`：覆盖 ready Session revision、候选 Package、精确文件摘要、pending confirmation 和零授权边界；
-- `prompt-package-v0.yaml`：覆盖完整 Package 结构、稳定 ID、六个 Review Lenses、风险、Approval Points、执行契约和 Handoff。
+- `prompt-package-v0.yaml`：覆盖完整 Package 结构、稳定 ID、六个 Review Lenses、风险、Approval Points、执行契约、可选确认创建 lineage 和 Handoff。
 
 七者均对应产品契约的 `0.1.0` 语义。结构通过不代表事实正确或产品效果通过；外部事实、用户决定和下游结果仍需按 Runbook 独立验证。
 
@@ -51,6 +51,12 @@ ruby scripts/preview_prompt_package_compilation.rb path/to/new-session.yaml path
 ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml
 ```
 
+重跑完整确认链，并只在 confirmed + Handoff-ready + creation-authorized 时，以 `0600` 权限创建不覆盖任何来源的最终 Package：
+
+```sh
+ruby scripts/create_prompt_package.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh
@@ -64,6 +70,6 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-pac
 ruby scripts/validate_prompt_package.rb /absolute/or/relative/package.yaml
 ```
 
-退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。除 `create_clarification_revision.rb` 只创建用户指定的新文件外，其余命令不修改输入、仓库或外部系统；创建命令永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package，也不授权 Handoff。
+退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb` 与 `create_prompt_package.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；两个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package，Creator 的成功也不授权 Handoff。
 
 `test/fixtures/` 下的 Clarification Session、Answer Receipt、Revision Proposal、Confirmation Receipt、Compilation Proposal、Compilation Confirmation Receipt 与 Prompt Package 只用于自动化测试，是合成示例，不是校准运行、真实用户交付物或 PMind 效果证据。

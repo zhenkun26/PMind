@@ -9,7 +9,7 @@
 
 Compilation Confirmation Receipt 把“用户看到了哪一份精确编译提案”和“用户随后选择了什么”保存为独立事实。它不复制候选 Package 内容，不把确认解释为 Handoff，也不改变任何 Approval Point。
 
-只读预演入口为 `scripts/preview_prompt_package_compilation_confirmation.rb`。本阶段只验证 Receipt 和生成结果文案；即使选择有效且允许创建，也不会写入最终 Package。
+只读预演入口为 `scripts/preview_prompt_package_compilation_confirmation.rb`。预演本身只验证 Receipt 和生成结果文案；选择有效且允许创建后，可由 [Prompt Package Creation v0](prompt-package-creation-v0.md) 的独立 Creator 在新路径持久化最终 Package。
 
 ## 四层事实边界
 
@@ -79,4 +79,4 @@ ruby scripts/preview_prompt_package_compilation_confirmation.rb SESSION_REVISION
 - `0`：四文件链路、选择、时间和数据策略有效，安全结果文案写入 stdout；
 - `1`：任一来源漂移、选择组合非法、摘要/时间/数据策略无效，仅在 stderr 返回不回显用户原文的错误。
 
-成功不表示最终 Package 已创建、Package 内容或外部事实正确、Handoff 已发生、高风险动作已批准、下游交付成功或 PMind 商业效果成立。下一阶段若实现 creator，必须为 confirmed-only、no-overwrite、本地 `0600` 创建，并另行设计 persisted Package lineage replay。
+成功不表示最终 Package 已创建、Package 内容或外部事实正确、Handoff 已发生、高风险动作已批准、下游交付成功或 PMind 商业效果成立。需要创建时必须使用 confirmed-only、no-overwrite、本地 `0600` Creator；创建后仍须另行完成 persisted Package lineage replay。
