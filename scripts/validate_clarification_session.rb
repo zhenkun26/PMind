@@ -78,6 +78,7 @@ module PMind
       validate_identifiers(document, path)
       validate_gap_map(document, path)
       validate_rounds(document, path)
+      validate_revision(document, path)
       validate_question_priority(document, path)
       validate_compile_gate(document, path)
       validate_state(document, path)
@@ -293,6 +294,25 @@ module PMind
         errors << "#{path}: extension_reason requires extension_authorized_by_user"
       elsif extended && !present?(policy["extension_reason"])
         errors << "#{path}: authorized round extension requires extension_reason"
+      end
+    end
+
+    def validate_revision(document, path)
+      revision = document["revision"]
+      return unless revision.is_a?(Hash)
+
+      rounds = array_of_hashes(document["rounds"])
+      unless revision["revision_number"] == rounds.length
+        errors << "#{path}: revision_number must equal the completed round count #{rounds.length}"
+      end
+      unless %w[clarifying ready_to_compile blocked].include?(document["status"])
+        errors << "#{path}: revision metadata requires a post-clarification Session state"
+      end
+
+      revision_time = parse_time(revision["created_at"])
+      latest_round_time = rounds.map { |round| parse_time(round["completed_at"]) }.compact.max
+      if revision_time && latest_round_time && revision_time < latest_round_time
+        errors << "#{path}: revision created_at cannot predate its latest completed round"
       end
     end
 

@@ -22,6 +22,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Clarification user copy contract](docs/product/clarification-copy-v0.md)
 - [Clarification Answer Receipt contract](docs/product/clarification-answer-receipt-v0.md)
 - [Clarification Revision Proposal contract](docs/product/clarification-revision-proposal-v0.md)
+- [Clarification Confirmation Receipt contract](docs/product/clarification-confirmation-receipt-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -66,6 +67,14 @@ safe user-confirmation Markdown without writing either input:
 ruby scripts/preview_clarification_revision.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml
 ```
 
+Validate the user's exact choice against all three source files, then create a
+new no-overwrite Session revision only when that choice is confirmed:
+
+```sh
+ruby scripts/preview_clarification_confirmation.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml
+ruby scripts/create_clarification_revision.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -96,3 +105,6 @@ Executor Profile and four-role separation gates before any run may start.
   or treats an ordinary response as high-risk authorization.
 - A Revision Proposal preview applies its delta only in memory, revalidates the
   complete candidate Session, and never records confirmation or risk approval.
+- A Confirmation Receipt binds exact input-file digests. Only `confirmed` may
+  create a new `0600` Session file; inputs are never overwritten and high-risk
+  Approval Points remain separate.

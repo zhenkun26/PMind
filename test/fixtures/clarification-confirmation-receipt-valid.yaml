@@ -1,0 +1,22 @@
+schema_version: "0.1.0"
+confirmation_id: confirmation-20260821-001
+captured_at: "2026-08-21T11:07:00+08:00"
+language: zh-CN
+session_id: session-20260821-002
+source_session_status: gap_scan
+source_session_file_sha256: 3053fa07781e4d7e81891e61332b495f96b6f0158bd92a25658c90924468139a
+answer_receipt_id: receipt-20260821-001
+answer_receipt_file_sha256: 81d0005efc2f7007ce0258ff8d4b94cae0b084c17eeab7c858da5b325436d65e
+proposal_id: proposal-20260821-001
+proposal_file_sha256: cb4e3de94d4fc99e0c23a96a59fc63bf7cef2c4ee288e17f1f2f42bf696bc5fa
+round_number: 1
+target_revision_number: 1
+target_session_status: ready_to_compile
+confirmation_decision: confirmed
+revision_creation_authorized: true
+high_risk_authorization_inferred: false
+user_response: "确认，可以按上述理解创建新的 Session revision。"
+user_response_sha256: 6c219952887bbb17378addd4717b2b3017bcd2706c06d8d90a448612fc3c640e
+data_classification: public
+contains_personal_data: false
+contains_secrets: false

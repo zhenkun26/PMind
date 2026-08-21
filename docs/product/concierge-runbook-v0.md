@@ -78,6 +78,20 @@ ruby scripts/preview_clarification_revision.rb path/to/session.yaml path/to/rece
 
 只把 stdout 中的候选理解、产品影响、候选状态和确认选项发给用户。成功仅表示三文件绑定、delta 和完整候选 Session 一致；仍须获得用户明确确认后，才可由后续步骤创建新的 Session revision。Proposal 本身不是确认回执，也不能新增、删除或改写既有高风险审批要求。
 
+把用户对该份 Proposal 的逐字选择保存为 [Clarification Confirmation Receipt v0](clarification-confirmation-receipt-v0.md)，先做四文件只读预演：
+
+```sh
+ruby scripts/preview_clarification_confirmation.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml
+```
+
+`modify_requested` 必须形成新 Proposal 并重新确认；`rejected` 必须保留原 Session。只有预演通过的 `confirmed` Receipt 才可创建新文件：
+
+```sh
+ruby scripts/create_clarification_revision.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
+```
+
+创建后再次运行 Session 校验，并从此使用新路径继续；不得覆盖旧 Session。新 revision 的 lineage 保存四份来源摘要，但确认仍不构成任何高风险 Approval Point 授权。
+
 只有状态为 `ready_to_compile` 且校验通过的 Session 才能进入 Compile；`blocked` 必须保留阻塞原因，不能用操作者推断补齐。
 
 ### 4. Research：按需取证

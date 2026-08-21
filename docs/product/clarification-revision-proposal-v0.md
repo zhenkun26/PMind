@@ -92,7 +92,7 @@ stdout 首先明确“请确认我对本轮回答的理解”和“Session 尚�
 2. 修改：指出哪一项理解或影响不准确；
 3. 拒绝：保留当前 Session，不应用 Proposal。
 
-本 CLI 不接收或保存该选择。
+本 CLI 不接收或保存该选择。后续选择必须按 [Clarification Confirmation Receipt v0](clarification-confirmation-receipt-v0.md) 独立保存并绑定当前三份精确输入文件。
 
 ## 命令与退出码
 
@@ -104,3 +104,5 @@ ruby scripts/preview_clarification_revision.rb SESSION.yaml RECEIPT.yaml PROPOSA
 - `1`：绑定、delta 或 Candidate Session 无效，仅在 stderr 返回不含原答的错误。
 
 成功不表示用户已确认、Session 已更新、Prompt Package 已生成或风险已授权。
+
+用户作出选择后，先运行 `ruby scripts/preview_clarification_confirmation.rb SESSION RECEIPT PROPOSAL CONFIRMATION`。只有有效的 `confirmed` Receipt 才能交给 no-overwrite revision 创建命令。

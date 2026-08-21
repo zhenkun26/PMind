@@ -61,6 +61,8 @@ The experiment is paired:
 - `schemas/clarification-answer-receipt-v0.yaml`: machine-readable Answer Receipt structure and data declaration;
 - `docs/product/clarification-revision-proposal-v0.md`: in-memory Session revision, state-transition, and user-confirmation contract;
 - `schemas/clarification-revision-proposal-v0.yaml`: machine-readable answer normalization, gap/knowledge delta, and candidate Compile Gate structure;
+- `docs/product/clarification-confirmation-receipt-v0.md`: exact-file choice capture, safe outcome copy, and no-overwrite revision creation contract;
+- `schemas/clarification-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject choice, source-file digests, privacy declarations, and creation authorization;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -83,6 +85,8 @@ The experiment is paired:
 - `scripts/render_clarification_copy.rb`: read-only validated Session-to-user-Markdown renderer.
 - `scripts/preview_clarification_answers.rb`: read-only Answer Receipt applicability and no-echo confirmation renderer.
 - `scripts/preview_clarification_revision.rb`: read-only three-file binding, in-memory delta application, candidate Session validation, and safe confirmation renderer.
+- `scripts/preview_clarification_confirmation.rb`: read-only exact-file confirmation binding and three-choice outcome renderer.
+- `scripts/create_clarification_revision.rb`: confirmed-only, deterministic, no-overwrite Session revision creator with audit lineage.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.

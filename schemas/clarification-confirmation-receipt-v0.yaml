@@ -1,0 +1,103 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/clarification-confirmation-receipt-v0.yaml"
+title: "PMind Clarification Confirmation Receipt v0"
+description: "Immutable user choice bound to exact Session, Answer Receipt, and Revision Proposal files."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - confirmation_id
+  - captured_at
+  - language
+  - session_id
+  - source_session_status
+  - source_session_file_sha256
+  - answer_receipt_id
+  - answer_receipt_file_sha256
+  - proposal_id
+  - proposal_file_sha256
+  - round_number
+  - target_revision_number
+  - target_session_status
+  - confirmation_decision
+  - revision_creation_authorized
+  - high_risk_authorization_inferred
+  - user_response
+  - user_response_sha256
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  confirmation_id:
+    type: string
+    pattern: "^confirmation-[0-9]{8}-[0-9]{3}$"
+  captured_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  session_id:
+    type: string
+    pattern: "^session-[0-9]{8}-[0-9]{3}$"
+  source_session_status:
+    type: string
+    enum:
+      - gap_scan
+      - clarifying
+  source_session_file_sha256:
+    $ref: "#/$defs/sha256"
+  answer_receipt_id:
+    type: string
+    pattern: "^receipt-[0-9]{8}-[0-9]{3}$"
+  answer_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  proposal_id:
+    type: string
+    pattern: "^proposal-[0-9]{8}-[0-9]{3}$"
+  proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  round_number:
+    type: integer
+    minimum: 1
+  target_revision_number:
+    type: integer
+    minimum: 1
+  target_session_status:
+    type: string
+    enum:
+      - clarifying
+      - ready_to_compile
+      - blocked
+  confirmation_decision:
+    type: string
+    enum:
+      - confirmed
+      - modify_requested
+      - rejected
+  revision_creation_authorized:
+    type: boolean
+  high_risk_authorization_inferred:
+    const: false
+  user_response:
+    type: string
+    minLength: 1
+    maxLength: 4000
+  user_response_sha256:
+    $ref: "#/$defs/sha256"
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
+  contains_personal_data:
+    type: boolean
+  contains_secrets:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"

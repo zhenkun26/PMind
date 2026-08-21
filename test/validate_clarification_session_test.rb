@@ -199,6 +199,36 @@ class ValidateClarificationSessionTest < Minitest::Test
     assert_invalid(document, "authorized round extension requires extension_reason")
   end
 
+  def test_generated_revision_lineage_is_valid
+    document = session
+    document["revision"] = revision_metadata(document)
+
+    assert_valid(document)
+  end
+
+  def test_revision_number_must_equal_completed_round_count
+    document = session
+    document["revision"] = revision_metadata(document)
+    document["revision"]["revision_number"] = 2
+
+    assert_invalid(document, "revision_number must equal the completed round count 1")
+  end
+
+  def test_revision_cannot_predate_latest_round
+    document = session
+    document["revision"] = revision_metadata(document)
+    document["revision"]["created_at"] = "2026-08-21T10:04:00+08:00"
+
+    assert_invalid(document, "revision created_at cannot predate its latest completed round")
+  end
+
+  def test_revision_metadata_requires_a_post_clarification_state
+    document = gap_scan_session
+    document["revision"] = revision_metadata(document)
+
+    assert_invalid(document, "revision metadata requires a post-clarification Session state")
+  end
+
   def test_ready_session_and_prompt_package_have_valid_lineage
     assert_pair_valid(session, prompt_package)
   end
@@ -388,6 +418,22 @@ class ValidateClarificationSessionTest < Minitest::Test
     gate["next_question_ids"] = []
     gate["stop_reason"] = "blocked"
     document
+  end
+
+  def revision_metadata(document)
+    {
+      "revision_number" => document.fetch("rounds").length,
+      "created_at" => "2026-08-21T11:07:00+08:00",
+      "source_session_file_sha256" => "a" * 64,
+      "answer_receipt_id" => "receipt-20260821-001",
+      "answer_receipt_file_sha256" => "b" * 64,
+      "proposal_id" => "proposal-20260821-001",
+      "proposal_file_sha256" => "c" * 64,
+      "confirmation_id" => "confirmation-20260821-001",
+      "confirmation_receipt_file_sha256" => "d" * 64,
+      "confirmation_decision" => "confirmed",
+      "high_risk_authorization_inferred" => false
+    }
   end
 
   def make_risk_gap_unknown(document)

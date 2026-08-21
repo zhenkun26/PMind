@@ -1,7 +1,7 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
 $id: "https://pmind.local/schemas/clarification-session-v0.yaml"
 title: "PMind Clarification Session v0"
-description: "Immutable Intake, nine-dimension Gap Map, minimal Clarification rounds, and compile readiness."
+description: "Immutable Intake, nine-dimension Gap Map, minimal Clarification rounds, compile readiness, and optional confirmed revision lineage."
 type: object
 additionalProperties: false
 required:
@@ -38,6 +38,53 @@ properties:
       - clarifying
       - ready_to_compile
       - blocked
+  revision:
+    type: object
+    additionalProperties: false
+    required:
+      - revision_number
+      - created_at
+      - source_session_file_sha256
+      - answer_receipt_id
+      - answer_receipt_file_sha256
+      - proposal_id
+      - proposal_file_sha256
+      - confirmation_id
+      - confirmation_receipt_file_sha256
+      - confirmation_decision
+      - high_risk_authorization_inferred
+    properties:
+      revision_number:
+        type: integer
+        minimum: 1
+      created_at:
+        type: string
+        format: date-time
+      source_session_file_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      answer_receipt_id:
+        type: string
+        pattern: "^receipt-[0-9]{8}-[0-9]{3}$"
+      answer_receipt_file_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      proposal_id:
+        type: string
+        pattern: "^proposal-[0-9]{8}-[0-9]{3}$"
+      proposal_file_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      confirmation_id:
+        type: string
+        pattern: "^confirmation-[0-9]{8}-[0-9]{3}$"
+      confirmation_receipt_file_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      confirmation_decision:
+        const: confirmed
+      high_risk_authorization_inferred:
+        const: false
   intake:
     type: object
     additionalProperties: false
