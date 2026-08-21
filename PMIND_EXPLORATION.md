@@ -4,7 +4,7 @@
 >
 > 状态：Validation Sprint 第 0 阶段已归档，第 1 阶段校准准备中；尚未进入 Agent 运行时实现。
 >
-> 快照日期：2026-08-21（Asia/Shanghai）。价格、产品能力、仓库状态和第三方 Skill 内容均可能在此日期后变化，实施前应重新核验。
+> 快照日期：2026-08-22（Asia/Shanghai）。价格、产品能力、仓库状态和第三方 Skill 内容均可能在此日期后变化，实施前应重新核验。
 
 ## 0. 压缩后恢复须知
 
@@ -30,6 +30,7 @@
 - 已新增 Prompt Package Compilation Confirmation Receipt v0：四文件只读 preview 会重跑完整 Compilation Proposal 链路，再校验用户选择、三份来源字节摘要、时间与数据策略；只有 confirmed + Handoff-ready 候选可授权后续本地创建，任何状态都不创建 Package、不 Handoff、不改变 Approval Point。
 - 已新增 Prompt Package Creation v0：confirmed-only Creator 会重跑完整四文件确认链，只对 Handoff-ready 且 creation-authorized 的候选在新路径创建 `0600` 最终 Package；业务内容逐字段保持不变，仅新增四来源 compilation lineage，拒绝覆盖且不推导 Handoff 或高风险授权。
 - 已新增 Prompt Package Lineage Verification v0：五文件只读 verifier 会复用 Creator 的无写入构建 seam 重跑四份来源，独立校验 persisted Package 与 Session→Package lineage，再分别逐字段比较 compilation metadata 和完整业务内容；等价 YAML 可接受，来源或内容漂移会拒绝，验证不执行或授权 Handoff。
+- 已新增 Handoff Proposal v0：六文件只读 preview 会先重放最终 Package 的完整来源链，再以同一次读取的字节摘要绑定 pending Proposal；用户只看到交接对象、范围、允许/禁止动作、未决项、停止条件、Approval Points 和三种选择。Proposal 不保存选择、不授权 Handoff/外部效果/高风险动作，也不执行交接。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
@@ -677,5 +678,6 @@ Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.
 用户选择写入独立 Compilation Confirmation Receipt 后，用 ruby scripts/preview_prompt_package_compilation_confirmation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION 做四文件只读预演。只有 confirmed + Handoff-ready 才能允许后续 creator；未就绪确认、修改或拒绝都不允许创建，所有状态继续禁止自动 Handoff 和推导高风险授权。
 预演通过后，只有 confirmed + Handoff-ready + creation-authorized 才可运行 ruby scripts/create_prompt_package.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION OUTPUT；OUTPUT 必须是不存在的新路径。最终 Package 只新增 compilation lineage，业务内容、Approval Point 与 Handoff 动作保持不变。
 创建后必须运行 ruby scripts/verify_prompt_package_lineage.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION OUTPUT，重跑来源链并逐字段核对 metadata 与业务内容。验证通过只允许进入受控 Handoff 决策，不会自动授权或执行 Handoff；验证失败不得继续。
+随后创建符合 docs/product/handoff-proposal-v0.md 的 pending Proposal，并运行 ruby scripts/preview_handoff_proposal.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL。预演会重跑完整 lineage 并绑定最终文件字节，只展示最小化 Handoff 决策文案；当前步骤不保存选择、不授权或执行 Handoff。下一边界是独立 Handoff Confirmation Receipt，不能把 Proposal 的“确认”选项当成已经确认。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```

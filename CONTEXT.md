@@ -61,6 +61,15 @@ Package and attempts delivery.
 The controlled transfer of an approved Prompt Package and its context to a
 Downstream Executor.
 
+### Handoff Proposal
+
+A pending decision artifact that presents the boundaries of one exact,
+Handoff-ready Prompt Package. A Handoff Proposal is not a Handoff or an
+authorization to perform one.
+
+Avoid: “Handoff authorization” or “Handoff” when the user has only been shown
+the proposal.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

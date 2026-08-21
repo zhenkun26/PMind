@@ -52,7 +52,7 @@ Persisted Session revision
 1. 四份来源绑定、用户确认和确定性重建均匹配；
 2. Package Quality Gate 为可交接；
 3. Approval Point scope 与状态保持不变；
-4. 下一步只能进入受控 Handoff 决策，验证本身不执行或授权 Handoff。
+4. 下一步只能创建并预演精确绑定最终 Package 的 [Handoff Proposal v0](handoff-proposal-v0.md)，验证本身不执行或授权 Handoff。
 
 动态 Approval Point scope 必须经过共享 Markdown 安全层。文案不得展示路径、摘要、Session/Package/Proposal/Confirmation ID、原始 Intent、问题原答、确认原文、Evidence 来源、source refs、Review owner、decision maker ref 或字段路径。
 
@@ -67,4 +67,4 @@ ruby scripts/verify_prompt_package_lineage.rb SESSION_REVISION.yaml DRAFT_PACKAG
 - `0`：五文件有效，persisted Package 与确定性重建逐字段一致，安全审计文案写入 stdout；
 - `1`：任一输入不可读、链路无效、metadata 不匹配或 Package 内容漂移，仅在 stderr 返回错误。
 
-验证通过只证明最终 Package 的可重放来源链完整；不证明用户身份、外部事实正确、Handoff 已授权或发生、待审批动作获批、下游交付成功或 PMind 商业效果成立。
+验证通过只证明最终 Package 的可重放来源链完整；不证明用户身份、外部事实正确、Handoff 已授权或发生、待审批动作获批、下游交付成功或 PMind 商业效果成立。后续 Handoff Proposal 必须重新执行这份五文件验证，并绑定同一次读取的最终 Package 字节摘要。

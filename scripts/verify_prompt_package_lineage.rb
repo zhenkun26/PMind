@@ -7,18 +7,19 @@ require_relative "markdown_safety"
 
 module PMind
   class PromptPackageLineageVerifier
-    attr_reader :errors, :prompt_package, :expected_package
+    attr_reader :errors, :prompt_package, :expected_package, :package_bytes
 
     def initialize(root)
       @root = File.realpath(root)
       @errors = []
       @prompt_package = nil
       @expected_package = nil
+      @package_bytes = nil
     end
 
     def verify_files(session_path, draft_path, proposal_path, confirmation_path, package_path)
       errors.clear
-      @prompt_package = load_yaml_file(package_path)
+      @prompt_package, @package_bytes = load_yaml_file_with_bytes(package_path)
       @expected_package = nil
       return nil unless prompt_package
 
@@ -47,16 +48,18 @@ module PMind
 
     private
 
-    def load_yaml_file(path)
-      YAML.safe_load(
-        File.binread(File.expand_path(path)),
+    def load_yaml_file_with_bytes(path)
+      bytes = File.binread(File.expand_path(path))
+      document = YAML.safe_load(
+        bytes,
         permitted_classes: [],
         permitted_symbols: [],
         aliases: false
       )
+      [document, bytes]
     rescue Errno::ENOENT, Errno::EACCES, Psych::Exception => e
       errors << "#{path}: cannot load YAML (#{e.message})"
-      nil
+      [nil, nil]
     end
 
     def validate_reconstruction(document, expected, path)

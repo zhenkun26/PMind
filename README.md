@@ -28,6 +28,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Prompt Package Compilation Confirmation Receipt contract](docs/product/prompt-package-compilation-confirmation-receipt-v0.md)
 - [Prompt Package Creation contract](docs/product/prompt-package-creation-v0.md)
 - [Prompt Package Lineage Verification contract](docs/product/prompt-package-lineage-v0.md)
+- [Handoff Proposal contract](docs/product/handoff-proposal-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -101,6 +102,7 @@ files, then create a new final Package only for the confirmed, ready state:
 ruby scripts/preview_prompt_package_compilation_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml
 ruby scripts/create_prompt_package.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
 ruby scripts/verify_prompt_package_lineage.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml
+ruby scripts/preview_handoff_proposal.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -109,6 +111,10 @@ file with `0600` permissions. It does not perform Handoff.
 The verifier then replays the same four sources and compares every persisted
 field without modifying any file; success permits only a controlled Handoff
 decision, not an automatic Handoff.
+The Handoff Proposal preview then binds that exact final file, replays all five
+lineage inputs, and shows recipient, scope, action boundaries, stop conditions,
+open items, Approval Points, and three choices. It neither saves the choice nor
+authorizes or performs Handoff.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -156,3 +162,6 @@ Executor Profile and four-role separation gates before any run may start.
   immutable compilation lineage, and cannot overwrite a path or infer Handoff.
   Independent persisted-Package lineage replay must pass before a controlled
   Handoff decision; verification itself does not authorize or perform Handoff.
+- A Handoff Proposal is valid only for the exact byte digest of a lineage-
+  verified, Handoff-ready final Package. It remains pending with Handoff,
+  external effects, and inferred high-risk authorization all set to false.

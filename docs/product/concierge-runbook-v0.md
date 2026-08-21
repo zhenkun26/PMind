@@ -187,6 +187,14 @@ ruby scripts/verify_prompt_package_lineage.rb path/to/session-revision.yaml path
 
 Creator 只增加 `compilation` lineage metadata，候选业务内容和四份来源必须保持不变。[Prompt Package Lineage Verification v0](prompt-package-lineage-v0.md) 会重新构建期望 Package，并独立核对 metadata、完整业务内容与 Session→Package lineage。四项校验全部通过后只可进入受控 Handoff 决策；验证本身不执行 Handoff，也不改变 Approval Point、禁止动作或停止条件。
 
+在请求用户作出 Handoff 决策前，创建符合 [Handoff Proposal v0](handoff-proposal-v0.md) 的 pending、零授权 Proposal，并把完整六文件链交给只读预演器：
+
+```sh
+ruby scripts/preview_handoff_proposal.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml
+```
+
+预演器必须重新执行最终 Package lineage replay，并用同一次读取的字节摘要绑定 Proposal。只向用户展示交接对象、范围、允许/禁止动作、未决项、停止条件、Approval Points 和确认/修改/拒绝选项；不得展示路径、摘要、内部 ID、原始 Intent、原答或 Evidence 来源。当前步骤不保存选择、不授权 Handoff/外部效果/高风险动作，也不执行交接。请求修改必须回到新的候选 Package 和编译确认链；下一步授权只能由独立 Handoff Confirmation Receipt 表达。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -194,6 +202,7 @@ Creator 只增加 `compilation` lineage metadata，候选业务内容和四份�
 - `handoff.ready` 只有在所有 blocking gate 通过后才能为 `true`。
 - Handoff 只传递允许内容；禁止动作必须随 Package 一起传递。
 - Compilation Proposal 的确认不能代替 Quality Gate，也不能改变 Package 中已有 Approval Point 的状态。
+- Handoff Proposal 的 pending 预演不能代替明确 Handoff Confirmation，也不能携带任何外部效果或高风险授权。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 
