@@ -19,6 +19,7 @@
 - 已创建 Prompt Package、Clarification、Review Lenses、Concierge Runbook、Eval Schema、Rubric 和 10 个尚未运行的合成种子案例；阶段决策见 `reference/research/next-execution-stage-2026-08-21.md`。
 - 已创建首批 3 案例校准 Wave、无依赖验证器、3 个合成 Fixture、仓库外隔离工作区准备器、Executor Profile 契约和统一 preflight；Fixture 已冻结 workspace digest 并通过基础自检，但由于四个角色未分配、Profile 仍有六项未决字段且本次 Wave 的运行副本未就绪，Wave 保持 `blocked`。
 - 已将 Case Schema 升级到 `0.2.0`，补齐模型、Profile、Workspace Set、工作区结果 revision、返工与分段耗时溯源；新增 Acceptance Result Schema `0.1.0` 和 `consensus` / `needs_adjudication` / `adjudicated` 三态验证。10 个种子案例完成无数据迁移，当前仍为 0 条运行、0 条验收结果。
+- 已将 Prompt Package v0 落成 `schemas/prompt-package-v0.yaml`、依赖无关的只读校验 CLI 和合成测试夹具；稳定 ID、引用、六个 Review Lenses、Approval Point 状态与 Handoff 授权边界现在可机器校验。测试夹具不是实际 Package 或效果证据。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
@@ -655,5 +656,6 @@ PMind 当前处于 Validation Sprint 第 1 阶段：公开仓库、12 个本地�
 先运行 ruby scripts/validate_evals.rb，并读取 evals/calibration/wave-01.yaml 与 evals/fixtures/README.md。
 不得把 Fixture 基础自检当成 PMind 效果证据；当前 Wave 仍因角色、执行器配置和双臂隔离工作区未就绪而 blocked。
 Case Schema 现为 0.2.0，Acceptance Result Schema 为 0.1.0；运行产物路径、成功公式以及 consensus / needs_adjudication / adjudicated 三态已由验证器覆盖，但当前仍为 0 条运行和 0 条验收结果。
+Prompt Package v0 的机器契约位于 schemas/prompt-package-v0.yaml，可用 ruby scripts/validate_prompt_package.rb PATH 做只读校验；不得把 test/fixtures 下的合成 Package 当作真实产出。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```

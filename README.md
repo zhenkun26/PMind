@@ -19,6 +19,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Eval direction](evals/README.md)
 - [First-pass success rubric](evals/rubrics/first-pass-success-v0.md)
 - [Prompt Package contract](docs/product/prompt-package-v0.md)
+- [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
 
@@ -27,6 +28,12 @@ dependencies:
 
 ```sh
 ruby scripts/validate_evals.rb
+```
+
+Validate a Prompt Package without installing dependencies or modifying it:
+
+```sh
+ruby scripts/validate_prompt_package.rb path/to/package.yaml
 ```
 
 The repository also contains a no-overwrite preparer for creating six isolated
@@ -48,3 +55,5 @@ Executor Profile and four-role separation gates before any run may start.
   successful experiments.
 - A scored run requires two independent reviewer assessments and either direct
   consensus or a distinct third-reviewer adjudication.
+- A Prompt Package cannot mark Handoff ready while a blocking unknown, Review
+  Lens block, unresolved reference, or authorization contradiction remains.

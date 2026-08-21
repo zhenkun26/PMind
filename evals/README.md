@@ -54,6 +54,7 @@ The experiment is paired:
 ## Current assets
 
 - `docs/product/prompt-package-v0.md`: semantic Handoff contract;
+- `schemas/prompt-package-v0.yaml`: machine-readable Prompt Package structure and Handoff authorization contract;
 - `docs/product/clarification-policy-v0.md`: gap and stopping policy;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -71,6 +72,7 @@ The experiment is paired:
 - `scripts/validate_evals.rb`: dependency-free structural, artifact-path, success-formula, and adjudication-state checks.
 - `scripts/prepare_calibration_workspaces.rb`: no-overwrite preparation and verification of external arm copies.
 - `scripts/calibration_preflight.rb`: read-only readiness report across contracts, roles, executor, and arm copies.
+- `scripts/validate_prompt_package.rb`: read-only Prompt Package structure, reference, Review Lens, approval, and Handoff validator.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.

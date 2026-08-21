@@ -1,0 +1,238 @@
+schema_version: "0.1.0"
+package_id: pkg-20260821-001
+created_at: "2026-08-21T12:00:00+08:00"
+language: zh-CN
+intent:
+  raw_intent: "为后台用户列表增加安全的 CSV 导出能力。"
+  problem_statement: "具备权限的运营人员无法导出当前筛选结果。"
+  desired_outcome: "授权用户可以安全导出筛选后的必要字段。"
+  task_type: coding_handoff
+context:
+  target_users:
+    - "具有 export_users 权限的运营人员"
+  scenarios:
+    - "运营人员筛选后台用户后发起导出"
+  current_state: "后台已有用户列表和服务端权限检查。"
+  business_value: "减少手工复制并保留可审计的导出路径。"
+scope:
+  in_scope:
+    - "导出当前筛选条件下允许公开的用户字段"
+  out_of_scope:
+    - "导出认证凭据或内部安全字段"
+  deferred:
+    - item: "异步邮件通知"
+      reason: "首版先验证同步导出边界"
+constraints:
+  product:
+    - constraint_id: CONSTRAINT-001
+      statement: "只有授权角色可以发起导出。"
+      status: confirmed
+      source_ref: user
+  technical:
+    - constraint_id: CONSTRAINT-002
+      statement: "复用现有 Ruby 服务，不增加依赖。"
+      status: confirmed
+      source_ref: DECISION-001
+  data:
+    - constraint_id: CONSTRAINT-003
+      statement: "只输出明确允许的字段。"
+      status: confirmed
+      source_ref: user
+  compliance:
+    - constraint_id: CONSTRAINT-004
+      statement: "导出动作必须留下不含敏感值的审计记录。"
+      status: confirmed
+      source_ref: user
+  delivery:
+    - constraint_id: CONSTRAINT-005
+      statement: "交付包含自动化测试和使用说明。"
+      status: confirmed
+      source_ref: DECISION-001
+  budget:
+    - constraint_id: CONSTRAINT-006
+      statement: "不得引入新的付费服务。"
+      status: confirmed
+      source_ref: user
+knowledge:
+  facts:
+    - fact_id: FACT-001
+      statement: "用户明确要求导出 CSV。"
+      source_refs:
+        - user
+  evidence:
+    - evidence_id: EVID-001
+      source: "evals/fixtures/seed-001/workspace"
+      retrieved_at: "2026-08-21"
+      version_or_commit: "sha256-tree-v1:test-only"
+      license: not_applicable
+      trust_status: reviewed
+      actual_use: "确认测试夹具已有用户目录服务边界。"
+  assumptions:
+    - assumption_id: ASSUMP-001
+      statement: "首版数据量可由同步流式响应处理。"
+      invalidation_impact: "需要改为异步任务与下载链接。"
+      verification_method: "用边界数据量进行内存与延迟测试。"
+  unknowns:
+    - unknown_id: UNKNOWN-001
+      question: "最终按钮文案是否需要本地化？"
+      blocking: false
+  decisions:
+    - decision_id: DECISION-001
+      selected_option: "在现有服务内实现最小 CSV 导出路径"
+      decision_maker_ref: product-owner-test
+      rationale: "复用现有权限与数据访问边界。"
+      alternatives:
+        - "引入外部报表服务"
+      decided_at: "2026-08-21"
+clarifications:
+  - question_id: QUESTION-001
+    gap_dimension: risk_authority
+    question: "哪些角色可以导出？"
+    user_answer: "只有具有 export_users 权限的角色。"
+    outcome_status: resolved
+    affected_fields:
+      - constraints.product
+      - risks
+review_findings:
+  - finding_id: FINDING-001
+    lens_id: user_value
+    verdict: pass
+    finding: "目标用户与使用场景已明确。"
+    evidence_ids: []
+    assumption_ids: []
+    affected_fields:
+      - context
+    recommended_change: none
+    owner: product-owner-test
+  - finding_id: FINDING-002
+    lens_id: scope_business
+    verdict: pass
+    finding: "首版范围可独立验收。"
+    evidence_ids: []
+    assumption_ids: []
+    affected_fields:
+      - scope
+    recommended_change: none
+    owner: product-owner-test
+  - finding_id: FINDING-003
+    lens_id: technical_reuse
+    verdict: pass
+    finding: "方案复用现有服务边界。"
+    evidence_ids:
+      - EVID-001
+    assumption_ids:
+      - ASSUMP-001
+    affected_fields:
+      - execution_contract
+    recommended_change: none
+    owner: technical-owner-test
+  - finding_id: FINDING-004
+    lens_id: data_safety_compliance
+    verdict: pass
+    finding: "权限、字段白名单和审计要求已定义。"
+    evidence_ids: []
+    assumption_ids: []
+    affected_fields:
+      - constraints.data
+      - risks
+    recommended_change: none
+    owner: security-owner-test
+  - finding_id: FINDING-005
+    lens_id: delivery_operations
+    verdict: pass
+    finding: "交付物、错误路径和停止条件已定义。"
+    evidence_ids: []
+    assumption_ids: []
+    affected_fields:
+      - execution_contract
+      - handoff
+    recommended_change: none
+    owner: delivery-owner-test
+  - finding_id: FINDING-006
+    lens_id: testability_acceptance
+    verdict: pass
+    finding: "blocking 标准具有可执行验证方法。"
+    evidence_ids: []
+    assumption_ids: []
+    affected_fields:
+      - acceptance_criteria
+    recommended_change: none
+    owner: reviewer-test
+recommendation:
+  selected_option: "在现有服务内增加受权限保护的流式 CSV 导出"
+  why: "最小化改动并复用现有鉴权与用户查询。"
+  alternatives:
+    - option: "引入外部报表平台"
+      rejection_reason: "扩大供应链、费用和数据传输范围。"
+  tradeoffs:
+    - "首版不提供异步通知"
+execution_contract:
+  downstream_executor:
+    type: coding_agent
+    version_policy: record_at_run
+  instructions:
+    - "先读取现有权限与用户查询接口，再实现最小导出路径。"
+    - "运行现有测试并补充权限、字段和 CSV 边界测试。"
+  inputs:
+    - name: "用户目录工作区"
+      type: repository
+      source: "isolated calibration workspace"
+      data_classification: public
+  outputs:
+    - "CSV 导出实现"
+    - "自动化测试"
+  error_contract:
+    - "缺少权限时返回拒绝结果，不生成部分文件。"
+    - "工具不可用时停止并报告，不扩大权限。"
+  allowed_tools:
+    - "workspace read/write"
+    - "local test runner"
+  forbidden_tools:
+    - "network"
+    - "git remote writes"
+  references:
+    - "README.md"
+acceptance_criteria:
+  - criterion_id: AC-01
+    statement: "无导出权限的调用者无法获得 CSV 内容。"
+    verification_method: "自动化权限测试"
+    blocking: true
+    owner_ref: reviewer-test
+risks:
+  - risk_id: RISK-001
+    category: external_write
+    trigger: "执行器尝试提交、推送或修改外部服务。"
+    impact: "产生未授权外部状态变化。"
+    likelihood: low
+    mitigation: "工具策略禁止网络与 Git 远程写入。"
+    residual_risk: "执行环境仍需独立沙箱约束。"
+    requires_approval: true
+approval_points:
+  - approval_id: APPROVAL-001
+    risk_ids:
+      - RISK-001
+    action: external_service_write
+    scope: "任何仓库外服务修改"
+    status: required
+eval_plan:
+  quality_gate_checks:
+    - "Prompt Package Schema 与引用完整性检查"
+  downstream_checks:
+    - "运行权限和字段白名单测试"
+  human_judgments:
+    - "审计记录是否足以定位导出事件"
+  blinding_method: "评审只查看去除实验标签的结果和冻结标准。"
+handoff:
+  ready: true
+  recipient: coding_agent
+  authorized_actions: []
+  prohibited_actions:
+    - commit
+    - push
+    - deploy
+    - send_message
+    - external_service_write
+  open_items:
+    - "按钮文案本地化不阻塞实现"
+  stop_conditions:
+    - "需要网络、真实个人数据或外部写入时立即停止。"

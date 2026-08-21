@@ -11,6 +11,8 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 
 本契约用于人工 Concierge 验证。它定义语义，不绑定 Codex、模型供应商或应用技术栈。
 
+对应的机器可读结构位于 `schemas/prompt-package-v0.yaml`，只读校验入口为 `scripts/validate_prompt_package.rb`。Markdown 定义产品语义，Schema 和业务校验器负责拒绝结构、引用、Review Lens、Approval Point 与 Handoff 状态之间的矛盾；校验通过不替代事实核验或下游 Eval。
+
 ## 规范用语
 
 - **必须**：缺失即不能通过 Quality Gate。
@@ -134,6 +136,17 @@ Prompt Package 是 PMind 的结构化交接产物，不是经过润色的一段�
 
 风险包含 `risk_id`、类别、触发条件、影响、可能性、缓解和残余风险。Approval Point 包含 `approval_id`、对应风险/动作、授权人、授权范围和状态。v0 的有效状态为 `required`、`approved`、`rejected`、`not_applicable`。
 
+机器契约按以下状态映射执行硬校验：
+
+- `approved`：必须记录 `approver_ref`，动作只出现在 `handoff.authorized_actions`；
+- `required`：动作仍未获授权，只能出现在 `handoff.prohibited_actions`；
+- `rejected`：必须记录 `approver_ref`，动作继续保留在禁止列表；
+- `not_applicable`：动作不出现在授权或禁止列表，但不能借此移除默认高风险动作。
+
+同一动作不能拥有多个 Approval Point，也不能同时处于允许和禁止列表。标记 `requires_approval: true` 的风险必须被一个非 `not_applicable` Approval Point 覆盖。
+
+动作以稳定的 `snake_case` key 在 Approval Point 与 Handoff 列表间关联；人员/角色只使用不含空白与个人信息的 opaque ref，不把姓名、邮箱或密钥写入 Package。
+
 ### `eval_plan`
 
 - Package 结构检查；
@@ -163,6 +176,10 @@ Package 只有同时满足以下条件才能标记 `handoff.ready: true`：
 5. 所有 blocking Acceptance Criteria 都有验证方法。
 6. 所有高风险动作都有 Approval Point；未获授权的动作被列入禁止范围。
 7. Downstream Executor、输入、输出、错误处理和停止条件明确。
+
+六个 Review Lens 都必须至少有一条结构化结论。存在 blocking unknown 或任一 `block` 时，校验器会拒绝 `handoff.ready: true`，但允许以 `ready: false` 保存诚实的未就绪 Package。
+
+除非存在已批准且限定范围的 Approval Point，以下动作必须保留在 `handoff.prohibited_actions`：`commit`、`push`、`deploy`、`send_message`、`external_service_write`。
 
 Package 可以带着非阻塞未知项交接，但必须在 `handoff.open_items` 中完整披露。
 

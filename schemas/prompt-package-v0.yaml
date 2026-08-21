@@ -1,0 +1,677 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/prompt-package-v0.yaml"
+title: "PMind Prompt Package v0"
+description: "Provider-neutral, auditable Handoff package produced from a product Intent."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - package_id
+  - created_at
+  - language
+  - intent
+  - context
+  - scope
+  - constraints
+  - knowledge
+  - clarifications
+  - review_findings
+  - recommendation
+  - execution_contract
+  - acceptance_criteria
+  - risks
+  - approval_points
+  - eval_plan
+  - handoff
+properties:
+  schema_version:
+    const: "0.1.0"
+  package_id:
+    type: string
+    pattern: "^pkg-[0-9]{8}-[0-9]{3}$"
+  created_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  intent:
+    type: object
+    additionalProperties: false
+    required:
+      - raw_intent
+      - problem_statement
+      - desired_outcome
+      - task_type
+    properties:
+      raw_intent:
+        type: string
+        minLength: 10
+      problem_statement:
+        type: string
+        minLength: 10
+      desired_outcome:
+        type: string
+        minLength: 5
+      task_type:
+        type: string
+        enum:
+          - product_exploration
+          - feature_definition
+          - competitor_research
+          - technical_selection
+          - coding_handoff
+  context:
+    type: object
+    additionalProperties: false
+    required:
+      - target_users
+      - scenarios
+      - current_state
+      - business_value
+    properties:
+      target_users:
+        $ref: "#/$defs/non_empty_strings"
+      scenarios:
+        $ref: "#/$defs/non_empty_strings"
+      current_state:
+        type: string
+        minLength: 3
+      business_value:
+        type: string
+        minLength: 3
+  scope:
+    type: object
+    additionalProperties: false
+    required:
+      - in_scope
+      - out_of_scope
+      - deferred
+    properties:
+      in_scope:
+        $ref: "#/$defs/non_empty_strings"
+      out_of_scope:
+        $ref: "#/$defs/strings"
+      deferred:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - item
+            - reason
+          properties:
+            item:
+              type: string
+              minLength: 1
+            reason:
+              type: string
+              minLength: 1
+  constraints:
+    type: object
+    additionalProperties: false
+    required:
+      - product
+      - technical
+      - data
+      - compliance
+      - delivery
+      - budget
+    properties:
+      product:
+        $ref: "#/$defs/constraint_list"
+      technical:
+        $ref: "#/$defs/constraint_list"
+      data:
+        $ref: "#/$defs/constraint_list"
+      compliance:
+        $ref: "#/$defs/constraint_list"
+      delivery:
+        $ref: "#/$defs/constraint_list"
+      budget:
+        $ref: "#/$defs/constraint_list"
+  knowledge:
+    type: object
+    additionalProperties: false
+    required:
+      - facts
+      - evidence
+      - assumptions
+      - unknowns
+      - decisions
+    properties:
+      facts:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - fact_id
+            - statement
+            - source_refs
+          properties:
+            fact_id:
+              type: string
+              pattern: "^FACT-[0-9]{3}$"
+            statement:
+              type: string
+              minLength: 3
+            source_refs:
+              $ref: "#/$defs/non_empty_strings"
+      evidence:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - evidence_id
+            - source
+            - retrieved_at
+            - version_or_commit
+            - license
+            - trust_status
+            - actual_use
+          properties:
+            evidence_id:
+              type: string
+              pattern: "^EVID-[0-9]{3}$"
+            source:
+              type: string
+              minLength: 3
+            retrieved_at:
+              type: string
+              format: date
+            version_or_commit:
+              type: string
+              minLength: 1
+            license:
+              type: string
+              minLength: 1
+            trust_status:
+              type: string
+              enum:
+                - reviewed
+                - restricted
+                - rejected
+            actual_use:
+              type: string
+              minLength: 3
+      assumptions:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - assumption_id
+            - statement
+            - invalidation_impact
+            - verification_method
+          properties:
+            assumption_id:
+              type: string
+              pattern: "^ASSUMP-[0-9]{3}$"
+            statement:
+              type: string
+              minLength: 3
+            invalidation_impact:
+              type: string
+              minLength: 3
+            verification_method:
+              type: string
+              minLength: 3
+      unknowns:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - unknown_id
+            - question
+            - blocking
+          properties:
+            unknown_id:
+              type: string
+              pattern: "^UNKNOWN-[0-9]{3}$"
+            question:
+              type: string
+              minLength: 3
+            blocking:
+              type: boolean
+      decisions:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - decision_id
+            - selected_option
+            - decision_maker_ref
+            - rationale
+            - alternatives
+            - decided_at
+          properties:
+            decision_id:
+              type: string
+              pattern: "^DECISION-[0-9]{3}$"
+            selected_option:
+              type: string
+              minLength: 1
+            decision_maker_ref:
+              $ref: "#/$defs/opaque_ref"
+            rationale:
+              type: string
+              minLength: 3
+            alternatives:
+              $ref: "#/$defs/strings"
+            decided_at:
+              type: string
+              format: date
+  clarifications:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - question_id
+        - gap_dimension
+        - question
+        - user_answer
+        - outcome_status
+        - affected_fields
+      properties:
+        question_id:
+          type: string
+          pattern: "^QUESTION-[0-9]{3}$"
+        gap_dimension:
+          $ref: "#/$defs/gap_dimension"
+        question:
+          type: string
+          minLength: 3
+        user_answer:
+          type: string
+          minLength: 1
+        outcome_status:
+          type: string
+          enum:
+            - resolved
+            - assumed
+            - unresolved
+            - refused
+        affected_fields:
+          $ref: "#/$defs/non_empty_strings"
+  review_findings:
+    type: array
+    minItems: 6
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - finding_id
+        - lens_id
+        - verdict
+        - finding
+        - evidence_ids
+        - assumption_ids
+        - affected_fields
+        - recommended_change
+        - owner
+      properties:
+        finding_id:
+          type: string
+          pattern: "^FINDING-[0-9]{3}$"
+        lens_id:
+          $ref: "#/$defs/lens_id"
+        verdict:
+          type: string
+          enum:
+            - pass
+            - warn
+            - block
+        finding:
+          type: string
+          minLength: 3
+        evidence_ids:
+          $ref: "#/$defs/strings"
+        assumption_ids:
+          $ref: "#/$defs/strings"
+        affected_fields:
+          $ref: "#/$defs/non_empty_strings"
+        recommended_change:
+          type: string
+          minLength: 1
+        owner:
+          $ref: "#/$defs/opaque_ref"
+  recommendation:
+    type: object
+    additionalProperties: false
+    required:
+      - selected_option
+      - why
+      - alternatives
+      - tradeoffs
+    properties:
+      selected_option:
+        type: string
+        minLength: 1
+      why:
+        type: string
+        minLength: 3
+      alternatives:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - option
+            - rejection_reason
+          properties:
+            option:
+              type: string
+              minLength: 1
+            rejection_reason:
+              type: string
+              minLength: 1
+      tradeoffs:
+        $ref: "#/$defs/non_empty_strings"
+  execution_contract:
+    type: object
+    additionalProperties: false
+    required:
+      - downstream_executor
+      - instructions
+      - inputs
+      - outputs
+      - error_contract
+      - allowed_tools
+      - forbidden_tools
+      - references
+    properties:
+      downstream_executor:
+        type: object
+        additionalProperties: false
+        required:
+          - type
+          - version_policy
+        properties:
+          type:
+            const: coding_agent
+          version_policy:
+            const: record_at_run
+      instructions:
+        $ref: "#/$defs/non_empty_strings"
+      inputs:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - name
+            - type
+            - source
+            - data_classification
+          properties:
+            name:
+              type: string
+              minLength: 1
+            type:
+              type: string
+              minLength: 1
+            source:
+              type: string
+              minLength: 1
+            data_classification:
+              $ref: "#/$defs/data_classification"
+      outputs:
+        $ref: "#/$defs/non_empty_strings"
+      error_contract:
+        $ref: "#/$defs/non_empty_strings"
+      allowed_tools:
+        $ref: "#/$defs/strings"
+      forbidden_tools:
+        $ref: "#/$defs/non_empty_strings"
+      references:
+        $ref: "#/$defs/strings"
+  acceptance_criteria:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - criterion_id
+        - statement
+        - verification_method
+        - blocking
+        - owner_ref
+      properties:
+        criterion_id:
+          type: string
+          pattern: "^AC-[0-9]{2}$"
+        statement:
+          type: string
+          minLength: 8
+        verification_method:
+          type: string
+          minLength: 5
+        blocking:
+          type: boolean
+        owner_ref:
+          $ref: "#/$defs/opaque_ref"
+  risks:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - risk_id
+        - category
+        - trigger
+        - impact
+        - likelihood
+        - mitigation
+        - residual_risk
+        - requires_approval
+      properties:
+        risk_id:
+          type: string
+          pattern: "^RISK-[0-9]{3}$"
+        category:
+          type: string
+          enum:
+            - product
+            - delivery
+            - evidence
+            - data
+            - privacy
+            - authorization
+            - destructive_action
+            - financial
+            - external_write
+            - safety
+        trigger:
+          type: string
+          minLength: 3
+        impact:
+          type: string
+          minLength: 3
+        likelihood:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+        mitigation:
+          type: string
+          minLength: 3
+        residual_risk:
+          type: string
+          minLength: 3
+        requires_approval:
+          type: boolean
+  approval_points:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - approval_id
+        - risk_ids
+        - action
+        - scope
+        - status
+      properties:
+        approval_id:
+          type: string
+          pattern: "^APPROVAL-[0-9]{3}$"
+        risk_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            pattern: "^RISK-[0-9]{3}$"
+        action:
+          description: "Canonical action key shared with Handoff action lists, for example commit or external_service_write."
+          type: string
+          pattern: "^[a-z][a-z0-9_]{0,63}$"
+        approver_ref:
+          $ref: "#/$defs/opaque_ref"
+        scope:
+          type: string
+          minLength: 3
+        status:
+          type: string
+          enum:
+            - required
+            - approved
+            - rejected
+            - not_applicable
+  eval_plan:
+    type: object
+    additionalProperties: false
+    required:
+      - quality_gate_checks
+      - downstream_checks
+      - human_judgments
+      - blinding_method
+    properties:
+      quality_gate_checks:
+        $ref: "#/$defs/non_empty_strings"
+      downstream_checks:
+        $ref: "#/$defs/non_empty_strings"
+      human_judgments:
+        $ref: "#/$defs/strings"
+      blinding_method:
+        type: string
+        minLength: 3
+  handoff:
+    type: object
+    additionalProperties: false
+    required:
+      - ready
+      - recipient
+      - authorized_actions
+      - prohibited_actions
+      - open_items
+      - stop_conditions
+    properties:
+      ready:
+        type: boolean
+      recipient:
+        const: coding_agent
+      authorized_actions:
+        description: "Canonical action keys authorized by matching approved Approval Points."
+        $ref: "#/$defs/action_keys"
+      prohibited_actions:
+        description: "Canonical action keys the Downstream Executor must not perform."
+        $ref: "#/$defs/non_empty_action_keys"
+      open_items:
+        $ref: "#/$defs/strings"
+      stop_conditions:
+        $ref: "#/$defs/non_empty_strings"
+$defs:
+  strings:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+      minLength: 1
+  non_empty_strings:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+      minLength: 1
+  action_keys:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+      pattern: "^[a-z][a-z0-9_]{0,63}$"
+  non_empty_action_keys:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+      pattern: "^[a-z][a-z0-9_]{0,63}$"
+  opaque_ref:
+    type: string
+    pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+  constraint_list:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - constraint_id
+        - statement
+        - status
+        - source_ref
+      properties:
+        constraint_id:
+          type: string
+          pattern: "^CONSTRAINT-[0-9]{3}$"
+        statement:
+          type: string
+          minLength: 3
+        status:
+          type: string
+          enum:
+            - confirmed
+            - assumed
+            - unknown
+            - not_applicable
+        source_ref:
+          type: string
+          minLength: 1
+  gap_dimension:
+    type: string
+    enum:
+      - outcome
+      - user_scenario
+      - scope
+      - current_state
+      - constraints
+      - evidence
+      - acceptance
+      - risk_authority
+      - handoff
+  lens_id:
+    type: string
+    enum:
+      - user_value
+      - scope_business
+      - technical_reuse
+      - data_safety_compliance
+      - delivery_operations
+      - testability_acceptance
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
