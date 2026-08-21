@@ -1,0 +1,238 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/clarification-revision-proposal-v0.yaml"
+title: "PMind Clarification Revision Proposal v0"
+description: "Reviewable, non-applied delta from one Answer Receipt to a candidate Clarification Session revision."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - proposal_id
+  - created_at
+  - session_id
+  - session_raw_intent_sha256
+  - source_session_status
+  - receipt_id
+  - round_number
+  - confirmation
+  - patch
+properties:
+  schema_version:
+    const: "0.1.0"
+  proposal_id:
+    type: string
+    pattern: "^proposal-[0-9]{8}-[0-9]{3}$"
+  created_at:
+    type: string
+    format: date-time
+  session_id:
+    type: string
+    pattern: "^session-[0-9]{8}-[0-9]{3}$"
+  session_raw_intent_sha256:
+    $ref: "#/$defs/sha256"
+  source_session_status:
+    type: string
+    enum:
+      - gap_scan
+      - clarifying
+  receipt_id:
+    type: string
+    pattern: "^receipt-[0-9]{8}-[0-9]{3}$"
+  round_number:
+    type: integer
+    minimum: 1
+  confirmation:
+    type: object
+    additionalProperties: false
+    required:
+      - required
+      - status
+      - high_risk_authorization_inferred
+    properties:
+      required:
+        const: true
+      status:
+        const: pending
+      high_risk_authorization_inferred:
+        const: false
+  patch:
+    type: object
+    additionalProperties: false
+    required:
+      - status_after
+      - question_updates
+      - questions_to_add
+      - append_round
+      - gap_updates
+      - assumption_ids_to_remove
+      - unknown_ids_to_remove
+      - assumptions_to_add
+      - unknowns_to_add
+      - decisions_to_add
+      - compile_gate_after
+    properties:
+      status_after:
+        type: string
+        enum:
+          - clarifying
+          - ready_to_compile
+          - blocked
+      question_updates:
+        type: array
+        minItems: 1
+        maxItems: 3
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - question_id
+            - status
+            - round_number
+          properties:
+            question_id:
+              type: string
+              pattern: "^QUESTION-[0-9]{3}$"
+            status:
+              const: asked
+            round_number:
+              type: integer
+              minimum: 1
+      questions_to_add:
+        type: array
+        items:
+          type: object
+      append_round:
+        type: object
+        additionalProperties: false
+        required:
+          - round_number
+          - completed_at
+          - answers
+        properties:
+          round_number:
+            type: integer
+            minimum: 1
+          completed_at:
+            type: string
+            format: date-time
+          answers:
+            type: array
+            minItems: 1
+            maxItems: 3
+            items:
+              type: object
+              additionalProperties: false
+              required:
+                - question_id
+                - source_user_answer_sha256
+                - outcome_status
+                - normalized_conclusion
+                - affected_fields
+                - user_visible_effect
+              properties:
+                question_id:
+                  type: string
+                  pattern: "^QUESTION-[0-9]{3}$"
+                source_user_answer_sha256:
+                  $ref: "#/$defs/sha256"
+                outcome_status:
+                  type: string
+                  enum:
+                    - resolved
+                    - assumed
+                    - unknown
+                    - refused
+                normalized_conclusion:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                affected_fields:
+                  $ref: "#/$defs/non_empty_strings"
+                user_visible_effect:
+                  type: string
+                  minLength: 3
+                  maxLength: 500
+      gap_updates:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - dimension
+            - source_question_ids
+            - status
+            - blocking
+            - summary
+          properties:
+            dimension:
+              $ref: "#/$defs/gap_dimension"
+            source_question_ids:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              items:
+                type: string
+                pattern: "^QUESTION-[0-9]{3}$"
+            status:
+              type: string
+              enum:
+                - resolved
+                - assumed
+                - unknown
+            blocking:
+              type: boolean
+            summary:
+              type: string
+              minLength: 3
+            knowledge_ref:
+              type: string
+              pattern: "^(ASSUMP|UNKNOWN)-[0-9]{3}$"
+      assumption_ids_to_remove:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          pattern: "^ASSUMP-[0-9]{3}$"
+      unknown_ids_to_remove:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          pattern: "^UNKNOWN-[0-9]{3}$"
+      assumptions_to_add:
+        type: array
+        items:
+          type: object
+      unknowns_to_add:
+        type: array
+        items:
+          type: object
+      decisions_to_add:
+        type: array
+        items:
+          type: object
+      compile_gate_after:
+        type: object
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  non_empty_strings:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+      minLength: 1
+  gap_dimension:
+    type: string
+    enum:
+      - outcome
+      - user_scenario
+      - scope
+      - current_state
+      - constraints
+      - evidence
+      - acceptance
+      - risk_authority
+      - handoff

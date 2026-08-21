@@ -70,6 +70,14 @@ ruby scripts/preview_clarification_answers.rb path/to/session.yaml path/to/recei
 
 成功只表示问题、轮次、摘要、时间和数据边界一致。操作者仍需复核归一化结论、受影响字段与信息缺口状态，再创建 Session 新 revision；不得把普通回答推导为 Approval Point 授权。
 
+复核结果先写成 [Clarification Revision Proposal v0](clarification-revision-proposal-v0.md)，再与原 Session 和 Answer Receipt 一起做只读预演：
+
+```sh
+ruby scripts/preview_clarification_revision.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml
+```
+
+只把 stdout 中的候选理解、产品影响、候选状态和确认选项发给用户。成功仅表示三文件绑定、delta 和完整候选 Session 一致；仍须获得用户明确确认后，才可由后续步骤创建新的 Session revision。Proposal 本身不是确认回执，也不能新增、删除或改写既有高风险审批要求。
+
 只有状态为 `ready_to_compile` 且校验通过的 Session 才能进入 Compile；`blocked` 必须保留阻塞原因，不能用操作者推断补齐。
 
 ### 4. Research：按需取证

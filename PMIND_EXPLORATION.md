@@ -23,6 +23,7 @@
 - 已将 Clarification Session v0 落成 `schemas/clarification-session-v0.yaml`、依赖无关的只读校验 CLI 和合成测试夹具；不可变 Intake、九维 gap、问题优先级、连续轮次、Compile Gate 与 Session → Package lineage 现在可机器校验。校验器不会代替用户回答或自动生成 Package。
 - 已新增 Clarification Copy v0 和只读 Markdown Renderer，把五种有效 Session 状态投影为克制、可操作的用户文案；它只展示当前结果、下一轮 1–3 问和必须披露的假设/未知项/审批边界，并隐藏原始 Intent、已保存回答、内部优先级、source refs 与决策者标识。
 - 已新增 Clarification Answer Receipt v0 与只读 dry-run，把逐字原答绑定到当前 Session、问题摘要和连续轮次，并输出不回显原答的确认文案；它拒绝错轮、旧问题、摘要漂移和数据分类降级，不归一化答案、不修改 Session、不推导风险授权。
+- 已新增 Clarification Revision Proposal v0 与三文件只读预演：Proposal 明确声明答案归一化、gap/知识项 delta、候选状态和 Compile Gate；预演只在内存应用 delta，随后用完整 Session 校验器复验候选状态并生成安全确认文案。它不写回 Session、不代表用户确认，也不能弱化既有高风险审批要求。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
@@ -663,5 +664,6 @@ Prompt Package v0 的机器契约位于 schemas/prompt-package-v0.yaml，可用 
 Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.yaml，可用 ruby scripts/validate_clarification_session.rb SESSION 做状态校验，或加入 --prompt-package PACKAGE 校验编译 lineage；不得虚构用户答案、授权、假设或决策来让会话进入 ready_to_compile。
 用户可见文案契约位于 docs/product/clarification-copy-v0.md；只在 Session 校验通过后运行 ruby scripts/render_clarification_copy.rb SESSION。Renderer 不生成新问题、不推进状态，也不表示 Prompt Package 或下游交付已经完成。
 回答收据契约位于 docs/product/clarification-answer-receipt-v0.md；用 ruby scripts/preview_clarification_answers.rb SESSION RECEIPT 只读检查当前轮次适用性。成功不表示答案已归一化或 Session 已更新，Receipt 原答不得出现在用户确认文案中。
+修订提案契约位于 docs/product/clarification-revision-proposal-v0.md；用 ruby scripts/preview_clarification_revision.rb SESSION RECEIPT PROPOSAL 校验三文件绑定、内存应用 delta、复验候选 Session 并生成用户确认文案。成功不表示用户已确认或 Session 已写回，高风险审批项必须原样保留。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```

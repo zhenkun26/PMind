@@ -59,6 +59,8 @@ The experiment is paired:
 - `docs/product/clarification-copy-v0.md`: five-state user-facing copy and disclosure contract;
 - `docs/product/clarification-answer-receipt-v0.md`: immutable raw-answer capture, current-round binding, and confirmation-copy contract;
 - `schemas/clarification-answer-receipt-v0.yaml`: machine-readable Answer Receipt structure and data declaration;
+- `docs/product/clarification-revision-proposal-v0.md`: in-memory Session revision, state-transition, and user-confirmation contract;
+- `schemas/clarification-revision-proposal-v0.yaml`: machine-readable answer normalization, gap/knowledge delta, and candidate Compile Gate structure;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -80,6 +82,7 @@ The experiment is paired:
 - `scripts/validate_clarification_session.rb`: read-only Clarification Session state and optional Session-to-Package lineage validator.
 - `scripts/render_clarification_copy.rb`: read-only validated Session-to-user-Markdown renderer.
 - `scripts/preview_clarification_answers.rb`: read-only Answer Receipt applicability and no-echo confirmation renderer.
+- `scripts/preview_clarification_revision.rb`: read-only three-file binding, in-memory delta application, candidate Session validation, and safe confirmation renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.

@@ -1,0 +1,54 @@
+schema_version: "0.1.0"
+proposal_id: proposal-20260821-001
+created_at: "2026-08-21T11:06:00+08:00"
+session_id: session-20260821-002
+session_raw_intent_sha256: 27a53dd6861fee065c22fbf67bbaf098fc4f40d90746cf8b90963294fde9db3d
+source_session_status: gap_scan
+receipt_id: receipt-20260821-001
+round_number: 1
+confirmation:
+  required: true
+  status: pending
+  high_risk_authorization_inferred: false
+patch:
+  status_after: ready_to_compile
+  question_updates:
+    - question_id: QUESTION-001
+      status: asked
+      round_number: 1
+  questions_to_add: []
+  append_round:
+    round_number: 1
+    completed_at: "2026-08-21T11:06:00+08:00"
+    answers:
+      - question_id: QUESTION-001
+        source_user_answer_sha256: e8361c17d21fcf2071b3a8009fe74e1fd10e7945585ae4722f8b5d969d3fd738
+        outcome_status: resolved
+        normalized_conclusion: "导出入口和服务端接口都必须检查 export_users 权限。"
+        affected_fields:
+          - constraints.product
+          - risks
+        user_visible_effect: "导出能力只对具备 export_users 权限的角色开放。"
+  gap_updates:
+    - dimension: risk_authority
+      source_question_ids:
+        - QUESTION-001
+      status: resolved
+      blocking: false
+      summary: "只有具有 export_users 权限的角色可以导出。"
+  assumption_ids_to_remove: []
+  unknown_ids_to_remove:
+    - UNKNOWN-002
+  assumptions_to_add: []
+  unknowns_to_add: []
+  decisions_to_add: []
+  compile_gate_after:
+    ready: true
+    blocking_reasons: []
+    material_conflicts: []
+    high_risk_actions:
+      - action: external_service_write
+        description: "任何仓库外服务修改"
+        approval_point_required: true
+    next_question_ids: []
+    stop_reason: sufficient_information

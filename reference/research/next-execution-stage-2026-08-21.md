@@ -294,3 +294,5 @@ PMind 的下一阶段不应是“搭建完整多 Agent 产品”，而应是一�
 下一轮补齐了 Clarification 的用户呈现切片：`docs/product/clarification-copy-v0.md` 固定五态标题、信息层级、追问格式、隐私提示和禁止泄漏字段，`scripts/render_clarification_copy.rb` 仅对已通过校验的 Session 生成 stdout Markdown。动态内容会折叠为单行并转义 HTML/Markdown；Renderer 不显示 raw Intent、保存的回答、内部优先级、source refs 或 decision maker ref，也不生成问题、推进状态或触发模型/网络。该能力改善可测的交互一致性，但仍不是实际用户验证或产品效果数据。
 
 本轮在用户文案之后增加 Answer Receipt 信任边界：`schemas/clarification-answer-receipt-v0.yaml` 逐字保存 1–3 项原答，并绑定 Session ID、raw Intent 摘要、当前状态、连续轮次、问题摘要、回答摘要和数据声明；`scripts/preview_clarification_answers.rb` 只读检查 Receipt 是否适用于当前 `gap_scan` / `clarifying` 问题，并输出不回显原答的确认文案。它拒绝 intake/ready/blocked、错序或重复响应、摘要漂移、时间回退和数据分类降级；不会归一化、写回 Session、推导授权、调用模型或产生效果数据。
+
+下一轮补上回答归一化到候选状态之间的显式审阅层：`schemas/clarification-revision-proposal-v0.yaml` 绑定原 Session、Answer Receipt 和连续轮次，声明问题结论、gap/知识项 delta、目标状态与 Compile Gate；`scripts/preview_clarification_revision.rb` 只在内存应用 delta，再调用完整 Clarification Session 校验器复验候选状态，并输出“确认 / 修改 / 拒绝”文案。六种允许的状态转换、回答类型到 outcome 的映射、无关知识项不可删除、既有高风险项原样保留、原答与内部标识不泄漏、CLI 零写入均有合成测试覆盖。该 Proposal 不是用户确认、Session revision 或风险授权，仍未产生真实用户数据、模型结果或商业效果证据。
