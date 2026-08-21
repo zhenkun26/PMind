@@ -12,6 +12,8 @@
 
 三个最小 Fixture 已创建并冻结 workspace digest，隔离工作区准备器、Executor Profile 契约和统一 preflight 也已实现；但当前会话只有一名操作者，Profile 仍有六项真实决策未确定，尚未为一次真实 Wave 生成运行副本。此时直接生成输出并自行评分仍会泄露 oracle、混淆角色并把模拟结果误写成产品证据。
 
+运行记账契约也已准备完成：Case Schema `0.2.0` 固定模型、Profile、Workspace Set、工作区 revision、返工和耗时证据，Acceptance Result Schema `0.1.0` 强制双评审与三态裁决。仓库验证器会核对运行目录、成功公式和最终运行结论。该准备状态不会解除角色、Profile 或隔离工作区门禁。
+
 `blocked` 是 Quality Gate 的正确结果，不是执行失败。它阻止新增 `run_records`，但不阻止继续准备 Fixture 和角色。
 
 ## 启动条件
@@ -47,7 +49,7 @@
    ```
 
 5. 按清单中的 `arm_order` 运行；主持人只回答实际提出的问题。
-6. 两名评审独立评分前三例，记录原始分歧和一致率。
+6. 两名评审独立评分前三例，按 `consensus` / `needs_adjudication` / `adjudicated` 保存原始分歧和一致率；没有独立第三评审时，分歧结果保持未计分。
 7. 若 Rubric 可一致使用，再准备剩余七例；若不可一致，提升协议版本后重跑受影响案例。
 
 ## 不属于本 Wave 的动作

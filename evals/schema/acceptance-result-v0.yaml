@@ -1,0 +1,167 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/evals/schema/acceptance-result-v0.yaml"
+title: "PMind Acceptance Result v0"
+description: "Two-reviewer acceptance record with explicit adjudication state and a derived first-pass outcome."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - run_id
+  - case_id
+  - arm
+  - rubric_version
+  - status
+  - reviewer_assessments
+properties:
+  schema_version:
+    const: "0.1.0"
+  run_id:
+    type: string
+    pattern: "^run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}$"
+  case_id:
+    type: string
+    pattern: "^(seed|real)-[0-9]{3}$"
+  arm:
+    type: string
+    enum:
+      - baseline
+      - pmind
+  rubric_version:
+    const: "0.1.0"
+  status:
+    type: string
+    enum:
+      - consensus
+      - needs_adjudication
+      - adjudicated
+  reviewer_assessments:
+    type: array
+    minItems: 2
+    maxItems: 2
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - reviewer_ref
+        - decision
+      properties:
+        reviewer_ref:
+          type: string
+          minLength: 1
+        decision:
+          $ref: "#/$defs/decision"
+  final_decision:
+    $ref: "#/$defs/decision"
+  adjudicator_ref:
+    type: string
+    minLength: 1
+$defs:
+  decision:
+    type: object
+    additionalProperties: false
+    required:
+      - run_valid
+      - invalid_reasons
+      - criteria
+      - material_respecification
+      - safety_violation
+      - usable_without_restart
+      - first_pass_delivery_success
+      - diagnostic_scores
+      - primary_failure_classification
+    properties:
+      run_valid:
+        type: boolean
+      invalid_reasons:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+      criteria:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - criterion_id
+            - result
+            - rationale
+            - evidence_paths
+          properties:
+            criterion_id:
+              type: string
+              pattern: "^AC-[0-9]{2}$"
+            result:
+              type: string
+              enum:
+                - pass
+                - fail
+                - not_applicable
+                - ambiguous
+            rationale:
+              type: string
+              minLength: 1
+            evidence_paths:
+              type: array
+              uniqueItems: true
+              items:
+                type: string
+                minLength: 1
+      material_respecification:
+        type: boolean
+      safety_violation:
+        type: boolean
+      usable_without_restart:
+        type: boolean
+      first_pass_delivery_success:
+        type: boolean
+      diagnostic_scores:
+        type: object
+        additionalProperties: false
+        required:
+          - acceptance
+          - specification_fidelity
+          - traceability
+          - safety_authority
+          - delivery_efficiency
+          - user_usability
+        properties:
+          acceptance:
+            type: integer
+            minimum: 0
+            maximum: 2
+          specification_fidelity:
+            type: integer
+            minimum: 0
+            maximum: 2
+          traceability:
+            type: integer
+            minimum: 0
+            maximum: 2
+          safety_authority:
+            type: integer
+            minimum: 0
+            maximum: 2
+          delivery_efficiency:
+            type: integer
+            minimum: 0
+            maximum: 2
+          user_usability:
+            type: integer
+            minimum: 0
+            maximum: 2
+      primary_failure_classification:
+        type: string
+        enum:
+          - none
+          - not_scored
+          - intent_gap
+          - clarification_miss
+          - research_error
+          - package_contract
+          - executor_error
+          - environment_error
+          - evaluation_ambiguity
+          - safety_violation

@@ -1,4 +1,4 @@
-schema_version: "0.1.0"
+schema_version: "0.2.0"
 case_id: seed-008
 title: "项目批量删除与恢复"
 status: ready

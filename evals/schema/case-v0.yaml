@@ -18,7 +18,7 @@ required:
   - run_records
 properties:
   schema_version:
-    const: "0.1.0"
+    const: "0.2.0"
   case_id:
     type: string
     pattern: "^(seed|real)-[0-9]{3}$"
@@ -296,11 +296,22 @@ properties:
         - input_artifact_path
         - started_at
         - finished_at
+        - executor_profile_path
+        - executor_profile_revision
         - executor_version
-        - workspace_revision
+        - model_version
+        - reasoning_settings
+        - workspace_set_receipt_digest
+        - workspace_set_receipt_path
+        - workspace_base_revision
+        - workspace_result_revision
         - tool_policy
         - pre_handoff_clarification_rounds
         - executor_clarification_rounds
+        - executor_rework_rounds
+        - material_rework_rounds
+        - idea_to_handoff_minutes
+        - handoff_to_result_minutes
         - model_calls
         - search_calls
         - human_intervention_minutes
@@ -314,6 +325,7 @@ properties:
       properties:
         run_id:
           type: string
+          pattern: "^run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}$"
         arm:
           type: string
           enum:
@@ -323,17 +335,44 @@ properties:
           const: "0.1.0"
         input_artifact_path:
           type: string
-          minLength: 1
+          pattern: "^evals/runs/run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}/input\\.md$"
         started_at:
           type: string
           format: date-time
         finished_at:
           type: string
           format: date-time
+        executor_profile_path:
+          type: string
+          pattern: "^evals/runs/run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}/executor-profile\\.yaml$"
+        executor_profile_revision:
+          description: "SHA-256 of the exact frozen executor-profile artifact preserved with the run."
+          type: string
+          pattern: "^[a-f0-9]{64}$"
         executor_version:
           type: string
-        workspace_revision:
+          minLength: 1
+        model_version:
           type: string
+          minLength: 1
+        reasoning_settings:
+          type: string
+          minLength: 1
+        workspace_set_receipt_digest:
+          description: "SHA-256 of the exact workspace-set receipt preserved with the run."
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        workspace_set_receipt_path:
+          type: string
+          pattern: "^evals/runs/run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}/workspace-set\\.yaml$"
+        workspace_base_revision:
+          description: "sha256-tree-v1 digest of the executor-visible workspace before execution."
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        workspace_result_revision:
+          description: "sha256-tree-v1 digest of the executor-visible workspace after execution."
+          type: string
+          pattern: "^[a-f0-9]{64}$"
         tool_policy:
           type: string
           minLength: 1
@@ -342,6 +381,18 @@ properties:
           minimum: 0
         executor_clarification_rounds:
           type: integer
+          minimum: 0
+        executor_rework_rounds:
+          type: integer
+          minimum: 0
+        material_rework_rounds:
+          type: integer
+          minimum: 0
+        idea_to_handoff_minutes:
+          type: number
+          minimum: 0
+        handoff_to_result_minutes:
+          type: number
           minimum: 0
         model_calls:
           type: integer
@@ -404,7 +455,7 @@ properties:
             - safety_violation
         result_path:
           type: string
-          minLength: 1
+          pattern: "^evals/runs/run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}/result\\.md$"
         acceptance_results_path:
           type: string
-          minLength: 1
+          pattern: "^evals/runs/run-(seed|real)-[0-9]{3}-(baseline|pmind)-[0-9]{3}/acceptance\\.yaml$"

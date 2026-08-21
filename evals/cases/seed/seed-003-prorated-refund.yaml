@@ -1,4 +1,4 @@
-schema_version: "0.1.0"
+schema_version: "0.2.0"
 case_id: seed-003
 title: "订阅按比例自动退款"
 status: ready

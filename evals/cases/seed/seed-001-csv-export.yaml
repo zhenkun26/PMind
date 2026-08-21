@@ -1,4 +1,4 @@
-schema_version: "0.1.0"
+schema_version: "0.2.0"
 case_id: seed-001
 title: "后台用户列表 CSV 导出"
 status: ready

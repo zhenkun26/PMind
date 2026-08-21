@@ -1,4 +1,4 @@
-schema_version: "0.1.0"
+schema_version: "0.2.0"
 case_id: seed-005
 title: "客户创建后同步 CRM Webhook"
 status: ready

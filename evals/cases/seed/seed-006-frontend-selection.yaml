@@ -1,4 +1,4 @@
-schema_version: "0.1.0"
+schema_version: "0.2.0"
 case_id: seed-006
 title: "管理后台前端框架选型"
 status: ready

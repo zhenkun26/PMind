@@ -106,10 +106,12 @@
 
 ## 评审流程
 
+机器可读结果遵循 `evals/schema/acceptance-result-v0.yaml`。主判断签名包括运行有效性、逐项 Criteria 结果、Material Re-specification、Safety Violation、可用性、二元主指标和主失败分类；诊断分数或措辞差异本身不触发裁决。
+
 1. 两名评审者独立查看去除实验标签的下游结果、Acceptance Criteria 和必要日志。
 2. 每人先判定运行是否有效，再逐项判定 blocking Criteria、Material Re-specification、Safety Violation 和可用性。
-3. 两人一致时锁定结果。
-4. 不一致时先记录原始评分和分歧原因，再由第三评审者裁决；没有第三人时由两人基于证据达成共识，并保留修改前记录。
+3. 两人的主判断一致时，以 `consensus` 锁定匹配的最终结果。
+4. 不一致时保留两份原始判断并标记 `needs_adjudication`；只有与两名评审身份均不同的第三评审者可写入最终判断并转为 `adjudicated`。没有第三人时不得把结果强行记为共识，也不得计入主指标。
 5. 每批报告评审一致率；前三个种子案例用于校准，不得删除分歧。
 
 ## 成组比较

@@ -14,6 +14,7 @@ class ValidateEvalsTest < Minitest::Test
     assert_equal 3, validator.summary["fixtures"]
     assert_equal 1, validator.summary["executor_profiles"]
     assert_equal 1, validator.summary["calibration_waves"]
+    assert_equal 0, validator.summary["acceptance_results"]
     assert_equal 9, validator.summary["gap_dimensions"]
   end
 
@@ -146,6 +147,36 @@ class ValidateEvalsTest < Minitest::Test
     assert validator.errors.any? { |error| error.include?("requires a concrete failure classification") }
   end
 
+  def test_invalid_run_requires_concrete_failure_classification
+    validator = PMind::EvalValidator.new(ROOT)
+    entries = Dir[File.join(ROOT, "evals/cases/seed/*.yaml")].sort.map do |path|
+      [path, validator.load_yaml(path)]
+    end
+    entries.first[1]["run_records"] = [valid_run.merge(
+      "outcome" => "invalid_run",
+      "failure_classification" => "not_scored"
+    )]
+
+    refute validator.validate_case_set(entries)
+    assert validator.errors.any? { |error| error.include?("invalid_run outcome requires a concrete failure classification") }
+  end
+
+  def test_case_schema_keeps_real_case_run_identifiers_available
+    validator = PMind::EvalValidator.new(ROOT)
+    schema = validator.load_yaml("evals/schema/case-v0.yaml")
+    run_schema = schema.dig("properties", "run_records", "items")
+    real_run = valid_run.merge(
+      "run_id" => "run-real-001-baseline-001",
+      "input_artifact_path" => "evals/runs/run-real-001-baseline-001/input.md",
+      "result_path" => "evals/runs/run-real-001-baseline-001/result.md",
+      "acceptance_results_path" => "evals/runs/run-real-001-baseline-001/acceptance.yaml",
+      "executor_profile_path" => "evals/runs/run-real-001-baseline-001/executor-profile.yaml",
+      "workspace_set_receipt_path" => "evals/runs/run-real-001-baseline-001/workspace-set.yaml"
+    )
+
+    assert validator.validate_document(run_schema, real_run, "real-run", schema), validator.errors.join("\n")
+  end
+
   private
 
   def valid_run
@@ -156,11 +187,22 @@ class ValidateEvalsTest < Minitest::Test
       "input_artifact_path" => "evals/runs/run-seed-001-baseline-001/input.md",
       "started_at" => "2026-08-21T10:00:00+08:00",
       "finished_at" => "2026-08-21T10:05:00+08:00",
+      "executor_profile_path" => "evals/runs/run-seed-001-baseline-001/executor-profile.yaml",
+      "executor_profile_revision" => "a" * 64,
       "executor_version" => "test-executor",
-      "workspace_revision" => "fixture-revision",
+      "model_version" => "test-model",
+      "reasoning_settings" => "fixed-test-settings",
+      "workspace_set_receipt_digest" => "b" * 64,
+      "workspace_set_receipt_path" => "evals/runs/run-seed-001-baseline-001/workspace-set.yaml",
+      "workspace_base_revision" => "c" * 64,
+      "workspace_result_revision" => "d" * 64,
       "tool_policy" => "no-external-writes",
       "pre_handoff_clarification_rounds" => 0,
       "executor_clarification_rounds" => 0,
+      "executor_rework_rounds" => 0,
+      "material_rework_rounds" => 0,
+      "idea_to_handoff_minutes" => 1,
+      "handoff_to_result_minutes" => 5,
       "model_calls" => 1,
       "search_calls" => 0,
       "human_intervention_minutes" => 0,

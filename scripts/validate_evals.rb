@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "date"
+require "digest"
 require "time"
 require "yaml"
 require_relative "workspace_tree"
@@ -9,6 +10,7 @@ require_relative "workspace_tree"
 module PMind
   class EvalValidator
     CASE_SCHEMA = "evals/schema/case-v0.yaml"
+    ACCEPTANCE_RESULT_SCHEMA = "evals/schema/acceptance-result-v0.yaml"
     CALIBRATION_SCHEMA = "evals/schema/calibration-wave-v0.yaml"
     EXECUTOR_PROFILE_SCHEMA = "evals/schema/executor-profile-v0.yaml"
     FIXTURE_SCHEMA = "evals/schema/fixture-v0.yaml"
@@ -45,10 +47,14 @@ module PMind
       errors.clear
 
       case_schema = load_yaml(CASE_SCHEMA)
+      acceptance_result_schema = load_yaml(ACCEPTANCE_RESULT_SCHEMA)
       calibration_schema = load_yaml(CALIBRATION_SCHEMA)
       executor_profile_schema = load_yaml(EXECUTOR_PROFILE_SCHEMA)
       fixture_schema = load_yaml(FIXTURE_SCHEMA)
-      return false unless case_schema && calibration_schema && executor_profile_schema && fixture_schema
+      return false unless case_schema && acceptance_result_schema && calibration_schema && executor_profile_schema && fixture_schema
+
+      @acceptance_result_schema = acceptance_result_schema
+      @acceptance_result_count = 0
 
       case_entries = yaml_entries("evals/cases/seed/*.yaml")
       calibration_entries = yaml_entries("evals/calibration/*.yaml")
@@ -104,6 +110,7 @@ module PMind
         "fixtures" => fixture_entries.length,
         "executor_profiles" => executor_profile_entries.length,
         "calibration_waves" => calibration_entries.length,
+        "acceptance_results" => @acceptance_result_count,
         "gap_dimensions" => dimensions.length,
         "risk_tags" => risks.length
       }
@@ -169,6 +176,7 @@ module PMind
         duplicate_values(run_ids).each { |run_id| errors << "#{label}: duplicate run_id #{run_id}" }
         (document["run_records"] || []).each do |run|
           validate_run_consistency(run, label)
+          validate_run_artifacts(run, document, label)
         end
       end
 
@@ -346,7 +354,229 @@ module PMind
       errors.empty?
     end
 
+    def validate_acceptance_result(result, case_document, run, path, schema = nil)
+      acceptance_schema = schema || @acceptance_result_schema || load_yaml(ACCEPTANCE_RESULT_SCHEMA)
+      return false unless acceptance_schema
+
+      validate_document(acceptance_schema, result, path, acceptance_schema)
+      return false unless result.is_a?(Hash) && case_document.is_a?(Hash) && run.is_a?(Hash)
+
+      unless result["run_id"] == run["run_id"] &&
+             result["case_id"] == case_document["case_id"] &&
+             result["arm"] == run["arm"] &&
+             result["rubric_version"] == run["rubric_version"]
+        errors << "#{path}: acceptance identity must match its case and run record"
+      end
+
+      raw_assessments = result["reviewer_assessments"]
+      assessments = raw_assessments.is_a?(Array) ? raw_assessments.select { |assessment| assessment.is_a?(Hash) } : []
+      reviewer_refs = assessments.map { |assessment| assessment["reviewer_ref"] }.compact
+      duplicate_values(reviewer_refs).each do |reviewer_ref|
+        errors << "#{path}: reviewer_ref #{reviewer_ref} must be unique"
+      end
+
+      decisions = assessments.map { |assessment| assessment["decision"] }.select { |decision| decision.is_a?(Hash) }
+      decisions << result["final_decision"] if result["final_decision"].is_a?(Hash)
+      decisions.each do |decision|
+        validate_acceptance_decision(decision, case_document, run, path)
+      end
+
+      validate_acceptance_state(result, run, reviewer_refs, path)
+      errors.empty?
+    end
+
     private
+
+    def validate_run_artifacts(run, case_document, path)
+      run_id = run["run_id"]
+      match = /\Arun-((?:seed|real)-[0-9]{3})-(baseline|pmind)-[0-9]{3}\z/.match(run_id.to_s)
+      unless match && match[1] == case_document["case_id"] && match[2] == run["arm"]
+        errors << "#{path}: run_id must encode its case_id and arm"
+      end
+
+      expected_root = "evals/runs/#{run_id}"
+      expected_paths = {
+        "input_artifact_path" => "#{expected_root}/input.md",
+        "result_path" => "#{expected_root}/result.md",
+        "acceptance_results_path" => "#{expected_root}/acceptance.yaml",
+        "executor_profile_path" => "#{expected_root}/executor-profile.yaml",
+        "workspace_set_receipt_path" => "#{expected_root}/workspace-set.yaml"
+      }
+      artifact_files = {}
+      expected_paths.each do |field, expected|
+        declared = run[field]
+        errors << "#{path}: #{field} must equal #{expected}" unless declared == expected
+        absolute = safe_repo_path(declared, path)
+        if regular_repo_file?(absolute)
+          artifact_files[field] = absolute
+        else
+          errors << "#{path}: missing or unsafe run artifact #{declared}"
+        end
+      end
+
+      {
+        "executor_profile_path" => "executor_profile_revision",
+        "workspace_set_receipt_path" => "workspace_set_receipt_digest"
+      }.each do |artifact_field, digest_field|
+        absolute = artifact_files[artifact_field]
+        next unless absolute
+
+        actual_digest = Digest::SHA256.file(absolute).hexdigest
+        unless run[digest_field] == actual_digest
+          errors << "#{path}: #{digest_field} does not match preserved #{artifact_field}"
+        end
+      end
+
+      acceptance_path = run["acceptance_results_path"]
+      acceptance_absolute = safe_repo_path(acceptance_path, path)
+      return unless regular_repo_file?(acceptance_absolute)
+
+      result = load_yaml(acceptance_path)
+      return unless result
+
+      @acceptance_result_count = (@acceptance_result_count || 0) + 1
+      validate_acceptance_result(result, case_document, run, acceptance_path)
+    end
+
+    def validate_acceptance_decision(decision, case_document, run, path)
+      expected_criteria = case_document.dig("oracle", "acceptance_criteria") || []
+      expected_ids = expected_criteria.map { |criterion| criterion["criterion_id"] }
+      actual_criteria = decision_criteria(decision)
+      actual_ids = actual_criteria.map { |criterion| criterion["criterion_id"] }
+      unless actual_ids == expected_ids
+        errors << "#{path}: every decision must cover acceptance criteria once and in case order"
+      end
+      validate_acceptance_evidence(actual_criteria, run, path)
+
+      invalid_reasons = decision["invalid_reasons"] || []
+      if decision["run_valid"] == true && !invalid_reasons.empty?
+        errors << "#{path}: valid decision cannot retain invalid reasons"
+      elsif decision["run_valid"] == false && invalid_reasons.empty?
+        errors << "#{path}: invalid decision must explain at least one reason"
+      end
+
+      results_by_id = actual_criteria.each_with_object({}) do |criterion, output|
+        output[criterion["criterion_id"]] = criterion["result"]
+      end
+      blocking_pass = expected_criteria.select { |criterion| criterion["blocking"] }.all? do |criterion|
+        results_by_id[criterion["criterion_id"]] == "pass"
+      end
+      expected_success = decision["run_valid"] == true &&
+                         blocking_pass &&
+                         decision["material_respecification"] == false &&
+                         decision["safety_violation"] == false &&
+                         decision["usable_without_restart"] == true
+      unless decision["first_pass_delivery_success"] == expected_success
+        errors << "#{path}: first_pass_delivery_success does not match the rubric formula"
+      end
+
+      failure = decision["primary_failure_classification"]
+      if expected_success && failure != "none"
+        errors << "#{path}: successful decision requires failure classification none"
+      elsif !expected_success && %w[none not_scored].include?(failure)
+        errors << "#{path}: unsuccessful decision requires a concrete failure classification"
+      end
+    end
+
+    def validate_acceptance_state(result, run, reviewer_refs, path)
+      raw_assessments = result["reviewer_assessments"]
+      assessments = raw_assessments.is_a?(Array) ? raw_assessments.select { |assessment| assessment.is_a?(Hash) } : []
+      signatures = assessments.map do |assessment|
+        decision = assessment["decision"]
+        decision_signature(decision.is_a?(Hash) ? decision : {})
+      end
+      reviewers_agree = signatures.length == 2 && signatures.uniq.length == 1
+      final_decision = result["final_decision"].is_a?(Hash) ? result["final_decision"] : nil
+      adjudicator_ref = result["adjudicator_ref"]
+
+      case result["status"]
+      when "consensus"
+        errors << "#{path}: consensus requires matching reviewer decisions" unless reviewers_agree
+        errors << "#{path}: consensus requires a matching final_decision" unless final_decision && decision_signature(final_decision) == signatures.first
+        errors << "#{path}: consensus must not name an adjudicator" if present?(adjudicator_ref)
+      when "needs_adjudication"
+        errors << "#{path}: needs_adjudication requires differing reviewer decisions" if reviewers_agree
+        errors << "#{path}: needs_adjudication must not contain final_decision" if final_decision
+        errors << "#{path}: needs_adjudication must not name an adjudicator" if present?(adjudicator_ref)
+      when "adjudicated"
+        errors << "#{path}: adjudicated requires differing reviewer decisions" if reviewers_agree
+        errors << "#{path}: adjudicated requires final_decision" unless final_decision
+        unless present?(adjudicator_ref) && !reviewer_refs.include?(adjudicator_ref)
+          errors << "#{path}: adjudicated requires a distinct adjudicator_ref"
+        end
+      end
+
+      validate_run_outcome_against_acceptance(result["status"], final_decision, run, path)
+    end
+
+    def validate_run_outcome_against_acceptance(status, final_decision, run, path)
+      if status == "needs_adjudication"
+        unless run["outcome"] == "not_scored" && run["failure_classification"] == "not_scored"
+          errors << "#{path}: pending adjudication requires a not_scored run record"
+        end
+        return
+      end
+      return unless final_decision
+
+      if final_decision["run_valid"] == false
+        expected_outcome = "invalid_run"
+      elsif final_decision["first_pass_delivery_success"] == true
+        expected_outcome = "pass"
+      else
+        expected_outcome = "fail"
+      end
+      unless run["outcome"] == expected_outcome &&
+             run["failure_classification"] == final_decision["primary_failure_classification"]
+        errors << "#{path}: run outcome and failure classification must match final_decision"
+      end
+    end
+
+    def decision_signature(decision)
+      [
+        decision["run_valid"],
+        decision_criteria(decision).map { |criterion| [criterion["criterion_id"], criterion["result"]] },
+        decision["material_respecification"],
+        decision["safety_violation"],
+        decision["usable_without_restart"],
+        decision["first_pass_delivery_success"],
+        decision["primary_failure_classification"]
+      ]
+    end
+
+    def decision_criteria(decision)
+      criteria = decision["criteria"]
+      criteria.is_a?(Array) ? criteria.select { |criterion| criterion.is_a?(Hash) } : []
+    end
+
+    def validate_acceptance_evidence(criteria, run, path)
+      expected_root = safe_repo_path("evals/runs/#{run["run_id"]}", path)
+      criteria.each do |criterion|
+        evidence_paths = criterion["evidence_paths"]
+        next unless evidence_paths.is_a?(Array)
+
+        evidence_paths.each do |evidence_path|
+          absolute = safe_repo_path(evidence_path, path)
+          unless expected_root && absolute && nested_path?(absolute, expected_root) && regular_repo_file?(absolute)
+            errors << "#{path}: evidence path must be a regular file inside its run directory (#{evidence_path})"
+          end
+        end
+      end
+    end
+
+    def regular_repo_file?(absolute)
+      return false unless absolute && File.file?(absolute)
+
+      current = absolute
+      until current == @root
+        return false if File.symlink?(current)
+
+        parent = File.dirname(current)
+        return false if parent == current
+
+        current = parent
+      end
+      true
+    end
 
     def validate_executor_gate(manifest, profile, profile_path, path)
       config = manifest["executor_config"] || {}
@@ -531,6 +761,9 @@ module PMind
       if schema["minimum"] && data < schema["minimum"]
         errors << "#{path}: must be >= #{schema["minimum"]}"
       end
+      if schema["maximum"] && data > schema["maximum"]
+        errors << "#{path}: must be <= #{schema["maximum"]}"
+      end
     end
 
     def validate_string(schema, data, path)
@@ -553,6 +786,21 @@ module PMind
     end
 
     def validate_run_consistency(run, path)
+      begin
+        if Time.iso8601(run["finished_at"]) < Time.iso8601(run["started_at"])
+          errors << "#{path}: finished_at cannot precede started_at"
+        end
+      rescue ArgumentError, TypeError
+        # Date-time shape errors are already reported by schema validation.
+      end
+
+      if run["arm"] == "baseline" && run["pre_handoff_clarification_rounds"] != 0
+        errors << "#{path}: baseline runs cannot have pre-handoff clarification rounds"
+      end
+      if run["material_rework_rounds"].to_i > run["executor_rework_rounds"].to_i
+        errors << "#{path}: material rework rounds cannot exceed executor rework rounds"
+      end
+
       cost = run["estimated_cost"] || {}
       case cost["status"]
       when "known"
@@ -572,6 +820,9 @@ module PMind
       errors << "#{path}: pass outcome requires failure none" if outcome == "pass" && failure != "none"
       if outcome == "fail" && %w[none not_scored].include?(failure)
         errors << "#{path}: fail outcome requires a concrete failure classification"
+      end
+      if outcome == "invalid_run" && %w[none not_scored].include?(failure)
+        errors << "#{path}: invalid_run outcome requires a concrete failure classification"
       end
       errors << "#{path}: not_scored outcome requires matching failure" if outcome == "not_scored" && failure != "not_scored"
     end

@@ -1,6 +1,7 @@
 # PMind Eval Baseline
 
-- Current schema: `evals/schema/case-v0.yaml` (`0.1.0`)
+- Current case schema: `evals/schema/case-v0.yaml` (`0.2.0`)
+- Current acceptance-result schema: `evals/schema/acceptance-result-v0.yaml` (`0.1.0`)
 - Current rubric: `evals/rubrics/first-pass-success-v0.md` (`0.1.0`)
 - Seed set: 10 synthetic, ready, unrun cases under `evals/cases/seed/`
 - Calibration fixtures: 3 synthetic, executable fixtures under `evals/fixtures/`
@@ -57,6 +58,7 @@ The experiment is paired:
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
 - `evals/schema/case-v0.yaml`: provider-neutral case definition;
+- `evals/schema/acceptance-result-v0.yaml`: two-reviewer decisions, adjudication state, and derived primary outcome;
 - `evals/rubrics/first-pass-success-v0.md`: binary primary outcome and diagnostic scores;
 - `evals/cases/seed/`: calibration cases. All have empty `run_records` until actually run.
 - `evals/schema/calibration-wave-v0.yaml`: calibration readiness contract;
@@ -66,7 +68,7 @@ The experiment is paired:
 - `evals/fixtures/`: three ready synthetic workspaces with executor-excluded oracles;
 - `evals/calibration/executor-profiles/`: truthful draft/frozen executor decisions;
 - `evals/calibration/wave-01.yaml`: first three-case Wave and honest blockers;
-- `scripts/validate_evals.rb`: dependency-free structural and cross-field checks.
+- `scripts/validate_evals.rb`: dependency-free structural, artifact-path, success-formula, and adjudication-state checks.
 - `scripts/prepare_calibration_workspaces.rb`: no-overwrite preparation and verification of external arm copies.
 - `scripts/calibration_preflight.rb`: read-only readiness report across contracts, roles, executor, and arm copies.
 
@@ -78,8 +80,30 @@ Run the current deterministic checks with:
 ```sh
 ruby scripts/validate_evals.rb
 ruby test/validate_evals_test.rb
+ruby test/acceptance_result_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 
 The last command currently exits with a blocked status by design; it must not be
 treated as a failed experiment.
+
+## Measurement contract status
+
+Case Schema `0.2.0` adds immutable executor/model/profile/workspace receipts,
+separate Handoff and result durations, and executor/material rework counts. A
+real `run_record` is valid only when its `input.md`, `result.md`,
+`acceptance.yaml`, frozen `executor-profile.yaml`, and `workspace-set.yaml`
+receipt exist under the directory encoded by its run ID. The validator hashes
+the two preserved YAML receipts and rejects stale run-record digests.
+
+The acceptance result preserves two independent assessments and permits only
+three states:
+
+- `consensus`: both primary decisions match and the matching final decision is locked;
+- `needs_adjudication`: primary decisions differ and no final decision exists;
+- `adjudicated`: primary decisions differ and a distinct third reviewer records the final decision.
+
+The validator derives First-pass Delivery Success from the frozen blocking
+criteria and Rubric gates, then cross-checks it against the run outcome. There
+are currently zero acceptance results and zero real runs; the contract being
+ready is not product-effect evidence.

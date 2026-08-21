@@ -17,6 +17,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Skill adoption policy](docs/agents/skill-policy.md)
 - [Third-party source review](reference/github/mattpocock__skills/analysis.md)
 - [Eval direction](evals/README.md)
+- [First-pass success rubric](evals/rubrics/first-pass-success-v0.md)
 - [Prompt Package contract](docs/product/prompt-package-v0.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -45,3 +46,5 @@ Executor Profile and four-role separation gates before any run may start.
   downstream delivery outcomes.
 - Empty `run_records` and a blocked calibration Wave are not reported as
   successful experiments.
+- A scored run requires two independent reviewer assessments and either direct
+  consensus or a distinct third-reviewer adjudication.

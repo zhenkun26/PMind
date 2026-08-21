@@ -284,3 +284,5 @@ PMind 的下一阶段不应是“搭建完整多 Agent 产品”，而应是一�
 下一质量门是由两名评审先用 3 个种子案例校准 Rubric 和角色隔离，再运行完整 10 案例。若无法提供独立案例主持人与第二评审，应把盲评和一致率标记为受限，而不能声称第 1 阶段通过。
 
 已进一步创建 `calibration-001`：选择 `seed-001`、`seed-006`、`seed-009`，固定交替臂顺序，并用机器可检查的门槛约束角色、Fixture、执行器配置和隔离工作区。三个合成 Fixture 及其 executor-excluded oracle 已创建，workspace digest 已冻结，基础自检已通过；`fixtures_ready` 因此为 `true`。仓库外隔离工作区准备器也已实现，可拒绝覆盖并生成同源双臂副本及可验证收据，但它不替代执行器沙箱。新增 Executor Profile 契约会精确核对未决字段和冻结摘要，统一 preflight 会合并契约、四角色互斥、Profile 与 workspace-set 证据。四个角色仍未分配、Profile 仍缺六项真实决策、本次 Wave 的运行副本仍未生成，所以 Wave 明确保持 `blocked`，所有案例仍未运行。
+
+随后完成测量契约加固：Case Schema 从 `0.1.0` 升级到 `0.2.0`，10 个未运行种子案例完成无数据迁移；运行记录新增 Executor Profile、模型/推理设置、Workspace Set 收据摘要、工作区结果 revision、返工和分段耗时字段。新增 Acceptance Result Schema `0.1.0`，只允许 `consensus`、`needs_adjudication`、`adjudicated` 三态，并由验证器根据 blocking Criteria、Material Re-specification、Safety Violation 与可用性推导 First-pass Delivery Success。当前仍为 0 条运行和 0 条验收结果，不构成效果数据。

@@ -28,3 +28,8 @@
 
 - [2026-08-21T20:05:00+08:00] staged EOF regression L0: `git diff --cached --check` again found double-newline EOFs in 21 newly staged Fixture and Schema files, fix: normalize the exact reported files and recompute every affected frozen workspace digest, prevention: run a whole-file EOF normalizer before first staging whenever a phase adds generated or bulk-created files
 - [2026-08-21T20:06:00+08:00] EOF normalizer L0: the first `ruby -pi` formatter was line-oriented and therefore could not collapse a separate blank line at file end, fix: read and rewrite each exact file as a whole byte string, prevention: do not use line-loop editing modes for whole-file boundary invariants
+
+## 2026-08-21 — Harden calibration measurement contract
+
+- [2026-08-21T20:35:00+08:00] validator edit L0: one patch declared two update operations for the same file and was rejected before changing it, fix: combine all validator hunks under one update operation, prevention: use one `Update File` section per target in each patch
+- [2026-08-21T20:48:00+08:00] receipt-integrity edit L0: a multi-file patch used a stale test hunk context and was rejected before changing files, fix: re-read the exact helper layout and apply smaller target-specific patches, prevention: refresh nearby context after adding tests before batching follow-up edits

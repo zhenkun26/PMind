@@ -3,7 +3,7 @@ wave_id: calibration-001
 status: blocked
 can_start: false
 protocols:
-  case_schema_version: "0.1.0"
+  case_schema_version: "0.2.0"
   prompt_package_version: "0.1.0"
   rubric_version: "0.1.0"
   runbook_version: "0.1.0"
