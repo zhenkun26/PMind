@@ -11,6 +11,8 @@ class ValidateEvalsTest < Minitest::Test
 
     assert validator.validate_repository, validator.errors.join("\n")
     assert_equal 10, validator.summary["cases"]
+    assert_equal 3, validator.summary["fixtures"]
+    assert_equal 1, validator.summary["executor_profiles"]
     assert_equal 1, validator.summary["calibration_waves"]
     assert_equal 9, validator.summary["gap_dimensions"]
   end
@@ -38,7 +40,7 @@ class ValidateEvalsTest < Minitest::Test
     assert validator.errors.any? { |error| error.include?("is not declared in coverage") }
   end
 
-  def test_ready_wave_rejects_unassigned_roles_and_missing_fixtures
+  def test_ready_wave_rejects_unassigned_roles_and_unfrozen_executor
     validator = PMind::EvalValidator.new(ROOT)
     manifest = validator.load_yaml("evals/calibration/wave-01.yaml")
     manifest["can_start"] = true
@@ -48,7 +50,84 @@ class ValidateEvalsTest < Minitest::Test
 
     refute validator.validate_calibration(manifest, case_ids, "mutated-wave")
     assert validator.errors.any? { |error| error.include?("must be assigned") }
-    assert validator.errors.any? { |error| error.include?("fixture must be ready") }
+    assert validator.errors.any? { |error| error.include?("executor configuration must be frozen") }
+  end
+
+  def test_fixture_rejects_workspace_digest_drift
+    validator = PMind::EvalValidator.new(ROOT)
+    fixture = validator.load_yaml("evals/fixtures/seed-001/fixture.yaml")
+    fixture["workspace_revision"]["digest"] = "0" * 64
+
+    refute validator.validate_fixture(fixture, "evals/fixtures/seed-001/fixture.yaml")
+    assert validator.errors.any? { |error| error.include?("workspace digest mismatch") }
+  end
+
+  def test_calibration_fixture_gate_must_match_ready_manifests
+    validator = PMind::EvalValidator.new(ROOT)
+    manifest = validator.load_yaml("evals/calibration/wave-01.yaml")
+    manifest["start_gates"]["fixtures_ready"] = false
+    fixtures = %w[seed-001 seed-006 seed-009].to_h do |case_id|
+      [case_id, validator.load_yaml("evals/fixtures/#{case_id}/fixture.yaml")]
+    end
+
+    refute validator.validate_calibration(
+      manifest,
+      fixtures.keys,
+      "mutated-wave",
+      fixtures
+    )
+    assert validator.errors.any? { |error| error.include?("fixtures_ready gate does not match") }
+  end
+
+  def test_executor_profile_unresolved_fields_must_match_missing_decisions
+    validator = PMind::EvalValidator.new(ROOT)
+    profile = validator.load_yaml("evals/calibration/executor-profiles/calibration-001.yaml")
+    profile["unresolved_fields"].delete("model_version")
+
+    refute validator.validate_executor_profile(profile, "mutated-profile")
+    assert validator.errors.any? { |error| error.include?("must exactly match missing executor decisions") }
+  end
+
+  def test_role_gate_rejects_reused_assignee_references
+    validator = PMind::EvalValidator.new(ROOT)
+    manifest = validator.load_yaml("evals/calibration/wave-01.yaml")
+    manifest["roles"].each_value do |assignment|
+      assignment["status"] = "assigned"
+      assignment["assignee_ref"] = "same-person"
+    end
+    profile_path = "evals/calibration/executor-profiles/calibration-001.yaml"
+    profile = validator.load_yaml(profile_path)
+
+    refute validator.validate_calibration(
+      manifest,
+      %w[seed-001 seed-006 seed-009],
+      "mutated-wave",
+      {},
+      profile,
+      profile_path
+    )
+    assert validator.errors.any? { |error| error.include?("cannot hold multiple calibration roles") }
+  end
+
+  def test_role_gate_must_match_four_distinct_assignments
+    validator = PMind::EvalValidator.new(ROOT)
+    manifest = validator.load_yaml("evals/calibration/wave-01.yaml")
+    manifest["roles"].each_with_index do |(_role, assignment), index|
+      assignment["status"] = "assigned"
+      assignment["assignee_ref"] = "person-#{index + 1}"
+    end
+    profile_path = "evals/calibration/executor-profiles/calibration-001.yaml"
+    profile = validator.load_yaml(profile_path)
+
+    refute validator.validate_calibration(
+      manifest,
+      %w[seed-001 seed-006 seed-009],
+      "mutated-wave",
+      {},
+      profile,
+      profile_path
+    )
+    assert validator.errors.any? { |error| error.include?("roles_assigned gate does not match") }
   end
 
   def test_fail_run_requires_concrete_failure_classification

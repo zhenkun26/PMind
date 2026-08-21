@@ -1,0 +1,46 @@
+schema_version: "0.1.0"
+fixture_id: fixture-seed-009
+case_id: seed-009
+status: ready
+runtime:
+  language: ruby
+  version: "2.6+"
+  dependency_policy: no_external_dependencies
+paths:
+  workspace: evals/fixtures/seed-009/workspace
+  oracle: evals/fixtures/seed-009/oracle
+workspace_revision:
+  algorithm: sha256-tree-v1
+  digest: 780327c01b3c1594f6d674ab2539229ce979c0008d32fc2641c6f282de0b2e6e
+workspace_artifacts:
+  - evals/fixtures/seed-009/workspace/README.md
+  - evals/fixtures/seed-009/workspace/CONTRACT.md
+  - evals/fixtures/seed-009/workspace/data/documents.yml
+  - evals/fixtures/seed-009/workspace/lib/knowledge_store.rb
+  - evals/fixtures/seed-009/workspace/test/knowledge_store_test.rb
+oracle_artifacts:
+  - evals/fixtures/seed-009/oracle/acceptance_test.rb
+checks:
+  base:
+    - check_id: knowledge-store-base
+      mode: ruby_test
+      artifact: evals/fixtures/seed-009/workspace/test/knowledge_store_test.rb
+      command:
+        - ruby
+        - evals/fixtures/seed-009/workspace/test/knowledge_store_test.rb
+      pre_implementation_expectation: pass
+  acceptance:
+    - check_id: support-assistant-hidden-acceptance
+      mode: ruby_test
+      artifact: evals/fixtures/seed-009/oracle/acceptance_test.rb
+      command:
+        - ruby
+        - evals/fixtures/seed-009/oracle/acceptance_test.rb
+      pre_implementation_expectation: fail
+data_guarantees:
+  synthetic_only: true
+  contains_secrets: false
+  network_required: false
+  external_writes_allowed: false
+executor_excludes:
+  - evals/fixtures/seed-009/oracle

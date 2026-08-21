@@ -59,6 +59,12 @@ properties:
         enum:
           - unfrozen
           - frozen
+      profile_path:
+        type: string
+        pattern: "^evals/calibration/executor-profiles/calibration-[0-9]{3}\\.yaml$"
+      profile_revision:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
       executor_type:
         type: string
       model_version:

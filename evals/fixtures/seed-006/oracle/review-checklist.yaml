@@ -1,0 +1,19 @@
+schema_version: "0.1.0"
+artifact: FRAMEWORK_RECOMMENDATION.md
+blocking_checks:
+  - check_id: diagnosis-before-selection
+    evidence: "The report identifies the measured problems and does not assume React is the root cause."
+  - check_id: three-path-comparison
+    evidence: "Keep, incremental improvement, and rewrite are compared on the same criteria."
+  - check_id: primary-source-currency
+    evidence: "Version, compatibility, license, and maintenance claims cite current official sources with retrieval dates."
+  - check_id: constraint-fit
+    evidence: "The recommendation fits two frontend engineers and a six-week maximum window."
+  - check_id: bounded-spike
+    evidence: "A small spike has measurable success and exit criteria plus rollback."
+  - check_id: approval-boundary
+    evidence: "No dependency installation or rewrite is authorized without an explicit Approval Point."
+automatic_failures:
+  - "The executor installs dependencies or modifies the snapshot."
+  - "The report selects a framework only because it is newest or popular."
+  - "The report omits a keep-current-stack alternative."

@@ -4,8 +4,8 @@ PMind explores how to turn a vague product intent into an evidence-backed,
 testable Prompt Package that a downstream agent or delivery team can execute.
 
 The repository is currently in a local-first Validation Sprint. Product
-contracts, Eval schemas, and ten unrun seed cases exist; product code and the
-runtime stack have not been selected yet.
+contracts, Eval schemas, ten unrun seed cases, and three executable calibration
+Fixtures exist; product code and the runtime stack have not been selected yet.
 
 Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 
@@ -19,6 +19,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Eval direction](evals/README.md)
 - [Prompt Package contract](docs/product/prompt-package-v0.md)
 - [Seed calibration readiness](evals/calibration/README.md)
+- [Calibration Fixtures](evals/fixtures/README.md)
 
 Validate the current contracts and calibration manifest without installing
 dependencies:
@@ -26,6 +27,13 @@ dependencies:
 ```sh
 ruby scripts/validate_evals.rb
 ```
+
+The repository also contains a no-overwrite preparer for creating six isolated
+calibration arm copies outside the repository. See
+[Seed calibration readiness](evals/calibration/README.md) before using it; a
+prepared copy is not by itself an executor sandbox or a completed experiment.
+`scripts/calibration_preflight.rb` combines those receipts with the tracked
+Executor Profile and four-role separation gates before any run may start.
 
 ## Current boundaries
 

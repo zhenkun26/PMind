@@ -10,7 +10,7 @@
 
 ## 为什么当前是 `blocked`
 
-当前会话只有一名操作者，且三例都缺少可隔离的 Downstream Executor Fixture。此时直接生成 baseline、PMind 输出并自行评分会泄露 oracle、混淆角色并把模拟结果误写成产品证据。
+三个最小 Fixture 已创建并冻结 workspace digest，隔离工作区准备器、Executor Profile 契约和统一 preflight 也已实现；但当前会话只有一名操作者，Profile 仍有六项真实决策未确定，尚未为一次真实 Wave 生成运行副本。此时直接生成输出并自行评分仍会泄露 oracle、混淆角色并把模拟结果误写成产品证据。
 
 `blocked` 是 Quality Gate 的正确结果，不是执行失败。它阻止新增 `run_records`，但不阻止继续准备 Fixture 和角色。
 
@@ -18,9 +18,9 @@
 
 只有 `wave-01.yaml` 同时满足以下条件，才能把 `can_start` 改为 `true`：
 
-1. 四个角色均为 `assigned`，角色合并偏差已记录；
+1. 四个角色均为 `assigned` 且引用互异；角色合并只能记录为偏差，不能通过本 Wave 的盲评启动门禁；
 2. 三个 Fixture 均为 `ready`，并记录同一只读 base revision；
-3. Downstream Executor 的类型、模型版本、推理设置、工具策略和时限已冻结；
+3. Downstream Executor 的产品/版本、模型版本、推理设置、工具策略、时限和尝试次数已冻结，并记录 Profile 摘要；
 4. baseline 与 PMind 分别拥有隔离工作区，无法读取 `oracle` 或另一组结果；
 5. Contract validator 通过，Rubric 版本未在看到结果后改变；
 6. `blocked_reasons` 为空，所有 `start_gates` 为 `true`。
@@ -29,12 +29,26 @@
 
 ## 推荐执行顺序
 
-1. 创建三个最小 Fixture，只包含验证 Acceptance Criteria 所需的代码、合成数据和接口；不使用生产数据。
-2. 为每个 Fixture 冻结 base revision，并为两组复制隔离工作区。
-3. 分配角色和冻结执行器配置，然后运行 `ruby scripts/validate_evals.rb`。
-4. 按清单中的 `arm_order` 运行；主持人只回答实际提出的问题。
-5. 两名评审独立评分前三例，记录原始分歧和一致率。
-6. 若 Rubric 可一致使用，再准备剩余七例；若不可一致，提升协议版本后重跑受影响案例。
+1. ~~创建三个最小 Fixture，并冻结 base revision。~~ 已完成，见 `evals/fixtures/`。
+2. 在 `evals/calibration/executor-profiles/calibration-001.yaml` 填写真实执行器决策，按同目录 README 冻结摘要；为四个角色写入互异 opaque ID。
+3. 执行器冻结后，使用下方准备器在仓库外从对应 workspace digest 创建 baseline 与 PMind 副本；两组都排除 `oracle/`：
+
+   ```sh
+   ruby scripts/prepare_calibration_workspaces.rb --output /absolute/path/calibration-001
+   ruby scripts/prepare_calibration_workspaces.rb --verify /absolute/path/calibration-001
+   ```
+
+   准备器拒绝相对路径、仓库内路径和已存在目标，输出 `workspace-set.yaml` 收据。每个 Downstream Executor 仍必须被沙箱限制在自己的 arm 目录；文件复制本身不是操作系统级沙箱。
+
+4. 运行统一 preflight；只有输出 `READY` 才能启动：
+
+   ```sh
+   ruby scripts/calibration_preflight.rb --workspace-set /absolute/path/calibration-001
+   ```
+
+5. 按清单中的 `arm_order` 运行；主持人只回答实际提出的问题。
+6. 两名评审独立评分前三例，记录原始分歧和一致率。
+7. 若 Rubric 可一致使用，再准备剩余七例；若不可一致，提升协议版本后重跑受影响案例。
 
 ## 不属于本 Wave 的动作
 

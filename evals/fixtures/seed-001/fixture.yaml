@@ -1,0 +1,46 @@
+schema_version: "0.1.0"
+fixture_id: fixture-seed-001
+case_id: seed-001
+status: ready
+runtime:
+  language: ruby
+  version: "2.6+"
+  dependency_policy: no_external_dependencies
+paths:
+  workspace: evals/fixtures/seed-001/workspace
+  oracle: evals/fixtures/seed-001/oracle
+workspace_revision:
+  algorithm: sha256-tree-v1
+  digest: d61a86be3bbd586604bbaa3dbd89891de7c905d5f161a599111fffd8dfaa922c
+workspace_artifacts:
+  - evals/fixtures/seed-001/workspace/README.md
+  - evals/fixtures/seed-001/workspace/CONTRACT.md
+  - evals/fixtures/seed-001/workspace/lib/user_directory.rb
+  - evals/fixtures/seed-001/workspace/lib/synthetic_users.rb
+  - evals/fixtures/seed-001/workspace/test/user_directory_test.rb
+oracle_artifacts:
+  - evals/fixtures/seed-001/oracle/acceptance_test.rb
+checks:
+  base:
+    - check_id: user-directory-base
+      mode: ruby_test
+      artifact: evals/fixtures/seed-001/workspace/test/user_directory_test.rb
+      command:
+        - ruby
+        - evals/fixtures/seed-001/workspace/test/user_directory_test.rb
+      pre_implementation_expectation: pass
+  acceptance:
+    - check_id: csv-export-hidden-acceptance
+      mode: ruby_test
+      artifact: evals/fixtures/seed-001/oracle/acceptance_test.rb
+      command:
+        - ruby
+        - evals/fixtures/seed-001/oracle/acceptance_test.rb
+      pre_implementation_expectation: fail
+data_guarantees:
+  synthetic_only: true
+  contains_secrets: false
+  network_required: false
+  external_writes_allowed: false
+executor_excludes:
+  - evals/fixtures/seed-001/oracle

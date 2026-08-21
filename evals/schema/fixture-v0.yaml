@@ -1,0 +1,160 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/evals/schema/fixture-v0.yaml"
+title: "PMind Calibration Fixture v0"
+description: "Isolation, provenance, and verification contract for a seed calibration workspace."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - fixture_id
+  - case_id
+  - status
+  - runtime
+  - paths
+  - workspace_revision
+  - workspace_artifacts
+  - oracle_artifacts
+  - checks
+  - data_guarantees
+  - executor_excludes
+properties:
+  schema_version:
+    const: "0.1.0"
+  fixture_id:
+    type: string
+    pattern: "^fixture-seed-[0-9]{3}$"
+  case_id:
+    type: string
+    pattern: "^seed-[0-9]{3}$"
+  status:
+    type: string
+    enum:
+      - ready
+      - blocked
+      - retired
+  runtime:
+    type: object
+    additionalProperties: false
+    required:
+      - language
+      - version
+      - dependency_policy
+    properties:
+      language:
+        type: string
+        enum:
+          - ruby
+          - typescript_snapshot
+      version:
+        type: string
+        minLength: 1
+      dependency_policy:
+        const: no_external_dependencies
+  paths:
+    type: object
+    additionalProperties: false
+    required:
+      - workspace
+      - oracle
+    properties:
+      workspace:
+        type: string
+        pattern: "^evals/fixtures/seed-[0-9]{3}/workspace$"
+      oracle:
+        type: string
+        pattern: "^evals/fixtures/seed-[0-9]{3}/oracle$"
+  workspace_revision:
+    type: object
+    additionalProperties: false
+    required:
+      - algorithm
+      - digest
+    properties:
+      algorithm:
+        const: sha256-tree-v1
+      digest:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+  workspace_artifacts:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+  oracle_artifacts:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+  checks:
+    type: object
+    additionalProperties: false
+    required:
+      - base
+      - acceptance
+    properties:
+      base:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/check"
+      acceptance:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/check"
+  data_guarantees:
+    type: object
+    additionalProperties: false
+    required:
+      - synthetic_only
+      - contains_secrets
+      - network_required
+      - external_writes_allowed
+    properties:
+      synthetic_only:
+        const: true
+      contains_secrets:
+        const: false
+      network_required:
+        const: false
+      external_writes_allowed:
+        const: false
+  executor_excludes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+$defs:
+  check:
+    type: object
+    additionalProperties: false
+    required:
+      - check_id
+      - mode
+      - artifact
+      - pre_implementation_expectation
+    properties:
+      check_id:
+        type: string
+        pattern: "^[a-z0-9-]+$"
+      mode:
+        type: string
+        enum:
+          - ruby_test
+          - manual_review
+      artifact:
+        type: string
+      command:
+        type: array
+        minItems: 2
+        items:
+          type: string
+      pre_implementation_expectation:
+        type: string
+        enum:
+          - pass
+          - fail
+          - not_run

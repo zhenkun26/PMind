@@ -4,11 +4,23 @@
 require "date"
 require "time"
 require "yaml"
+require_relative "workspace_tree"
 
 module PMind
   class EvalValidator
     CASE_SCHEMA = "evals/schema/case-v0.yaml"
     CALIBRATION_SCHEMA = "evals/schema/calibration-wave-v0.yaml"
+    EXECUTOR_PROFILE_SCHEMA = "evals/schema/executor-profile-v0.yaml"
+    FIXTURE_SCHEMA = "evals/schema/fixture-v0.yaml"
+    EXECUTOR_DECISION_FIELDS = %w[
+      executor_type
+      executor_version
+      model_version
+      reasoning_settings
+      tool_policy
+      time_limit_minutes
+      max_attempts
+    ].freeze
     GAP_DIMENSIONS = %w[
       outcome
       user_scenario
@@ -34,10 +46,14 @@ module PMind
 
       case_schema = load_yaml(CASE_SCHEMA)
       calibration_schema = load_yaml(CALIBRATION_SCHEMA)
-      return false unless case_schema && calibration_schema
+      executor_profile_schema = load_yaml(EXECUTOR_PROFILE_SCHEMA)
+      fixture_schema = load_yaml(FIXTURE_SCHEMA)
+      return false unless case_schema && calibration_schema && executor_profile_schema && fixture_schema
 
       case_entries = yaml_entries("evals/cases/seed/*.yaml")
       calibration_entries = yaml_entries("evals/calibration/*.yaml")
+      executor_profile_entries = yaml_entries("evals/calibration/executor-profiles/*.yaml")
+      fixture_entries = yaml_entries("evals/fixtures/*/fixture.yaml")
 
       case_entries.each do |path, document|
         validate_document(case_schema, document, relative(path), case_schema)
@@ -45,9 +61,35 @@ module PMind
       validate_case_set(case_entries)
 
       case_ids = case_entries.map { |_path, document| document["case_id"] }.compact
+      fixture_entries.each do |path, document|
+        validate_document(fixture_schema, document, relative(path), fixture_schema)
+        validate_fixture(document, relative(path))
+      end
+      validate_fixture_set(fixture_entries, case_ids)
+      fixtures_by_case = fixture_entries.each_with_object({}) do |(_path, document), output|
+        output[document["case_id"]] = document if document["case_id"]
+      end
+
+      executor_profile_entries.each do |path, document|
+        validate_document(executor_profile_schema, document, relative(path), executor_profile_schema)
+        validate_executor_profile(document, relative(path))
+      end
+      validate_executor_profile_set(executor_profile_entries)
+      profiles_by_wave = executor_profile_entries.each_with_object({}) do |(path, document), output|
+        output[document["wave_id"]] = [document, relative(path)] if document["wave_id"]
+      end
+
       calibration_entries.each do |path, document|
         validate_document(calibration_schema, document, relative(path), calibration_schema)
-        validate_calibration(document, case_ids, relative(path))
+        profile, profile_path = profiles_by_wave[document["wave_id"]]
+        validate_calibration(
+          document,
+          case_ids,
+          relative(path),
+          fixtures_by_case,
+          profile,
+          profile_path
+        )
       end
 
       dimensions = case_entries.flat_map do |_path, document|
@@ -59,6 +101,8 @@ module PMind
 
       @summary = {
         "cases" => case_entries.length,
+        "fixtures" => fixture_entries.length,
+        "executor_profiles" => executor_profile_entries.length,
         "calibration_waves" => calibration_entries.length,
         "gap_dimensions" => dimensions.length,
         "risk_tags" => risks.length
@@ -134,7 +178,134 @@ module PMind
       errors.empty?
     end
 
-    def validate_calibration(manifest, case_ids, path)
+    def validate_fixture_set(entries, case_ids)
+      errors << "fixtures: expected 3, got #{entries.length}" unless entries.length == 3
+
+      fixture_ids = entries.map { |_path, document| document["fixture_id"] }.compact
+      case_fixture_ids = entries.map { |_path, document| document["case_id"] }.compact
+      duplicate_values(fixture_ids).each { |fixture_id| errors << "fixtures: duplicate fixture_id #{fixture_id}" }
+      duplicate_values(case_fixture_ids).each { |case_id| errors << "fixtures: duplicate case_id #{case_id}" }
+      (case_fixture_ids - case_ids).each { |case_id| errors << "fixtures: unknown case_id #{case_id}" }
+      errors.empty?
+    end
+
+    def validate_executor_profile_set(entries)
+      errors << "executor profiles: expected 1, got #{entries.length}" unless entries.length == 1
+
+      profile_ids = entries.map { |_path, document| document["profile_id"] }.compact
+      wave_ids = entries.map { |_path, document| document["wave_id"] }.compact
+      duplicate_values(profile_ids).each { |id| errors << "executor profiles: duplicate profile_id #{id}" }
+      duplicate_values(wave_ids).each { |id| errors << "executor profiles: duplicate wave_id #{id}" }
+      errors.empty?
+    end
+
+    def validate_executor_profile(profile, path)
+      wave_id = profile["wave_id"]
+      expected_path = "evals/calibration/executor-profiles/#{wave_id}.yaml"
+      unless path == expected_path && profile["profile_id"] == "executor-#{wave_id}"
+        errors << "#{path}: profile path and profile_id must match wave_id"
+      end
+
+      missing = EXECUTOR_DECISION_FIELDS.reject { |field| profile.key?(field) }
+      unresolved = profile["unresolved_fields"] || []
+      unless unresolved.sort == missing.sort
+        errors << "#{path}: unresolved_fields must exactly match missing executor decisions"
+      end
+
+      if profile["status"] == "frozen" && !unresolved.empty?
+        errors << "#{path}: frozen profile cannot retain unresolved fields"
+      elsif profile["status"] == "draft" && unresolved.empty?
+        errors << "#{path}: draft profile must retain at least one unresolved field"
+      end
+      errors.empty?
+    end
+
+    def executor_profile_ready?(profile)
+      profile && profile["status"] == "frozen" && (profile["unresolved_fields"] || []).empty?
+    end
+
+    def roles_ready?(roles)
+      assignments = (roles || {}).values
+      refs = assignments.map { |assignment| assignment["assignee_ref"] }
+      assignments.length == 4 &&
+        assignments.all? { |assignment| assignment["status"] == "assigned" && present?(assignment["assignee_ref"]) } &&
+        refs.uniq.length == 4
+    end
+
+    def validate_fixture(fixture, path)
+      case_id = fixture["case_id"]
+      fixture_root = "evals/fixtures/#{case_id}"
+      unless fixture["fixture_id"] == "fixture-#{case_id}"
+        errors << "#{path}: fixture_id must match case_id"
+      end
+      unless path == "#{fixture_root}/fixture.yaml"
+        errors << "#{path}: fixture manifest path must match case_id"
+      end
+      unless fixture.dig("paths", "workspace") == "#{fixture_root}/workspace" &&
+             fixture.dig("paths", "oracle") == "#{fixture_root}/oracle"
+        errors << "#{path}: workspace and oracle paths must match case_id"
+      end
+
+      workspace = safe_repo_path(fixture.dig("paths", "workspace"), path)
+      oracle = safe_repo_path(fixture.dig("paths", "oracle"), path)
+      return false unless workspace && oracle
+
+      errors << "#{path}: workspace directory is missing" unless File.directory?(workspace)
+      errors << "#{path}: oracle directory is missing" unless File.directory?(oracle)
+      return false unless File.directory?(workspace) && File.directory?(oracle)
+
+      if nested_path?(workspace, oracle) || nested_path?(oracle, workspace)
+        errors << "#{path}: workspace and oracle must be disjoint"
+      end
+      workspace_files = safe_tree_files(workspace, path)
+      oracle_files = safe_tree_files(oracle, path)
+      return false unless workspace_files && oracle_files
+
+      validate_artifact_inventory(
+        fixture["workspace_artifacts"] || [],
+        workspace_files.map { |file| relative(file) },
+        workspace,
+        "workspace",
+        path
+      )
+      validate_artifact_inventory(
+        fixture["oracle_artifacts"] || [],
+        oracle_files.map { |file| relative(file) },
+        oracle,
+        "oracle",
+        path
+      )
+
+      digest = workspace_digest(fixture.dig("paths", "workspace"))
+      unless digest == fixture.dig("workspace_revision", "digest")
+        errors << "#{path}: workspace digest mismatch, actual #{digest}"
+      end
+
+      unless fixture["executor_excludes"] == [fixture.dig("paths", "oracle")]
+        errors << "#{path}: executor_excludes must contain only the oracle directory"
+      end
+      validate_fixture_checks(fixture, path)
+      errors.empty?
+    end
+
+    def workspace_digest(relative_workspace)
+      workspace = safe_repo_path(relative_workspace, "workspace digest")
+      return nil unless workspace && File.directory?(workspace)
+
+      WorkspaceTree.digest(workspace)
+    rescue WorkspaceTree::UnsafeTreeError => e
+      errors << "workspace digest: #{e.message}"
+      nil
+    end
+
+    def validate_calibration(
+      manifest,
+      case_ids,
+      path,
+      fixtures_by_case = {},
+      executor_profile = nil,
+      executor_profile_path = nil
+    )
       selected = (manifest["cases"] || []).map { |entry| entry["case_id"] }.compact
       duplicate_values(selected).each { |case_id| errors << "#{path}: duplicate case #{case_id}" }
       (selected - case_ids).each { |case_id| errors << "#{path}: unknown case #{case_id}" }
@@ -145,6 +316,22 @@ module PMind
       if (baseline_first - pmind_first).abs > 1
         errors << "#{path}: arm order must be balanced within one case"
       end
+
+      unless fixtures_by_case.empty?
+        fixtures_ready = (manifest["cases"] || []).all? do |entry|
+          fixture = fixtures_by_case[entry["case_id"]]
+          fixture &&
+            fixture["status"] == "ready" &&
+            entry.dig("fixture", "status") == "ready" &&
+            entry.dig("fixture", "workspace_base_revision") == fixture.dig("workspace_revision", "digest")
+        end
+        if manifest.dig("start_gates", "fixtures_ready") != fixtures_ready
+          errors << "#{path}: fixtures_ready gate does not match fixture manifests"
+        end
+      end
+
+      validate_executor_gate(manifest, executor_profile, executor_profile_path, path)
+      validate_role_gate(manifest, path)
 
       if manifest["can_start"]
         validate_ready_calibration(manifest, path)
@@ -160,6 +347,121 @@ module PMind
     end
 
     private
+
+    def validate_executor_gate(manifest, profile, profile_path, path)
+      config = manifest["executor_config"] || {}
+      if profile.nil?
+        if present?(config["profile_path"]) || manifest.dig("start_gates", "executor_frozen")
+          errors << "#{path}: executor profile is missing from validation context"
+        end
+        return
+      end
+
+      unless config["profile_path"] == profile_path && profile["wave_id"] == manifest["wave_id"]
+        errors << "#{path}: executor profile path and wave_id must match the Wave"
+      end
+
+      frozen = executor_profile_ready?(profile)
+      expected_status = frozen ? "frozen" : "unfrozen"
+      unless config["status"] == expected_status
+        errors << "#{path}: executor configuration status does not match its profile"
+      end
+      unless manifest.dig("start_gates", "executor_frozen") == frozen
+        errors << "#{path}: executor_frozen gate does not match its profile"
+      end
+
+      if frozen
+        expected_revision = Digest::SHA256.file(File.expand_path(profile_path, @root)).hexdigest
+        unless config["profile_revision"] == expected_revision
+          errors << "#{path}: frozen executor profile revision is missing or stale"
+        end
+      elsif config.key?("profile_revision")
+        errors << "#{path}: draft executor profile must not have a frozen revision"
+      end
+    end
+
+    def validate_role_gate(manifest, path)
+      assignments = (manifest["roles"] || {}).values
+      assigned_refs = assignments.each_with_object([]) do |assignment, refs|
+        if assignment["status"] == "assigned" && present?(assignment["assignee_ref"])
+          refs << assignment["assignee_ref"]
+        end
+      end
+      duplicate_values(assigned_refs).each do |assignee_ref|
+        errors << "#{path}: assignee_ref #{assignee_ref} cannot hold multiple calibration roles"
+      end
+
+      roles_assigned = roles_ready?(manifest["roles"])
+      unless manifest.dig("start_gates", "roles_assigned") == roles_assigned
+        errors << "#{path}: roles_assigned gate does not match distinct role assignments"
+      end
+    end
+
+    def validate_artifact_inventory(declared, actual, expected_root, kind, path)
+      declared.each do |artifact|
+        absolute = safe_repo_path(artifact, path)
+        next unless absolute
+
+        unless nested_path?(absolute, expected_root) && File.file?(absolute)
+          errors << "#{path}: #{kind} artifact is missing or outside #{kind} (#{artifact})"
+        end
+      end
+      (actual.sort - declared.sort).each { |artifact| errors << "#{path}: undeclared #{kind} artifact #{artifact}" }
+      (declared.sort - actual.sort).each { |artifact| errors << "#{path}: missing declared #{kind} artifact #{artifact}" }
+    end
+
+    def validate_fixture_checks(fixture, path)
+      checks = fixture["checks"] || {}
+      (checks["base"] || []).each do |check|
+        errors << "#{path}: base check must expect pass" unless check["pre_implementation_expectation"] == "pass"
+        validate_check_command(check, path)
+      end
+      (checks["acceptance"] || []).each do |check|
+        if check["pre_implementation_expectation"] == "pass"
+          errors << "#{path}: acceptance check cannot pass before implementation"
+        end
+        validate_check_command(check, path)
+      end
+    end
+
+    def validate_check_command(check, path)
+      artifact = safe_repo_path(check["artifact"], path)
+      errors << "#{path}: check artifact is missing #{check["artifact"]}" unless artifact && File.file?(artifact)
+
+      command = check["command"]
+      if check["mode"] == "ruby_test"
+        unless command == ["ruby", check["artifact"]]
+          errors << "#{path}: ruby_test command must exactly invoke its declared artifact"
+        end
+      elsif command
+        errors << "#{path}: manual_review check must not declare a command"
+      end
+    end
+
+    def safe_repo_path(path, context)
+      unless path.is_a?(String) && !path.empty?
+        errors << "#{context}: repository path is missing"
+        return nil
+      end
+
+      absolute = File.expand_path(path, @root)
+      unless absolute == @root || absolute.start_with?("#{@root}/")
+        errors << "#{context}: path escapes repository (#{path})"
+        return nil
+      end
+      absolute
+    end
+
+    def nested_path?(candidate, root)
+      candidate == root || candidate.start_with?("#{root}/")
+    end
+
+    def safe_tree_files(root, path)
+      WorkspaceTree.files(root)
+    rescue WorkspaceTree::UnsafeTreeError => e
+      errors << "#{path}: #{e.message}"
+      nil
+    end
 
     def yaml_entries(pattern)
       Dir[File.join(@root, pattern)].sort.each_with_object([]) do |path, entries|
@@ -288,9 +590,8 @@ module PMind
 
       executor = manifest["executor_config"] || {}
       errors << "#{path}: executor configuration must be frozen" unless executor["status"] == "frozen"
-      %w[executor_type model_version reasoning_settings tool_policy time_limit_minutes].each do |field|
-        errors << "#{path}: frozen executor missing #{field}" unless present?(executor[field])
-      end
+      errors << "#{path}: frozen executor missing profile_path" unless present?(executor["profile_path"])
+      errors << "#{path}: frozen executor missing profile_revision" unless present?(executor["profile_revision"])
 
       (manifest["cases"] || []).each do |entry|
         fixture = entry["fixture"] || {}

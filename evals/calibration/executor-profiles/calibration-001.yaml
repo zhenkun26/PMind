@@ -1,0 +1,20 @@
+schema_version: "0.1.0"
+profile_id: executor-calibration-001
+wave_id: calibration-001
+status: draft
+executor_type: coding_agent
+fairness:
+  same_profile_all_cases: true
+  same_profile_both_arms: true
+  fresh_context_per_arm: true
+safety:
+  secrets_allowed: false
+  production_data_allowed: false
+  automatic_external_actions_allowed: false
+unresolved_fields:
+  - executor_version
+  - model_version
+  - reasoning_settings
+  - tool_policy
+  - time_limit_minutes
+  - max_attempts

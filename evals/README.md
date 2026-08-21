@@ -3,8 +3,9 @@
 - Current schema: `evals/schema/case-v0.yaml` (`0.1.0`)
 - Current rubric: `evals/rubrics/first-pass-success-v0.md` (`0.1.0`)
 - Seed set: 10 synthetic, ready, unrun cases under `evals/cases/seed/`
-- Calibration: `evals/calibration/wave-01.yaml` is blocked until roles,
-  fixtures, executor settings, and isolated workspaces are ready
+- Calibration fixtures: 3 synthetic, executable fixtures under `evals/fixtures/`
+- Calibration: `evals/calibration/wave-01.yaml` remains blocked until roles,
+  executor settings, and isolated arm workspaces are ready
 - Runtime framework: intentionally not selected
 
 PMind will be evaluated by downstream delivery outcomes, not by whether an
@@ -59,8 +60,15 @@ The experiment is paired:
 - `evals/rubrics/first-pass-success-v0.md`: binary primary outcome and diagnostic scores;
 - `evals/cases/seed/`: calibration cases. All have empty `run_records` until actually run.
 - `evals/schema/calibration-wave-v0.yaml`: calibration readiness contract;
+- `evals/schema/fixture-v0.yaml`: Fixture isolation, inventory, digest, and check contract;
+- `evals/schema/workspace-set-v0.yaml`: generated isolated-arm receipt contract;
+- `evals/schema/executor-profile-v0.yaml`: executor fairness, safety, and freeze contract;
+- `evals/fixtures/`: three ready synthetic workspaces with executor-excluded oracles;
+- `evals/calibration/executor-profiles/`: truthful draft/frozen executor decisions;
 - `evals/calibration/wave-01.yaml`: first three-case Wave and honest blockers;
 - `scripts/validate_evals.rb`: dependency-free structural and cross-field checks.
+- `scripts/prepare_calibration_workspaces.rb`: no-overwrite preparation and verification of external arm copies.
+- `scripts/calibration_preflight.rb`: read-only readiness report across contracts, roles, executor, and arm copies.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -70,4 +78,8 @@ Run the current deterministic checks with:
 ```sh
 ruby scripts/validate_evals.rb
 ruby test/validate_evals_test.rb
+ruby scripts/calibration_preflight.rb
 ```
+
+The last command currently exits with a blocked status by design; it must not be
+treated as a failed experiment.

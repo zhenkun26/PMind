@@ -1,0 +1,46 @@
+schema_version: "0.1.0"
+fixture_id: fixture-seed-006
+case_id: seed-006
+status: ready
+runtime:
+  language: typescript_snapshot
+  version: "React 18.2.0 / TypeScript 5.5.4"
+  dependency_policy: no_external_dependencies
+paths:
+  workspace: evals/fixtures/seed-006/workspace
+  oracle: evals/fixtures/seed-006/oracle
+workspace_revision:
+  algorithm: sha256-tree-v1
+  digest: 2ffbcb9eda4e65a5ed6d29c9e59bc7fbdbce0846a74da8608d91737d34af3fe4
+workspace_artifacts:
+  - evals/fixtures/seed-006/workspace/README.md
+  - evals/fixtures/seed-006/workspace/CONTRACT.md
+  - evals/fixtures/seed-006/workspace/ARCHITECTURE.md
+  - evals/fixtures/seed-006/workspace/package.json
+  - evals/fixtures/seed-006/workspace/metrics.json
+  - evals/fixtures/seed-006/workspace/src/AdminApp.tsx
+  - evals/fixtures/seed-006/workspace/src/forms/ProjectForm.tsx
+  - evals/fixtures/seed-006/workspace/test/snapshot_test.rb
+oracle_artifacts:
+  - evals/fixtures/seed-006/oracle/review-checklist.yaml
+checks:
+  base:
+    - check_id: admin-snapshot-base
+      mode: ruby_test
+      artifact: evals/fixtures/seed-006/workspace/test/snapshot_test.rb
+      command:
+        - ruby
+        - evals/fixtures/seed-006/workspace/test/snapshot_test.rb
+      pre_implementation_expectation: pass
+  acceptance:
+    - check_id: framework-report-review
+      mode: manual_review
+      artifact: evals/fixtures/seed-006/oracle/review-checklist.yaml
+      pre_implementation_expectation: not_run
+data_guarantees:
+  synthetic_only: true
+  contains_secrets: false
+  network_required: false
+  external_writes_allowed: false
+executor_excludes:
+  - evals/fixtures/seed-006/oracle

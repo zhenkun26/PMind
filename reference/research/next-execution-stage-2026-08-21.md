@@ -283,4 +283,4 @@ PMind 的下一阶段不应是“搭建完整多 Agent 产品”，而应是一�
 
 下一质量门是由两名评审先用 3 个种子案例校准 Rubric 和角色隔离，再运行完整 10 案例。若无法提供独立案例主持人与第二评审，应把盲评和一致率标记为受限，而不能声称第 1 阶段通过。
 
-已进一步创建 `calibration-001`：选择 `seed-001`、`seed-006`、`seed-009`，固定交替臂顺序，并用机器可检查的门槛约束角色、Fixture、执行器配置和隔离工作区。由于这些条件尚未满足，Wave 明确保持 `blocked`，所有案例仍未运行。仓库已提供无第三方依赖的 `scripts/validate_evals.rb`，用于验证案例、运行记录和校准清单的一致性。
+已进一步创建 `calibration-001`：选择 `seed-001`、`seed-006`、`seed-009`，固定交替臂顺序，并用机器可检查的门槛约束角色、Fixture、执行器配置和隔离工作区。三个合成 Fixture 及其 executor-excluded oracle 已创建，workspace digest 已冻结，基础自检已通过；`fixtures_ready` 因此为 `true`。仓库外隔离工作区准备器也已实现，可拒绝覆盖并生成同源双臂副本及可验证收据，但它不替代执行器沙箱。新增 Executor Profile 契约会精确核对未决字段和冻结摘要，统一 preflight 会合并契约、四角色互斥、Profile 与 workspace-set 证据。四个角色仍未分配、Profile 仍缺六项真实决策、本次 Wave 的运行副本仍未生成，所以 Wave 明确保持 `blocked`，所有案例仍未运行。

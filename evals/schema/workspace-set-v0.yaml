@@ -1,0 +1,77 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/evals/schema/workspace-set-v0.yaml"
+title: "PMind Calibration Workspace Set v0"
+description: "Generated receipt for isolated baseline and PMind workspace copies."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - wave_id
+  - status
+  - prepared_at
+  - source_wave_manifest
+  - oracle_included
+  - cases
+properties:
+  schema_version:
+    const: "0.1.0"
+  wave_id:
+    type: string
+    pattern: "^calibration-[0-9]{3}$"
+  status:
+    const: ready
+  prepared_at:
+    type: string
+    format: date-time
+  source_wave_manifest:
+    const: evals/calibration/wave-01.yaml
+  oracle_included:
+    const: false
+  cases:
+    type: array
+    minItems: 3
+    maxItems: 3
+    uniqueItems: true
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - case_id
+        - fixture_id
+        - arms
+      properties:
+        case_id:
+          type: string
+          pattern: "^seed-[0-9]{3}$"
+        fixture_id:
+          type: string
+          pattern: "^fixture-seed-[0-9]{3}$"
+        arms:
+          type: object
+          additionalProperties: false
+          required:
+            - baseline
+            - pmind
+          properties:
+            baseline:
+              $ref: "#/$defs/arm"
+            pmind:
+              $ref: "#/$defs/arm"
+$defs:
+  arm:
+    type: object
+    additionalProperties: false
+    required:
+      - path
+      - source_revision
+      - prepared_revision
+    properties:
+      path:
+        type: string
+        pattern: "^cases/seed-[0-9]{3}/(baseline|pmind)$"
+      source_revision:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      prepared_revision:
+        type: string
+        pattern: "^[a-f0-9]{64}$"

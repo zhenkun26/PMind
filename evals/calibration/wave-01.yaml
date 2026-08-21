@@ -9,6 +9,7 @@ protocols:
   runbook_version: "0.1.0"
 executor_config:
   status: unfrozen
+  profile_path: evals/calibration/executor-profiles/calibration-001.yaml
 roles:
   facilitator:
     status: unassigned
@@ -22,35 +23,35 @@ cases:
   - case_id: seed-001
     arm_order: baseline_then_pmind
     fixture:
-      status: missing
+      status: ready
+      workspace_base_revision: d61a86be3bbd586604bbaa3dbd89891de7c905d5f161a599111fffd8dfaa922c
       required_artifacts:
-        - "可隔离复制的后台用户列表最小代码仓库"
-        - "去标识化用户 fixture 与十万行生成器"
-        - "权限矩阵、审计接口和资源上限说明"
+        - "evals/fixtures/seed-001/workspace"
+        - "evals/fixtures/seed-001/oracle/acceptance_test.rb"
   - case_id: seed-006
     arm_order: pmind_then_baseline
     fixture:
-      status: missing
+      status: ready
+      workspace_base_revision: 2ffbcb9eda4e65a5ed6d29c9e59bc7fbdbce0846a74da8608d91737d34af3fe4
       required_artifacts:
-        - "代表 React 18/TypeScript 现状的只读管理后台快照"
-        - "代码规模、依赖、测试和性能基线"
-        - "两人团队与六周迁移约束说明"
+        - "evals/fixtures/seed-006/workspace"
+        - "evals/fixtures/seed-006/oracle/review-checklist.yaml"
   - case_id: seed-009
     arm_order: baseline_then_pmind
     fixture:
-      status: missing
+      status: ready
+      workspace_base_revision: 780327c01b3c1594f6d674ab2539229ce979c0008d32fc2641c6f282de0b2e6e
       required_artifacts:
-        - "客户可见、内部和跨租户三类合成知识文档"
-        - "提示注入、无答案和冲突来源问题集"
-        - "不连接真实模型或客户系统的结果评审接口"
+        - "evals/fixtures/seed-009/workspace"
+        - "evals/fixtures/seed-009/oracle/acceptance_test.rb"
 start_gates:
   contracts_valid: true
   rubric_frozen: true
   roles_assigned: false
-  fixtures_ready: false
+  fixtures_ready: true
   executor_frozen: false
   isolated_workspaces_ready: false
 blocked_reasons:
   - "独立案例主持人、PMind 操作者和两名评审尚未分配。"
-  - "三个案例的可执行 Fixture 与隔离工作区尚未创建。"
-  - "Downstream Executor 的模型版本、推理设置、工具和时间限制尚未冻结。"
+  - "Executor Profile 仍缺执行器版本、模型版本、推理设置、工具策略、时限和尝试次数。"
+  - "隔离工作区准备器已就绪，但本 Wave 尚未在冻结执行器后生成并验证 baseline/PMind 运行副本。"

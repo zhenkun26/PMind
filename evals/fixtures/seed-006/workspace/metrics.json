@@ -1,0 +1,9 @@
+{
+  "snapshot_kind": "representative_excerpt",
+  "estimated_source_lines": 25000,
+  "frontend_engineers": 2,
+  "migration_window_weeks": 6,
+  "p75_first_contentful_paint_ms": 3200,
+  "form_duplication_clusters": 7,
+  "weekly_product_releases": 2
+}
