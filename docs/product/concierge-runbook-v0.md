@@ -149,7 +149,7 @@ GitHub/Skill/框架研究至少记录 URL、检索日期、版本/commit、许�
 - 将所有高风险动作转为 Approval Point。
 - 不包含内部思维链或未获授权的敏感数据。
 
-产出：版本化 Prompt Package。
+产出：尚未确认的候选 Prompt Package。
 
 编译后同时校验 Package 结构和 Session → Package lineage：
 
@@ -160,12 +160,21 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-pac
 
 lineage 校验通过只证明会话中可审计信息被保留，不证明外部事实正确或下游效果达标。
 
+在展示编译结果前，先确认 Session revision 已完成独立来源链重放，再创建符合 [Prompt Package Compilation Proposal v0](prompt-package-compilation-proposal-v0.md) 的 pending Proposal，并运行三文件只读预演：
+
+```sh
+ruby scripts/preview_prompt_package_compilation.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml
+```
+
+只向用户展示 stdout 中的范围、推荐方案、主要取舍、blocking 验收、未知项、审批边界和候选质量门状态。当前步骤不保存“确认 / 修改 / 拒绝”选择，不创建最终 Package，也不授权 Handoff；必须由后续独立 Confirmation Receipt 绑定三份精确输入后才能继续。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
 - 依据 `evals/rubrics/first-pass-success-v0.md` 预先冻结判定方式。
 - `handoff.ready` 只有在所有 blocking gate 通过后才能为 `true`。
 - Handoff 只传递允许内容；禁止动作必须随 Package 一起传递。
+- Compilation Proposal 的确认不能代替 Quality Gate，也不能改变 Package 中已有 Approval Point 的状态。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

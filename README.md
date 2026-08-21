@@ -24,6 +24,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Clarification Revision Proposal contract](docs/product/clarification-revision-proposal-v0.md)
 - [Clarification Confirmation Receipt contract](docs/product/clarification-confirmation-receipt-v0.md)
 - [Clarification Revision Lineage Verification contract](docs/product/clarification-revision-lineage-v0.md)
+- [Prompt Package Compilation Proposal contract](docs/product/prompt-package-compilation-proposal-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -83,6 +84,13 @@ confirmed source files without modifying any of them:
 ruby scripts/verify_clarification_revision_lineage.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
 ```
 
+Preview a candidate Prompt Package against a persisted ready Session revision,
+without creating or handing off the Package:
+
+```sh
+ruby scripts/preview_prompt_package_compilation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -119,3 +127,6 @@ Executor Profile and four-role separation gates before any run may start.
 - A persisted revision is not trusted by presence alone; lineage verification
   must deterministically replay the confirmed sources and match every Session
   field before the revision proceeds downstream.
+- A Compilation Proposal binds one exact ready Session revision and draft
+  Package, but its pending confirmation never creates a Package, authorizes
+  Handoff, or changes any high-risk Approval Point.

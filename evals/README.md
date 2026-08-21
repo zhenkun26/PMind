@@ -64,6 +64,8 @@ The experiment is paired:
 - `docs/product/clarification-confirmation-receipt-v0.md`: exact-file choice capture, safe outcome copy, and no-overwrite revision creation contract;
 - `schemas/clarification-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject choice, source-file digests, privacy declarations, and creation authorization;
 - `docs/product/clarification-revision-lineage-v0.md`: persisted revision replay, deterministic content comparison, and safe audit-copy contract;
+- `docs/product/prompt-package-compilation-proposal-v0.md`: exact ready-revision/draft-Package binding, pending confirmation, and safe compilation-review copy;
+- `schemas/prompt-package-compilation-proposal-v0.yaml`: machine-readable Compilation Proposal digests, revision binding, privacy declarations, and zero-authorization contract;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -89,6 +91,7 @@ The experiment is paired:
 - `scripts/preview_clarification_confirmation.rb`: read-only exact-file confirmation binding and three-choice outcome renderer.
 - `scripts/create_clarification_revision.rb`: confirmed-only, deterministic, no-overwrite Session revision creator with audit lineage.
 - `scripts/verify_clarification_revision_lineage.rb`: read-only five-file replay verifier for persisted revision metadata and full Session content.
+- `scripts/preview_prompt_package_compilation.rb`: read-only Session/Package/Proposal binding, cross-lineage validation, and safe confirmation renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -102,6 +105,7 @@ ruby test/acceptance_result_test.rb
 ruby test/validate_clarification_session_test.rb
 ruby test/render_clarification_copy_test.rb
 ruby test/preview_clarification_answers_test.rb
+ruby test/preview_prompt_package_compilation_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

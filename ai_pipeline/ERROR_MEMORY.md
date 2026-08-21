@@ -57,3 +57,7 @@
 ## 2026-08-21 — Verify Clarification revision lineage
 
 - [2026-08-21T23:45:00+08:00] archive audit command L0: a dense zsh one-liner embedded conflicting Ruby and shell quote forms and failed before running any audit, fix: split the checks into small commands with simple literal patterns, prevention: avoid nested regex literals inside single-quoted shell programs during final archive verification
+
+## 2026-08-21 — Preview Prompt Package compilation
+
+- [2026-08-21T23:43:00+08:00] ready revision Fixture rehearsal L0: repeated the known `require_relative` failure inside a Ruby `-e` program, fix: load the repository script through `require File.expand_path(...)`, prevention: copy the existing absolute-load aggregate runner pattern whenever Ruby code has no backing file

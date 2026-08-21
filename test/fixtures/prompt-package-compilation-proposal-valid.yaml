@@ -1,0 +1,20 @@
+schema_version: "0.1.0"
+compilation_proposal_id: compile-proposal-20260821-001
+created_at: "2026-08-21T12:05:00+08:00"
+language: zh-CN
+session_id: session-20260821-002
+source_session_revision_number: 1
+source_session_status: ready_to_compile
+source_session_file_sha256: 6d78c8afe7d001cbe51e70d02c295cf1822abbba6c5706c2a2cafe6d42f93b49
+package_id: pkg-20260821-001
+draft_package_file_sha256: 2d847f1a2564a29fa366b56a82ded87fb3beebff6187275ee9f019860da9137f
+draft_package_handoff_ready: true
+confirmation:
+  required: true
+  status: pending
+  package_creation_authorized: false
+  handoff_authorized: false
+  high_risk_authorization_inferred: false
+data_classification: public
+contains_personal_data: false
+contains_secrets: false
