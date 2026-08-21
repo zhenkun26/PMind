@@ -1,0 +1,90 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/clarification-answer-receipt-v0.yaml"
+title: "PMind Clarification Answer Receipt v0"
+description: "Immutable user-answer batch bound to one validated Clarification Session question round."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - receipt_id
+  - session_id
+  - session_raw_intent_sha256
+  - session_status
+  - round_number
+  - captured_at
+  - language
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+  - responses
+properties:
+  schema_version:
+    const: "0.1.0"
+  receipt_id:
+    type: string
+    pattern: "^receipt-[0-9]{8}-[0-9]{3}$"
+  session_id:
+    type: string
+    pattern: "^session-[0-9]{8}-[0-9]{3}$"
+  session_raw_intent_sha256:
+    $ref: "#/$defs/sha256"
+  session_status:
+    type: string
+    enum:
+      - gap_scan
+      - clarifying
+  round_number:
+    type: integer
+    minimum: 1
+  captured_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
+  contains_personal_data:
+    type: boolean
+  contains_secrets:
+    const: false
+  responses:
+    type: array
+    minItems: 1
+    maxItems: 3
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - question_id
+        - question_sha256
+        - response_kind
+        - user_answer
+        - user_answer_sha256
+      properties:
+        question_id:
+          type: string
+          pattern: "^QUESTION-[0-9]{3}$"
+        question_sha256:
+          $ref: "#/$defs/sha256"
+        response_kind:
+          type: string
+          enum:
+            - answered
+            - skipped
+            - unknown
+            - refused
+        user_answer:
+          type: string
+          minLength: 1
+          maxLength: 4000
+        user_answer_sha256:
+          $ref: "#/$defs/sha256"
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"

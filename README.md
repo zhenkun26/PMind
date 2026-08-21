@@ -20,6 +20,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [First-pass success rubric](evals/rubrics/first-pass-success-v0.md)
 - [Prompt Package contract](docs/product/prompt-package-v0.md)
 - [Clarification user copy contract](docs/product/clarification-copy-v0.md)
+- [Clarification Answer Receipt contract](docs/product/clarification-answer-receipt-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -51,6 +52,12 @@ Render validated Session state as user-facing Markdown without modifying it:
 ruby scripts/render_clarification_copy.rb path/to/session.yaml
 ```
 
+Dry-run a user Answer Receipt against the current Session without applying it:
+
+```sh
+ruby scripts/preview_clarification_answers.rb path/to/session.yaml path/to/receipt.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -77,3 +84,5 @@ Executor Profile and four-role separation gates before any run may start.
   unmarked high-risk action remains.
 - User-facing Clarification copy never includes raw Intent, saved answers,
   internal priorities, source references, or decision-maker identifiers.
+- An Answer Receipt dry-run never normalizes an answer, mutates Session state,
+  or treats an ordinary response as high-risk authorization.

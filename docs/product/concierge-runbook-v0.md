@@ -62,6 +62,14 @@ ruby scripts/render_clarification_copy.rb path/to/session.yaml
 
 只发送 stdout 中的用户文案；校验错误留给操作者处理，不能作为半成品问题发送给用户。
 
+收到用户回复后，先按 [Clarification Answer Receipt v0](clarification-answer-receipt-v0.md) 保存逐字原答和摘要，再对当前 Session 做只读适用性预演：
+
+```sh
+ruby scripts/preview_clarification_answers.rb path/to/session.yaml path/to/receipt.yaml
+```
+
+成功只表示问题、轮次、摘要、时间和数据边界一致。操作者仍需复核归一化结论、受影响字段与信息缺口状态，再创建 Session 新 revision；不得把普通回答推导为 Approval Point 授权。
+
 只有状态为 `ready_to_compile` 且校验通过的 Session 才能进入 Compile；`blocked` 必须保留阻塞原因，不能用操作者推断补齐。
 
 ### 4. Research：按需取证

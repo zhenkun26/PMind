@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "cgi"
 require "yaml"
+require_relative "markdown_safety"
 require_relative "validate_clarification_session"
 
 module PMind
@@ -175,8 +175,7 @@ module PMind
     end
 
     def safe_text(value)
-      single_line = value.to_s.gsub(/[[:space:]]+/, " ").strip
-      CGI.escapeHTML(single_line).gsub(/[\\`*_{}\[\]#+!|~]/) { |character| "\\#{character}" }
+      MarkdownSafety.inline(value)
     end
   end
 end

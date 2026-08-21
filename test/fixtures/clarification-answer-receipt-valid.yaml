@@ -1,0 +1,17 @@
+schema_version: "0.1.0"
+receipt_id: receipt-20260821-001
+session_id: session-20260821-002
+session_raw_intent_sha256: 27a53dd6861fee065c22fbf67bbaf098fc4f40d90746cf8b90963294fde9db3d
+session_status: gap_scan
+round_number: 1
+captured_at: "2026-08-21T11:05:00+08:00"
+language: zh-CN
+data_classification: public
+contains_personal_data: false
+contains_secrets: false
+responses:
+  - question_id: QUESTION-001
+    question_sha256: 6d2f3530b759027480aeb26b13897d8231de20afdb1b208d4f7d753d7e4a6833
+    response_kind: answered
+    user_answer: "只有具有 export_users 权限的角色。"
+    user_answer_sha256: e8361c17d21fcf2071b3a8009fe74e1fd10e7945585ae4722f8b5d969d3fd738

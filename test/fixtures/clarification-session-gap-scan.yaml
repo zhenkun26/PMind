@@ -1,0 +1,124 @@
+schema_version: "0.1.0"
+session_id: session-20260821-002
+created_at: "2026-08-21T11:00:00+08:00"
+language: zh-CN
+status: gap_scan
+intake:
+  raw_intent: "为后台用户列表增加安全的 CSV 导出能力。"
+  raw_intent_sha256: 27a53dd6861fee065c22fbf67bbaf098fc4f40d90746cf8b90963294fde9db3d
+  source_kind: user
+  user_profile: "负责后台运营工具的产品经理"
+  task_type: coding_handoff
+  downstream_executor: coding_agent
+  data_classification: public
+  contains_personal_data: false
+  contains_secrets: false
+  allowed_context:
+    - "合成测试工作区"
+round_policy:
+  default_max_rounds: 3
+  extension_authorized_by_user: false
+gaps:
+  - dimension: outcome
+    status: resolved
+    blocking: false
+    summary: "授权用户可以安全导出筛选后的必要字段。"
+    source_refs:
+      - intake
+  - dimension: user_scenario
+    status: resolved
+    blocking: false
+    summary: "运营人员筛选后台用户后发起导出。"
+    source_refs:
+      - intake
+  - dimension: scope
+    status: resolved
+    blocking: false
+    summary: "仅导出当前筛选条件下明确允许的字段。"
+    source_refs:
+      - intake
+  - dimension: current_state
+    status: resolved
+    blocking: false
+    summary: "后台已有用户列表和服务端权限检查。"
+    source_refs:
+      - intake
+  - dimension: constraints
+    status: assumed
+    blocking: false
+    summary: "首版数据量可由同步流式响应处理。"
+    source_refs:
+      - DECISION-001
+    knowledge_ref: ASSUMP-001
+  - dimension: evidence
+    status: unknown
+    blocking: false
+    summary: "最终按钮本地化约定不影响服务端实现。"
+    source_refs: []
+    knowledge_ref: UNKNOWN-001
+  - dimension: acceptance
+    status: resolved
+    blocking: false
+    summary: "无权限调用者不得获得 CSV 内容。"
+    source_refs:
+      - intake
+  - dimension: risk_authority
+    status: unknown
+    blocking: true
+    summary: "导出权限尚未获得用户确认。"
+    source_refs: []
+    knowledge_ref: UNKNOWN-002
+  - dimension: handoff
+    status: resolved
+    blocking: false
+    summary: "交给隔离工作区内的 coding_agent 实现和测试。"
+    source_refs:
+      - intake
+questions:
+  - question_id: QUESTION-001
+    gap_dimension: risk_authority
+    question: "哪些角色可以导出？"
+    why_now: "权限边界会改变实现和安全验收。"
+    affected_fields:
+      - constraints.product
+      - risks
+    safe_default_or_stop: "未回答时停止生成可执行 Handoff。"
+    priority:
+      materiality: 3
+      uncertainty: 3
+      answerability: 2
+      friction: 1
+      score: 7
+    status: pending
+rounds: []
+assumptions:
+  - assumption_id: ASSUMP-001
+    statement: "首版数据量可由同步流式响应处理。"
+    invalidation_impact: "需要改为异步任务与下载链接。"
+    verification_method: "用边界数据量进行内存与延迟测试。"
+unknowns:
+  - unknown_id: UNKNOWN-001
+    question: "最终按钮文案是否需要本地化？"
+    blocking: false
+  - unknown_id: UNKNOWN-002
+    question: "哪些角色被授权导出？"
+    blocking: true
+decisions:
+  - decision_id: DECISION-001
+    selected_option: "在现有服务内实现最小 CSV 导出路径"
+    decision_maker_ref: product-owner-test
+    rationale: "复用现有权限与数据访问边界。"
+    alternatives:
+      - "引入外部报表服务"
+    decided_at: "2026-08-21"
+compile_gate:
+  ready: false
+  blocking_reasons: []
+  material_conflicts: []
+  high_risk_actions:
+    - action: external_service_write
+      description: "任何仓库外服务修改"
+      approval_point_required: true
+  next_question_ids:
+    - QUESTION-001
+  stop_reason: not_stopped
