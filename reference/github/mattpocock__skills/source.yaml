@@ -1,0 +1,34 @@
+schema_version: 1
+id: mattpocock-skills
+source:
+  url: https://github.com/mattpocock/skills
+  branch_at_fetch: main
+  commit: 0ab1b63a410a03d3627979a109c8695de27af954
+  commit_date: "2026-08-20T11:35:14+01:00"
+  fetched_at: "2026-08-21T17:16:00+08:00"
+license:
+  spdx: MIT
+  copyright: "Copyright (c) 2026 Matt Pocock"
+  notice_path: reference/github/mattpocock__skills/LICENSE
+trust:
+  rating: reviewed_with_local_overrides
+  arbitrary_code_executed: false
+  review_path: reference/github/mattpocock__skills/security-review.md
+installation:
+  destination: .agents/skills
+  installer: codex-skill-installer
+  transport: git
+  update_policy: manual_pinned_review
+installed_skills:
+  - setup-matt-pocock-skills
+  - grill-with-docs
+  - grilling
+  - domain-modeling
+  - research
+  - to-spec
+  - to-tickets
+  - tdd
+  - diagnosing-bugs
+  - codebase-design
+  - code-review
+  - handoff

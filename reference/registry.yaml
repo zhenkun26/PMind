@@ -1,0 +1,13 @@
+schema_version: 1
+updated_at: "2026-08-21"
+references:
+  - id: mattpocock-skills
+    type: github_repository
+    path: reference/github/mattpocock__skills
+    source_url: https://github.com/mattpocock/skills
+    pinned_commit: 0ab1b63a410a03d3627979a109c8695de27af954
+    license: MIT
+    trust_status: reviewed_with_local_overrides
+    used_for:
+      - engineering_workflow_methods
+      - repository_skills

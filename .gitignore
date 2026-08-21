@@ -1,0 +1,25 @@
+.DS_Store
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+
+# Dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+.coverage
+
+# Python local state
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
