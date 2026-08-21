@@ -74,6 +74,8 @@ The experiment is paired:
 - `schemas/handoff-proposal-v0.yaml`: machine-readable final-Package digest, recipient, data declaration, and no-authorization contract;
 - `docs/product/handoff-confirmation-receipt-v0.md`: exact six-source choice capture, Handoff-only authorization, and safe three-state result-copy contract;
 - `schemas/handoff-confirmation-receipt-v0.yaml`: machine-readable six-file digests, confirm/modify/reject state, personal-data declaration, and no-external-effect boundary;
+- `docs/product/handoff-envelope-creation-v0.md`: confirmed-only local bundle creation, deterministic seven-file lineage, and prepared-not-delivered copy contract;
+- `schemas/handoff-envelope-v0.yaml`: machine-readable embedded final Package, authorization lineage, prepared state, and no-external-effect boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -105,6 +107,7 @@ The experiment is paired:
 - `scripts/verify_prompt_package_lineage.rb`: read-only five-file replay verifier for final-Package metadata and full business content.
 - `scripts/preview_handoff_proposal.rb`: read-only six-file lineage replay, exact final-Package binding, and safe pending Handoff renderer.
 - `scripts/preview_handoff_confirmation.rb`: read-only seven-file Proposal replay, exact choice binding, and explicit Handoff-authorization renderer.
+- `scripts/create_handoff_envelope.rb`: deterministic, confirmed-only, no-overwrite `0600` local Envelope creator that performs no dispatch.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -124,6 +127,7 @@ ruby test/create_prompt_package_test.rb
 ruby test/verify_prompt_package_lineage_test.rb
 ruby test/preview_handoff_proposal_test.rb
 ruby test/preview_handoff_confirmation_test.rb
+ruby test/create_handoff_envelope_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

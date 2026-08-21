@@ -78,6 +78,15 @@ that the Handoff occurred or that any external effect was approved.
 
 Avoid: “completed Handoff” when only the choice has been recorded.
 
+### Handoff Envelope
+
+A local, provider-neutral bundle containing one exact Prompt Package and the
+confirmed authorization lineage for its future controlled Handoff. A Handoff
+Envelope with delivery state `prepared` has not been transferred to or
+accepted by a Downstream Executor.
+
+Avoid: “delivered,” “received,” or “running” when only a local Envelope exists.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

@@ -17,7 +17,8 @@ module PMind
       "restricted" => 3
     }.freeze
 
-    attr_reader :errors, :prompt_package, :proposal, :confirmation, :input_digests
+    attr_reader :errors, :prompt_package, :proposal, :confirmation, :input_digests,
+                :confirmation_file_sha256
 
     def initialize(root)
       @root = File.realpath(root)
@@ -26,6 +27,7 @@ module PMind
       @proposal = nil
       @confirmation = nil
       @input_digests = nil
+      @confirmation_file_sha256 = nil
     end
 
     def preview_files(session_path, draft_path, compilation_proposal_path, compilation_confirmation_path, package_path, handoff_proposal_path, handoff_confirmation_path)
@@ -34,6 +36,7 @@ module PMind
       @proposal = nil
       @confirmation = nil
       @input_digests = nil
+      @confirmation_file_sha256 = nil
 
       proposal_preview = HandoffProposalPreview.new(@root)
       proposal_copy = proposal_preview.preview_files(
@@ -47,13 +50,14 @@ module PMind
       errors.concat(proposal_preview.errors)
       return nil unless proposal_copy
 
-      confirmation_document = load_yaml_file(handoff_confirmation_path)
+      confirmation_document, confirmation_bytes = load_yaml_file(handoff_confirmation_path)
       return nil unless confirmation_document
 
       @prompt_package = proposal_preview.prompt_package
       @proposal = proposal_preview.proposal
       @confirmation = confirmation_document
       @input_digests = proposal_preview.input_digests.dup
+      @confirmation_file_sha256 = Digest::SHA256.hexdigest(confirmation_bytes)
       return nil unless validate_confirmation_schema(confirmation_document, handoff_confirmation_path)
 
       validate_binding(confirmation_document, handoff_confirmation_path)
@@ -69,15 +73,17 @@ module PMind
     private
 
     def load_yaml_file(path)
-      YAML.safe_load(
-        File.binread(File.expand_path(path)),
+      bytes = File.binread(File.expand_path(path))
+      document = YAML.safe_load(
+        bytes,
         permitted_classes: [],
         permitted_symbols: [],
         aliases: false
       )
+      [document, bytes]
     rescue Errno::ENOENT, Errno::EACCES, Psych::Exception => e
       errors << "#{path}: cannot load YAML (#{e.message})"
-      nil
+      [nil, nil]
     end
 
     def validate_confirmation_schema(document, path)
@@ -191,7 +197,7 @@ module PMind
                      "",
                      "## 下一步",
                      "",
-                     "只有独立的受控 Handoff 步骤可以继续，并必须再次核对这份 Receipt 与完整来源链。若交接渠道需要网络、消息或外部系统写入，必须停止并获得单独授权。"
+                     "只有 confirmed-only 的本地 Handoff Envelope 创建步骤可以继续，并必须再次核对这份 Receipt 与完整来源链。Envelope 创建后仍须独立重放 lineage；若未来交接渠道需要网络、消息或外部系统写入，必须停止并获得单独授权。"
                    ])
       lines.join("\n")
     end

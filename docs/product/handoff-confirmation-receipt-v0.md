@@ -86,4 +86,4 @@ ruby scripts/preview_handoff_confirmation.rb SESSION_REVISION.yaml DRAFT_PACKAGE
 - `0`：七文件来源链、选择、时间和数据策略有效，安全结果文案写入 stdout；
 - `1`：任一来源漂移、选择/授权组合非法、摘要/时间/数据策略无效，错误写入 stderr。
 
-成功只证明用户针对精确 Handoff Proposal 的选择有效；不证明 Handoff 已发生、外部效果获批、用户身份、外部事实、下游交付或 PMind 商业效果。由于运行时和交接渠道尚未选定，下一边界是 confirmed-only、no-overwrite 的本地 Handoff Envelope 及其独立 lineage replay；Envelope 仍不得启动执行器或产生外部效果。
+成功只证明用户针对精确 Handoff Proposal 的选择有效；不证明 Handoff 已发生、外部效果获批、用户身份、外部事实、下游交付或 PMind 商业效果。已确认链可进入 [Handoff Envelope Creation v0](handoff-envelope-creation-v0.md)，生成 confirmed-only、no-overwrite 的本地 `prepared` 封装；Envelope 仍不得启动执行器或产生外部效果，创建后须由下一边界独立重放 lineage。

@@ -201,7 +201,15 @@ ruby scripts/preview_handoff_proposal.rb path/to/session-revision.yaml path/to/d
 ruby scripts/preview_handoff_confirmation.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml
 ```
 
-只有 `confirmed` 才能令 `handoff_authorized: true`；修改和拒绝必须保持 false。无论用户选择为何，`external_effects_authorized` 与 `high_risk_authorization_inferred` 都必须为 false，Package 中的 Approval Points、禁止动作和停止条件继续有效。预演成功只验证授权事实，不执行 Handoff。当前尚未选定下游运行时或交接渠道，因此不得虚构一次真实交接；下一实现边界应是 confirmed-only、no-overwrite 的本地 Handoff Envelope，而不是直接调用外部 Agent。
+只有 `confirmed` 才能令 `handoff_authorized: true`；修改和拒绝必须保持 false。无论用户选择为何，`external_effects_authorized` 与 `high_risk_authorization_inferred` 都必须为 false，Package 中的 Approval Points、禁止动作和停止条件继续有效。预演成功只验证授权事实，不执行 Handoff。
+
+预演通过后，按 [Handoff Envelope Creation v0](handoff-envelope-creation-v0.md) 只在不存在的新路径创建本地封装：
+
+```sh
+ruby scripts/create_handoff_envelope.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
+```
+
+Creator 必须重跑完整七文件链，只接受明确确认，用 `0600` 权限封装精确最终 Package 与授权 lineage，并保持 `delivery_state: prepared`。Envelope 不得被描述为已交付、已接收或执行中；当前尚未选定下游运行时或渠道，必须先完成独立 Envelope lineage replay，之后才能设计 provider-specific adapter。任何需要网络、消息、进程或外部写入的真实交付仍须单独授权。
 
 ### 8. Quality Gate 与 Handoff
 
@@ -212,6 +220,7 @@ ruby scripts/preview_handoff_confirmation.rb path/to/session-revision.yaml path/
 - Compilation Proposal 的确认不能代替 Quality Gate，也不能改变 Package 中已有 Approval Point 的状态。
 - Handoff Proposal 的 pending 预演不能代替明确 Handoff Confirmation，也不能携带任何外部效果或高风险授权。
 - Handoff Confirmation 只授权未来受控交接精确 Package；它不表示 Handoff 已发生，也不批准交接渠道可能产生的外部效果。
+- Handoff Envelope 的 `prepared` 状态只表示本地封装已创建；它不表示执行器已接收、已启动或产生结果，且不能改变任何 Approval Point。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

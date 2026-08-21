@@ -1,0 +1,109 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-envelope-v0.yaml"
+title: "PMind Handoff Envelope v0"
+description: "Prepared local bundle of one exact final Prompt Package and its confirmed Handoff authorization lineage."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - envelope_id
+  - created_at
+  - language
+  - package_id
+  - recipient
+  - delivery_state
+  - handoff_authorized
+  - external_effects_authorized
+  - high_risk_authorization_inferred
+  - data_classification
+  - authorization
+  - prompt_package
+properties:
+  schema_version:
+    const: "0.1.0"
+  envelope_id:
+    type: string
+    pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$"
+  created_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  package_id:
+    type: string
+    pattern: "^pkg-[0-9]{8}-[0-9]{3}$"
+  recipient:
+    const: coding_agent
+  delivery_state:
+    const: prepared
+  handoff_authorized:
+    const: true
+  external_effects_authorized:
+    const: false
+  high_risk_authorization_inferred:
+    const: false
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
+  authorization:
+    type: object
+    additionalProperties: false
+    required:
+      - handoff_proposal_id
+      - handoff_confirmation_id
+      - handoff_confirmation_receipt_file_sha256
+      - source_session_file_sha256
+      - draft_package_file_sha256
+      - compilation_proposal_file_sha256
+      - compilation_confirmation_receipt_file_sha256
+      - final_package_file_sha256
+      - handoff_proposal_file_sha256
+      - confirmation_decision
+      - handoff_authorized
+      - external_effects_authorized
+      - high_risk_authorization_inferred
+      - confirmation_contains_personal_data
+      - confirmation_contains_secrets
+    properties:
+      handoff_proposal_id:
+        type: string
+        pattern: "^handoff-proposal-[0-9]{8}-[0-9]{3}$"
+      handoff_confirmation_id:
+        type: string
+        pattern: "^handoff-confirmation-[0-9]{8}-[0-9]{3}$"
+      handoff_confirmation_receipt_file_sha256:
+        $ref: "#/$defs/sha256"
+      source_session_file_sha256:
+        $ref: "#/$defs/sha256"
+      draft_package_file_sha256:
+        $ref: "#/$defs/sha256"
+      compilation_proposal_file_sha256:
+        $ref: "#/$defs/sha256"
+      compilation_confirmation_receipt_file_sha256:
+        $ref: "#/$defs/sha256"
+      final_package_file_sha256:
+        $ref: "#/$defs/sha256"
+      handoff_proposal_file_sha256:
+        $ref: "#/$defs/sha256"
+      confirmation_decision:
+        const: confirmed
+      handoff_authorized:
+        const: true
+      external_effects_authorized:
+        const: false
+      high_risk_authorization_inferred:
+        const: false
+      confirmation_contains_personal_data:
+        type: boolean
+      confirmation_contains_secrets:
+        const: false
+  prompt_package:
+    type: object
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"

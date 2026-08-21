@@ -9,12 +9,13 @@
 - `clarification-revision-proposal-v0.yaml`：覆盖答案归一化、gap/知识项变更、候选状态、Compile Gate 和三文件绑定；
 - `clarification-session-v0.yaml`：覆盖不可变 Intake、九维 gap map、问题优先级、1–3 问轮次、假设/未知项/决策、Compile Gate 和可选 revision lineage；
 - `handoff-confirmation-receipt-v0.yaml`：覆盖用户对精确六文件 Handoff Proposal 链的确认、修改或拒绝选择、个人数据声明及显式 Handoff 授权边界；
+- `handoff-envelope-v0.yaml`：覆盖内嵌精确最终 Package、七文件授权 lineage、`prepared` 交付状态和零外部效果边界；
 - `handoff-proposal-v0.yaml`：覆盖已验证最终 Package 的精确文件摘要、交接对象、pending confirmation 和零 Handoff/外部效果授权边界；
 - `prompt-package-compilation-confirmation-receipt-v0.yaml`：覆盖用户对精确 Session revision、候选 Package 和 Compilation Proposal 的确认、修改或拒绝选择；
 - `prompt-package-compilation-proposal-v0.yaml`：覆盖 ready Session revision、候选 Package、精确文件摘要、pending confirmation 和零授权边界；
 - `prompt-package-v0.yaml`：覆盖完整 Package 结构、稳定 ID、六个 Review Lenses、风险、Approval Points、执行契约、可选确认创建 lineage 和 Handoff。
 
-九者均对应产品契约的 `0.1.0` 语义。结构通过不代表事实正确或产品效果通过；外部事实、用户决定和下游结果仍需按 Runbook 独立验证。
+十者均对应产品契约的 `0.1.0` 语义。结构通过不代表事实正确或产品效果通过；外部事实、用户决定和下游结果仍需按 Runbook 独立验证。
 
 只读预演 Answer Receipt 是否适用于当前 Session，并生成不回显原答的确认文案：
 
@@ -77,6 +78,12 @@ ruby scripts/preview_handoff_proposal.rb path/to/new-session.yaml path/to/draft-
 ruby scripts/preview_handoff_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml
 ```
 
+重跑完整七文件确认链，并只对明确确认状态创建不覆盖任何来源的 `0600` 本地 Handoff Envelope：
+
+```sh
+ruby scripts/create_handoff_envelope.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh
@@ -90,6 +97,6 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-pac
 ruby scripts/validate_prompt_package.rb /absolute/or/relative/package.yaml
 ```
 
-退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb` 与 `create_prompt_package.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；两个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package；Creator、lineage verifier 或 Handoff Proposal Preview 的成功不授权 Handoff。Handoff Confirmation Preview 可以验证显式授权已成立，但仍不执行 Handoff 或授权外部效果。
+退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb`、`create_prompt_package.rb` 与 `create_handoff_envelope.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；三个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package；Package Creator、lineage verifier 或 Handoff Proposal Preview 的成功不授权 Handoff。Handoff Confirmation Preview 可以验证显式授权已成立，但仍不执行 Handoff 或授权外部效果。Handoff Envelope Creator 只生成 `prepared` 本地封装，不代表交付、接收或执行。
 
 `test/fixtures/` 下的 Clarification Session、Answer Receipt、Revision Proposal、Confirmation Receipt、Compilation Proposal、Compilation Confirmation Receipt、Handoff Proposal、Handoff Confirmation Receipt 与 Prompt Package 只用于自动化测试，是合成示例，不是校准运行、真实用户交付物或 PMind 效果证据。

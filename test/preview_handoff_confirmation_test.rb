@@ -32,6 +32,8 @@ class PreviewHandoffConfirmationTest < Minitest::Test
       assert_includes copy, "推送远端"
       assert_includes copy, "任何外部效果"
       assert_includes copy, "仍待单独审批"
+      assert_includes copy, "本地 Handoff Envelope 创建步骤"
+      assert_includes copy, "独立重放 lineage"
       assert_includes copy, "必须停止并获得单独授权"
     end
   end
@@ -131,6 +133,16 @@ class PreviewHandoffConfirmationTest < Minitest::Test
       write_yaml(paths.fetch(6), receipt)
 
       assert_invalid(paths, "final_package_file_sha256 does not match its confirmed source")
+    end
+  end
+
+  def test_preview_exposes_digest_of_exact_confirmation_bytes_it_loaded
+    with_seven_files do |paths|
+      File.open(paths.fetch(6), "ab") { |file| file.write("# equivalent receipt YAML\n") }
+      preview = confirmation_preview
+
+      assert preview.preview_files(*paths), preview.errors.join("\n")
+      assert_equal Digest::SHA256.file(paths.fetch(6)).hexdigest, preview.confirmation_file_sha256
     end
   end
 
