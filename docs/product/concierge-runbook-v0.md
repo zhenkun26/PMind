@@ -90,7 +90,14 @@ ruby scripts/preview_clarification_confirmation.rb path/to/session.yaml path/to/
 ruby scripts/create_clarification_revision.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
 ```
 
-创建后再次运行 Session 校验，并从此使用新路径继续；不得覆盖旧 Session。新 revision 的 lineage 保存四份来源摘要，但确认仍不构成任何高风险 Approval Point 授权。
+创建后先运行 Session 校验，再按 [Clarification Revision Lineage Verification v0](clarification-revision-lineage-v0.md) 独立重放全部来源：
+
+```sh
+ruby scripts/validate_clarification_session.rb path/to/new-session.yaml
+ruby scripts/verify_clarification_revision_lineage.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
+```
+
+两项均通过后才从新路径继续；不得覆盖旧 Session。新 revision 的 lineage 保存四份来源摘要，但确认和审计通过仍不构成任何高风险 Approval Point 授权。
 
 只有状态为 `ready_to_compile` 且校验通过的 Session 才能进入 Compile；`blocked` 必须保留阻塞原因，不能用操作者推断补齐。
 

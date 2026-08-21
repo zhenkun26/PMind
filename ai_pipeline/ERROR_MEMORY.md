@@ -53,3 +53,7 @@
 - [2026-08-21T23:16:06+08:00] Session revision test edit L0: the first multi-hunk patch used an inaccurate helper-method context and was rejected without changing the test, fix: re-read the exact insertion points and split the test and helper additions into smaller hunks, prevention: refresh exact helper boundaries before patching a long existing test file
 - [2026-08-21T23:16:46+08:00] Session revision time test L1: the first regression value equaled rather than predated the Fixture's latest round time, fix: move the revision timestamp one minute before the actual boundary, prevention: read the concrete Fixture timestamp before choosing temporal boundary values
 - [2026-08-21T23:18:00+08:00] Confirmation Receipt Schema assertion L1: the secret-declaration test expected a shortened generic Schema error instead of the validator's `expected constant false` contract, fix: assert the exact stable substring emitted by the shared validator, prevention: reuse existing Schema error vocabulary when adding structural rejection tests
+
+## 2026-08-21 — Verify Clarification revision lineage
+
+- [2026-08-21T23:45:00+08:00] archive audit command L0: a dense zsh one-liner embedded conflicting Ruby and shell quote forms and failed before running any audit, fix: split the checks into small commands with simple literal patterns, prevention: avoid nested regex literals inside single-quoted shell programs during final archive verification

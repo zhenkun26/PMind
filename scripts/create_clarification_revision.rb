@@ -30,6 +30,18 @@ module PMind
         return nil
       end
 
+      return nil unless build_files(session_path, receipt_path, proposal_path, confirmation_path)
+
+      content = YAML.dump(revision)
+      return nil unless write_exclusive(absolute_output, content, output_path)
+
+      render_copy(revision)
+    end
+
+    def build_files(session_path, receipt_path, proposal_path, confirmation_path)
+      errors.clear
+      @revision = nil
+
       preview = ClarificationConfirmationPreview.new(@root)
       confirmation_copy = preview.preview_files(session_path, receipt_path, proposal_path, confirmation_path)
       errors.concat(preview.errors)
@@ -48,16 +60,13 @@ module PMind
         preview.input_digests.fetch("confirmation_receipt_file_sha256")
       )
       validator = ClarificationSessionValidator.new(@root)
-      unless validator.validate(revision, "#{output_path}.generated_revision")
+      unless validator.validate(revision, "generated-revision")
         errors.concat(validator.errors)
         @revision = nil
         return nil
       end
 
-      content = YAML.dump(revision)
-      return nil unless write_exclusive(absolute_output, content, output_path)
-
-      render_copy(revision)
+      revision
     rescue Errno::ENOENT, Errno::EACCES => e
       errors << "#{e.message}: cannot read revision input"
       nil

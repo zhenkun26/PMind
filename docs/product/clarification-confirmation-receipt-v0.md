@@ -77,9 +77,11 @@ Confirmation Receipt 把“PMind 展示了什么 Proposal”和“用户随后�
 ```sh
 ruby scripts/preview_clarification_confirmation.rb SESSION.yaml RECEIPT.yaml PROPOSAL.yaml CONFIRMATION.yaml
 ruby scripts/create_clarification_revision.rb SESSION.yaml RECEIPT.yaml PROPOSAL.yaml CONFIRMATION.yaml OUTPUT.yaml
+ruby scripts/verify_clarification_revision_lineage.rb SESSION.yaml RECEIPT.yaml PROPOSAL.yaml CONFIRMATION.yaml OUTPUT.yaml
 ```
 
 - 确认预演 `0`：四文件链路和选择有效，安全文案写入 stdout；`1`：无效或过期。
 - 创建命令 `0`：`confirmed` Receipt 已生成一个新的有效 Session revision；`1`：未确认、链路无效、输出已存在或写入失败，并保持输入不变。
+- 重放验证 `0`：persisted revision 与四份已确认来源的确定性重建一致；`1`：来源、metadata 或 Session 内容漂移。
 
-成功创建仍不表示 Prompt Package 已生成、下游交付已完成、高风险动作已批准或 PMind 商业效果已验证。
+创建后应按 [Clarification Revision Lineage Verification v0](clarification-revision-lineage-v0.md) 做独立重放。成功创建或验证仍不表示 Prompt Package 已生成、下游交付已完成、高风险动作已批准或 PMind 商业效果已验证。

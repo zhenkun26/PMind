@@ -23,6 +23,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Clarification Answer Receipt contract](docs/product/clarification-answer-receipt-v0.md)
 - [Clarification Revision Proposal contract](docs/product/clarification-revision-proposal-v0.md)
 - [Clarification Confirmation Receipt contract](docs/product/clarification-confirmation-receipt-v0.md)
+- [Clarification Revision Lineage Verification contract](docs/product/clarification-revision-lineage-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -75,6 +76,13 @@ ruby scripts/preview_clarification_confirmation.rb path/to/session.yaml path/to/
 ruby scripts/create_clarification_revision.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
 ```
 
+Independently replay and verify a persisted revision against the same four
+confirmed source files without modifying any of them:
+
+```sh
+ruby scripts/verify_clarification_revision_lineage.rb path/to/session.yaml path/to/receipt.yaml path/to/proposal.yaml path/to/confirmation.yaml path/to/new-session.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -108,3 +116,6 @@ Executor Profile and four-role separation gates before any run may start.
 - A Confirmation Receipt binds exact input-file digests. Only `confirmed` may
   create a new `0600` Session file; inputs are never overwritten and high-risk
   Approval Points remain separate.
+- A persisted revision is not trusted by presence alone; lineage verification
+  must deterministically replay the confirmed sources and match every Session
+  field before the revision proceeds downstream.
