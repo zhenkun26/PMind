@@ -21,6 +21,7 @@
 - 已将 Case Schema 升级到 `0.2.0`，补齐模型、Profile、Workspace Set、工作区结果 revision、返工与分段耗时溯源；新增 Acceptance Result Schema `0.1.0` 和 `consensus` / `needs_adjudication` / `adjudicated` 三态验证。10 个种子案例完成无数据迁移，当前仍为 0 条运行、0 条验收结果。
 - 已将 Prompt Package v0 落成 `schemas/prompt-package-v0.yaml`、依赖无关的只读校验 CLI 和合成测试夹具；稳定 ID、引用、六个 Review Lenses、Approval Point 状态与 Handoff 授权边界现在可机器校验。测试夹具不是实际 Package 或效果证据。
 - 已将 Clarification Session v0 落成 `schemas/clarification-session-v0.yaml`、依赖无关的只读校验 CLI 和合成测试夹具；不可变 Intake、九维 gap、问题优先级、连续轮次、Compile Gate 与 Session → Package lineage 现在可机器校验。校验器不会代替用户回答或自动生成 Package。
+- 已新增 Clarification Copy v0 和只读 Markdown Renderer，把五种有效 Session 状态投影为克制、可操作的用户文案；它只展示当前结果、下一轮 1–3 问和必须披露的假设/未知项/审批边界，并隐藏原始 Intent、已保存回答、内部优先级、source refs 与决策者标识。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
@@ -659,5 +660,6 @@ PMind 当前处于 Validation Sprint 第 1 阶段：公开仓库、12 个本地�
 Case Schema 现为 0.2.0，Acceptance Result Schema 为 0.1.0；运行产物路径、成功公式以及 consensus / needs_adjudication / adjudicated 三态已由验证器覆盖，但当前仍为 0 条运行和 0 条验收结果。
 Prompt Package v0 的机器契约位于 schemas/prompt-package-v0.yaml，可用 ruby scripts/validate_prompt_package.rb PATH 做只读校验；不得把 test/fixtures 下的合成 Package 当作真实产出。
 Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.yaml，可用 ruby scripts/validate_clarification_session.rb SESSION 做状态校验，或加入 --prompt-package PACKAGE 校验编译 lineage；不得虚构用户答案、授权、假设或决策来让会话进入 ready_to_compile。
+用户可见文案契约位于 docs/product/clarification-copy-v0.md；只在 Session 校验通过后运行 ruby scripts/render_clarification_copy.rb SESSION。Renderer 不生成新问题、不推进状态，也不表示 Prompt Package 或下游交付已经完成。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```

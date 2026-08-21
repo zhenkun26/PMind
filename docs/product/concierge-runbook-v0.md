@@ -54,6 +54,14 @@
 ruby scripts/validate_clarification_session.rb path/to/session.yaml
 ```
 
+需要向用户展示当前状态或下一轮问题时，按 [Clarification Copy v0](clarification-copy-v0.md) 运行只读投影：
+
+```sh
+ruby scripts/render_clarification_copy.rb path/to/session.yaml
+```
+
+只发送 stdout 中的用户文案；校验错误留给操作者处理，不能作为半成品问题发送给用户。
+
 只有状态为 `ready_to_compile` 且校验通过的 Session 才能进入 Compile；`blocked` 必须保留阻塞原因，不能用操作者推断补齐。
 
 ### 4. Research：按需取证

@@ -330,8 +330,10 @@ module PMind
     def validate_compile_gate(document, path)
       gate = hash_value(document["compile_gate"])
       gaps = array_of_hashes(document["gaps"])
+      unknowns = array_of_hashes(document["unknowns"])
       if gate["ready"] == true
         errors << "#{path}: compile gate cannot be ready while a blocking Gap remains" if gaps.any? { |gap| gap["blocking"] == true }
+        errors << "#{path}: compile gate cannot be ready while a blocking unknown remains" if unknowns.any? { |unknown| unknown["blocking"] == true }
         errors << "#{path}: ready compile gate cannot retain blocking_reasons" unless Array(gate["blocking_reasons"]).empty?
         errors << "#{path}: ready compile gate cannot retain material_conflicts" unless Array(gate["material_conflicts"]).empty?
         errors << "#{path}: ready compile gate cannot retain next questions" unless Array(gate["next_question_ids"]).empty?

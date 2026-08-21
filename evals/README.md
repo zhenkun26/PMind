@@ -56,6 +56,7 @@ The experiment is paired:
 - `docs/product/prompt-package-v0.md`: semantic Handoff contract;
 - `schemas/prompt-package-v0.yaml`: machine-readable Prompt Package structure and Handoff authorization contract;
 - `docs/product/clarification-policy-v0.md`: gap and stopping policy;
+- `docs/product/clarification-copy-v0.md`: five-state user-facing copy and disclosure contract;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -75,6 +76,7 @@ The experiment is paired:
 - `scripts/calibration_preflight.rb`: read-only readiness report across contracts, roles, executor, and arm copies.
 - `scripts/validate_prompt_package.rb`: read-only Prompt Package structure, reference, Review Lens, approval, and Handoff validator.
 - `scripts/validate_clarification_session.rb`: read-only Clarification Session state and optional Session-to-Package lineage validator.
+- `scripts/render_clarification_copy.rb`: read-only validated Session-to-user-Markdown renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -86,6 +88,7 @@ ruby scripts/validate_evals.rb
 ruby test/validate_evals_test.rb
 ruby test/acceptance_result_test.rb
 ruby test/validate_clarification_session_test.rb
+ruby test/render_clarification_copy_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

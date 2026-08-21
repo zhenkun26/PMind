@@ -68,6 +68,13 @@ class ValidateClarificationSessionTest < Minitest::Test
     assert_invalid(document, "compile gate cannot be ready while a blocking Gap remains")
   end
 
+  def test_ready_state_rejects_an_orphaned_blocking_unknown
+    document = session
+    document["unknowns"].first["blocking"] = true
+
+    assert_invalid(document, "compile gate cannot be ready while a blocking unknown remains")
+  end
+
   def test_blocked_state_requires_a_recorded_reason_or_conflict
     document = blocked_session
     document["compile_gate"]["blocking_reasons"] = []

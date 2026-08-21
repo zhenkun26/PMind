@@ -94,7 +94,7 @@ Clarification 只用于减少会实质改变 Prompt Package 或下游交付结�
 - `intake`：只保存不可变 Intake，还没有 gap map、问题轮次或 Compile Gate 结论。
 - `gap_scan`：九个 gap 维度完整，尚未开始问答，并选出首轮 1–3 个问题。
 - `clarifying`：已有连续轮次记录，仍保留下一轮 1–3 个最高优先级问题。
-- `ready_to_compile`：没有阻塞 gap 或冲突，所有高风险动作都已标记为需要 Approval Point，可以开始编译 Package。
+- `ready_to_compile`：没有阻塞 gap、阻塞 unknown 或冲突，所有高风险动作都已标记为需要 Approval Point，可以开始编译 Package。
 - `blocked`：保留最小阻塞原因或冲突，不生成可执行 Handoff。
 
 `raw_intent_sha256` 用于发现 Intake 原文漂移。`outcome`、`scope`、`acceptance`、`risk_authority` 和 `handoff` 中任何 `unknown` 都必须是阻塞项，不能通过状态字段绕过。
@@ -134,3 +134,11 @@ Clarification 只用于减少会实质改变 Prompt Package 或下游交付结�
 ruby scripts/validate_clarification_session.rb path/to/session.yaml
 ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-package path/to/package.yaml
 ```
+
+通过状态校验后，可按 [Clarification Copy v0](clarification-copy-v0.md) 生成用户可见 Markdown：
+
+```sh
+ruby scripts/render_clarification_copy.rb path/to/session.yaml
+```
+
+Renderer 只呈现当前状态和下一步，不展示原始 Intent、已保存回答、内部优先级、source refs 或决策者标识，也不自动推进 Session。

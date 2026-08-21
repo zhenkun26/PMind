@@ -19,6 +19,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Eval direction](evals/README.md)
 - [First-pass success rubric](evals/rubrics/first-pass-success-v0.md)
 - [Prompt Package contract](docs/product/prompt-package-v0.md)
+- [Clarification user copy contract](docs/product/clarification-copy-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -44,6 +45,12 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml
 ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-package path/to/package.yaml
 ```
 
+Render validated Session state as user-facing Markdown without modifying it:
+
+```sh
+ruby scripts/render_clarification_copy.rb path/to/session.yaml
+```
+
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
 [Seed calibration readiness](evals/calibration/README.md) before using it; a
@@ -66,5 +73,7 @@ Executor Profile and four-role separation gates before any run may start.
 - A Prompt Package cannot mark Handoff ready while a blocking unknown, Review
   Lens block, unresolved reference, or authorization contradiction remains.
 - A Clarification Session cannot become ready to compile while a critical gap,
-  question-priority violation, unresolved conflict, or unmarked high-risk action
-  remains.
+  blocking unknown, question-priority violation, unresolved conflict, or
+  unmarked high-risk action remains.
+- User-facing Clarification copy never includes raw Intent, saved answers,
+  internal priorities, source references, or decision-maker identifiers.

@@ -290,3 +290,5 @@ PMind 的下一阶段不应是“搭建完整多 Agent 产品”，而应是一�
 下一轮把 Prompt Package v0 的 Markdown 语义落成 `schemas/prompt-package-v0.yaml` 和依赖无关的只读校验器。它交叉检查稳定 ID、事实/Evidence/Assumption 引用、六个 Review Lenses、风险与 Approval Point 覆盖，以及 `approved` / `required` / `rejected` / `not_applicable` 到 Handoff 允许/禁止动作的映射。合成测试夹具不进入校准数据；该能力只使未来 Package 可机器验收，不代表已经生成真实 Package 或解除 Wave 启动门禁。
 
 本轮继续把 Clarification Policy 落成 `schemas/clarification-session-v0.yaml` 和依赖无关的只读校验器。它检查不可变 Intake 摘要、完整九维 gap map、问题优先级、1–3 问连续轮次、默认三轮限制、五态 Compile Gate，以及 Session 到 Prompt Package 的原始 Intent、问答、假设、未知项、决策与高风险 Approval Point lineage。配套 Session 与 Package 仍是合成测试夹具；没有代替用户回答、生成真实 Package、执行模型调用或产生产品效果数据。
+
+下一轮补齐了 Clarification 的用户呈现切片：`docs/product/clarification-copy-v0.md` 固定五态标题、信息层级、追问格式、隐私提示和禁止泄漏字段，`scripts/render_clarification_copy.rb` 仅对已通过校验的 Session 生成 stdout Markdown。动态内容会折叠为单行并转义 HTML/Markdown；Renderer 不显示 raw Intent、保存的回答、内部优先级、source refs 或 decision maker ref，也不生成问题、推进状态或触发模型/网络。该能力改善可测的交互一致性，但仍不是实际用户验证或产品效果数据。
