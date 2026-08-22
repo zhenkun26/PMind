@@ -1,0 +1,180 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-effect-authorization-proposal-v0.yaml"
+title: "PMind Handoff Adapter Effect Authorization Proposal v0"
+description: "Pending disclosure of the exact selected Adapter Profile effects; it grants no effect or dispatch authority."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_effect_authorization_proposal_id
+  - created_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_selection_proposal_id
+  - adapter_selection_confirmation_id
+  - payload_data_attestation_id
+  - envelope_delivery_state
+  - adapter_profile_status
+  - adapter_selection_proposal_status
+  - selection_confirmation_decision
+  - adapter_selected
+  - payload_data_attestation_completed
+  - overall_data_compatibility
+  - recipient
+  - proposal_status
+  - requested_effect_authorizations
+  - cost_effect_present
+  - cost_disclosure_required
+  - cost_estimate_status
+  - production_data_access_disclosure_required
+  - retention_export_purpose_compatibility
+  - user_choice_status
+  - effect_authorizations_granted
+  - dispatch_authorized
+  - external_effects_authorized
+  - high_risk_authorization_inferred
+  - data_classification
+  - proposal_contains_personal_data
+  - proposal_contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  adapter_effect_authorization_proposal_id:
+    type: string
+    pattern: "^adapter-effect-authorization-proposal-[0-9]{8}-[0-9]{3}$"
+  created_at:
+    type: string
+    format: date-time
+  language:
+    const: zh-CN
+  source_session_file_sha256:
+    $ref: "#/$defs/sha256"
+  draft_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  final_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_envelope_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_profile_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  payload_data_attestation_file_sha256:
+    $ref: "#/$defs/sha256"
+  package_id:
+    type: string
+    pattern: "^pkg-[0-9]{8}-[0-9]{3}$"
+  envelope_id:
+    type: string
+    pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$"
+  adapter_profile_id:
+    type: string
+    pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_proposal_id:
+    type: string
+    pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_confirmation_id:
+    type: string
+    pattern: "^adapter-selection-confirmation-[0-9]{8}-[0-9]{3}$"
+  payload_data_attestation_id:
+    type: string
+    pattern: "^payload-data-attestation-[0-9]{8}-[0-9]{3}$"
+  envelope_delivery_state:
+    const: prepared
+  adapter_profile_status:
+    const: reviewed
+  adapter_selection_proposal_status:
+    const: pending
+  selection_confirmation_decision:
+    const: confirmed
+  adapter_selected:
+    const: true
+  payload_data_attestation_completed:
+    const: true
+  overall_data_compatibility:
+    const: compatible
+  recipient:
+    const: coding_agent
+  proposal_status:
+    const: pending
+  requested_effect_authorizations:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: "#/$defs/effect_name"
+  cost_effect_present:
+    type: boolean
+  cost_disclosure_required:
+    type: boolean
+  cost_estimate_status:
+    enum:
+      - not_applicable
+      - not_estimated
+  production_data_access_disclosure_required:
+    type: boolean
+  retention_export_purpose_compatibility:
+    const: not_attested
+  user_choice_status:
+    const: not_recorded
+  effect_authorizations_granted:
+    type: array
+    maxItems: 0
+    items:
+      $ref: "#/$defs/effect_name"
+  dispatch_authorized:
+    const: false
+  external_effects_authorized:
+    const: false
+  high_risk_authorization_inferred:
+    const: false
+  data_classification:
+    $ref: "#/$defs/data_classification"
+  proposal_contains_personal_data:
+    const: false
+  proposal_contains_secrets:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  effect_name:
+    type: string
+    enum:
+      - local_file_write
+      - network_access
+      - process_start
+      - notification
+      - external_service_write
+      - cost_incurred
+      - production_data_access
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted

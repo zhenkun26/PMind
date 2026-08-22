@@ -121,6 +121,7 @@ The experiment is paired:
 - `scripts/preview_handoff_adapter_selection.rb`: read-only ten-file Envelope replay, reviewed Profile consistency validation, exact dual binding, and safe pending selection renderer.
 - `scripts/preview_handoff_adapter_selection_confirmation.rb`: read-only eleven-file Selection replay, exact choice binding, and selected-without-dispatch renderer.
 - `scripts/preview_handoff_payload_data_attestation.rb`: read-only twelve-file confirmed-Selection replay, complete-review provenance and compatibility validator, and compatible-without-authorization or blocked renderer.
+- `scripts/preview_handoff_adapter_effect_authorization.rb`: read-only thirteen-file compatible-Attestation replay, exact true-effect and disclosure validator, and pending zero-authorization renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -145,6 +146,7 @@ ruby test/verify_handoff_envelope_lineage_test.rb
 ruby test/preview_handoff_adapter_selection_test.rb
 ruby test/preview_handoff_adapter_selection_confirmation_test.rb
 ruby test/preview_handoff_payload_data_attestation_test.rb
+ruby test/preview_handoff_adapter_effect_authorization_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

@@ -59,4 +59,4 @@ Calibration preflight remains honestly BLOCKED at 3/6 because four real roles, s
 
 ## Next boundary
 
-Define a provider-neutral Adapter Effect Authorization Proposal bound to the exact twelve-file chain. It should enumerate exactly the selected Profile's true effects, disclose cost and production-data implications, and remain pending with every authorization false. A later independent Receipt may record user choices; real Adapter implementation and dispatch remain deferred.
+The provider-neutral Adapter Effect Authorization Proposal is now implemented and documented in `handoff-adapter-effect-authorization-stage-2026-08-22.md`. It binds the exact twelve-file chain, enumerates the selected Profile's true effects, discloses cost and production-data implications, and remains pending with every authorization false. The next boundary is an independent Effect Authorization Confirmation Receipt; real Adapter implementation and dispatch remain deferred.

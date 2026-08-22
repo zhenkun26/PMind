@@ -130,6 +130,16 @@ Adapter effects.
 Avoid: “dispatch approved” or “payload delivered” when only data compatibility
 has been established.
 
+### Adapter Effect Authorization Proposal
+
+A pending, zero-authority decision artifact bound to one exact compatible
+Payload Data Attestation and its selected Adapter Capability Profile. It
+enumerates exactly the Profile's true effects and required disclosures, but
+does not record a user choice, grant an effect, or authorize dispatch.
+
+Avoid: “effects authorized,” “dispatch approved,” or “Adapter activated” when
+only the Proposal has been previewed.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

@@ -36,6 +36,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Selection Proposal contract](docs/product/handoff-adapter-selection-proposal-v0.md)
 - [Handoff Adapter Selection Confirmation Receipt contract](docs/product/handoff-adapter-selection-confirmation-receipt-v0.md)
 - [Handoff Payload Data Attestation contract](docs/product/handoff-payload-data-attestation-v0.md)
+- [Handoff Adapter Effect Authorization Proposal contract](docs/product/handoff-adapter-effect-authorization-proposal-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -116,6 +117,7 @@ ruby scripts/verify_handoff_envelope_lineage.rb path/to/new-session.yaml path/to
 ruby scripts/preview_handoff_adapter_selection.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml
 ruby scripts/preview_handoff_adapter_selection_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml
 ruby scripts/preview_handoff_payload_data_attestation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml
+ruby scripts/preview_handoff_adapter_effect_authorization.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -151,6 +153,10 @@ preview then validates a completed full-payload review, derives classification,
 personal-data, and secret compatibility from the selected Profile policy, and
 either reports compatibility without authorization or blocks dispatch. It does
 not scan the payload itself, authorize effects, or call an Adapter.
+The thirteen-file Adapter Effect Authorization Proposal preview accepts only a
+compatible Attestation, enumerates exactly the selected Profile's true effects,
+and discloses cost and production-data implications. It remains pending, saves
+no choice, grants no effect, and does not dispatch or call an Adapter.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -229,3 +235,8 @@ Executor Profile and four-role separation gates before any run may start.
   of the full Envelope payload. Compatibility is derived from declared payload
   facts and the selected Profile policy; compatible still means zero dispatch
   and effect authority, while incompatible explicitly blocks dispatch.
+- An Adapter Effect Authorization Proposal binds all twelve prior files and
+  exactly mirrors the selected Profile's true effects. It remains pending with
+  no saved choice, no granted effect, and no dispatch authority; cost,
+  production-data access, and unverified retention/export/purpose boundaries
+  must be disclosed rather than inferred.

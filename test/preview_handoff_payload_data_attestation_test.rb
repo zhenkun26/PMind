@@ -10,7 +10,6 @@ require_relative "support/handoff_adapter_chain_fixture"
 
 class PreviewHandoffPayloadDataAttestationTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
-  ATTESTATION_FIXTURE = File.join(ROOT, "test/fixtures/handoff-payload-data-attestation-valid.yaml")
   DIGEST_FIELDS = %w[
     source_session_file_sha256
     draft_package_file_sha256
@@ -380,38 +379,13 @@ class PreviewHandoffPayloadDataAttestationTest < Minitest::Test
 
   def with_twelve_files(envelope_classification: nil)
     Dir.mktmpdir("pmind-payload-data-attestation") do |directory|
-      paths = chain_fixture.write_eleven_files(directory, envelope_classification: envelope_classification)
-      attestation_path = File.join(directory, "payload-data-attestation.yaml")
-      chain_fixture.write_yaml(attestation_path, load_yaml(ATTESTATION_FIXTURE))
-      paths << attestation_path
-      refresh_attestation_bindings(paths)
+      paths = chain_fixture.write_twelve_files(directory, envelope_classification: envelope_classification)
       yield paths
     end
   end
 
   def refresh_attestation_bindings(paths)
-    preview = PMind::HandoffAdapterSelectionConfirmationPreview.new(ROOT)
-    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(11))
-
-    document = load_yaml(paths.fetch(11))
-    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
-    document["adapter_selection_confirmation_receipt_file_sha256"] = preview.confirmation_file_sha256
-    document["package_id"] = preview.envelope["package_id"]
-    document["envelope_id"] = preview.envelope["envelope_id"]
-    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
-    document["adapter_selection_proposal_id"] = preview.proposal["adapter_selection_proposal_id"]
-    document["adapter_selection_confirmation_id"] = preview.confirmation["adapter_selection_confirmation_id"]
-    document["envelope_delivery_state"] = preview.envelope["delivery_state"]
-    document["adapter_profile_status"] = preview.profile["status"]
-    document["adapter_selection_proposal_status"] = preview.proposal.dig("confirmation", "status")
-    document["selection_confirmation_decision"] = preview.confirmation["confirmation_decision"]
-    document["adapter_selected"] = preview.confirmation["adapter_selected"]
-    document["recipient"] = preview.envelope["recipient"]
-    document["adapter_maximum_data_classification"] = preview.profile.dig("data_policy", "maximum_data_classification")
-    document["adapter_personal_data_handling"] = preview.profile.dig("data_policy", "personal_data_handling")
-    document["adapter_secret_handling"] = preview.profile.dig("data_policy", "secret_handling")
-    document["data_classification"] = preview.confirmation["data_classification"]
-    chain_fixture.write_yaml(paths.fetch(11), document)
+    chain_fixture.refresh_payload_data_attestation_bindings(paths)
   end
 
   def allow_profile_personal_data(paths)

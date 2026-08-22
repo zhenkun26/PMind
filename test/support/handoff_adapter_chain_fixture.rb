@@ -51,6 +51,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_twelve_files(directory, envelope_classification: nil)
+    paths = write_eleven_files(directory, envelope_classification: envelope_classification)
+    attestation_path = File.join(directory, "payload-data-attestation.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-payload-data-attestation-valid.yaml")
+    write_yaml(attestation_path, load_yaml(fixture_path))
+    paths << attestation_path
+    refresh_payload_data_attestation_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -86,6 +96,31 @@ class HandoffAdapterChainFixture
     receipt["recipient"] = preview.envelope["recipient"]
     receipt["data_classification"] = preview.proposal["data_classification"]
     write_yaml(paths.fetch(10), receipt)
+  end
+
+  def refresh_payload_data_attestation_bindings(paths)
+    preview = PMind::HandoffAdapterSelectionConfirmationPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(11))
+
+    document = load_yaml(paths.fetch(11))
+    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
+    document["adapter_selection_confirmation_receipt_file_sha256"] = preview.confirmation_file_sha256
+    document["package_id"] = preview.envelope["package_id"]
+    document["envelope_id"] = preview.envelope["envelope_id"]
+    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    document["adapter_selection_proposal_id"] = preview.proposal["adapter_selection_proposal_id"]
+    document["adapter_selection_confirmation_id"] = preview.confirmation["adapter_selection_confirmation_id"]
+    document["envelope_delivery_state"] = preview.envelope["delivery_state"]
+    document["adapter_profile_status"] = preview.profile["status"]
+    document["adapter_selection_proposal_status"] = preview.proposal.dig("confirmation", "status")
+    document["selection_confirmation_decision"] = preview.confirmation["confirmation_decision"]
+    document["adapter_selected"] = preview.confirmation["adapter_selected"]
+    document["recipient"] = preview.envelope["recipient"]
+    document["adapter_maximum_data_classification"] = preview.profile.dig("data_policy", "maximum_data_classification")
+    document["adapter_personal_data_handling"] = preview.profile.dig("data_policy", "personal_data_handling")
+    document["adapter_secret_handling"] = preview.profile.dig("data_policy", "secret_handling")
+    document["data_classification"] = preview.confirmation["data_classification"]
+    write_yaml(paths.fetch(11), document)
   end
 
   def load_yaml(path)

@@ -93,4 +93,4 @@ ruby scripts/preview_handoff_payload_data_attestation.rb SESSION_REVISION.yaml D
 
 预演器只读十二份本地 YAML，不扫描文件内容、不调用模型或 Scanner、不实现 Adapter，也不写文件、访问网络、启动进程、发送通知、产生费用或访问生产数据。输入 Attestation 必须来自经批准的独立审核流程；本仓库只验证其契约和 lineage，不证明 retention/export/purpose 合规。
 
-下一最小边界是 provider-neutral Adapter Effect Authorization Proposal：逐项披露 Profile 中的 `true` effects 并请求选择，但 Proposal 自身继续保持零授权。真实 Adapter、凭据、健康检查、provider contract test 和 dispatch 仍后置。
+下一最小边界 [Adapter Effect Authorization Proposal v0](handoff-adapter-effect-authorization-proposal-v0.md) 已实现：它逐项披露 Profile 中的 `true` effects 并请求选择，但 Proposal 自身继续保持零授权。真实 Adapter、凭据、健康检查、provider contract test 和 dispatch 仍后置。
