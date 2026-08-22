@@ -1,0 +1,101 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-selection-proposal-v0.yaml"
+title: "PMind Handoff Adapter Selection Proposal v0"
+description: "Pending, zero-effect selection proposal bound to one exact verified Handoff Envelope and one exact reviewed Adapter Capability Profile."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_selection_proposal_id
+  - created_at
+  - language
+  - envelope_id
+  - handoff_envelope_file_sha256
+  - envelope_delivery_state
+  - recipient
+  - adapter_profile_id
+  - adapter_profile_file_sha256
+  - adapter_profile_status
+  - compatibility
+  - confirmation
+  - data_classification
+  - contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  adapter_selection_proposal_id:
+    type: string
+    pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$"
+  created_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  envelope_id:
+    type: string
+    pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$"
+  handoff_envelope_file_sha256:
+    $ref: "#/$defs/sha256"
+  envelope_delivery_state:
+    const: prepared
+  recipient:
+    const: coding_agent
+  adapter_profile_id:
+    type: string
+    pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$"
+  adapter_profile_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_profile_status:
+    const: reviewed
+  compatibility:
+    type: object
+    additionalProperties: false
+    required:
+      - data_classification
+      - personal_data
+      - secrets
+    properties:
+      data_classification:
+        const: compatible
+      personal_data:
+        const: unknown
+      secrets:
+        const: unknown
+  confirmation:
+    type: object
+    additionalProperties: false
+    required:
+      - required
+      - status
+      - adapter_selected
+      - dispatch_authorized
+      - external_effects_authorized
+      - high_risk_authorization_inferred
+    properties:
+      required:
+        const: true
+      status:
+        const: pending
+      adapter_selected:
+        const: false
+      dispatch_authorized:
+        const: false
+      external_effects_authorized:
+        const: false
+      high_risk_authorization_inferred:
+        const: false
+  data_classification:
+    $ref: "#/$defs/data_classification"
+  contains_secrets:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted

@@ -32,6 +32,8 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Confirmation Receipt contract](docs/product/handoff-confirmation-receipt-v0.md)
 - [Handoff Envelope Creation contract](docs/product/handoff-envelope-creation-v0.md)
 - [Handoff Envelope Lineage Verification contract](docs/product/handoff-envelope-lineage-v0.md)
+- [Handoff Adapter Capability Profile contract](docs/product/handoff-adapter-profile-v0.md)
+- [Handoff Adapter Selection Proposal contract](docs/product/handoff-adapter-selection-proposal-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -109,6 +111,7 @@ ruby scripts/preview_handoff_proposal.rb path/to/new-session.yaml path/to/draft-
 ruby scripts/preview_handoff_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml
 ruby scripts/create_handoff_envelope.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
 ruby scripts/verify_handoff_envelope_lineage.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
+ruby scripts/preview_handoff_adapter_selection.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -131,6 +134,11 @@ effect. The independent verifier then rebuilds the Envelope from all seven
 sources and compares its metadata, authorization lineage, and complete embedded
 Package without modifying any input. Success permits Adapter contract
 exploration only, not dispatch.
+The Adapter Selection preview then replays that complete Envelope lineage and
+binds the exact Envelope bytes to one exact reviewed Capability Profile. It
+shows delivery, receipt, idempotency, retry, data, cost, and effect boundaries
+while keeping selection pending and every dispatch/effect authorization false.
+It does not implement or call an Adapter.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -193,3 +201,11 @@ Executor Profile and four-role separation gates before any run may start.
   verifier must replay all seven sources and match the complete semantic
   content before Adapter exploration; verification cannot dispatch, start an
   executor, or authorize channel side effects.
+- An Adapter Capability Profile is a reviewed declaration, not an executable
+  Adapter or permission grant. Every true effect must have a matching explicit
+  future authorization requirement, and receipt/idempotency/retry/cost rules
+  must be internally consistent.
+- An Adapter Selection Proposal binds one exact verified Envelope and one exact
+  reviewed Profile. It stays pending with Adapter selection, dispatch, external
+  effects, and inferred high-risk authorization all false. Existing Envelope
+  classification does not prove personal-data or secret compatibility.

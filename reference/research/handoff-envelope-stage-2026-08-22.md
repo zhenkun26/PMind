@@ -64,11 +64,10 @@ still says not delivered and does not expose identifiers or source content.
 
 ## Next boundary
 
-Explore a provider-neutral Adapter Capability Profile and selection proposal
-before implementing any provider-specific delivery. The profile should make
-channel identity, required network/process/external-write effects, receipt
-semantics, idempotency, retry policy, data limits, cost, and additional
-Approval Points explicit. The selection preview must remain pending and
-zero-effect. A real adapter or dispatch command must not be introduced until a
-user selects a channel and separately authorizes every required external
-effect.
+The provider-neutral Adapter Capability Profile and pending Selection Proposal
+are now implemented; see `reference/research/handoff-adapter-selection-stage-2026-08-22.md`.
+They make channel effects, receipt, idempotency, retry, data, cost, and future
+authorization requirements explicit without implementing delivery. The next
+boundary is an immutable Selection Confirmation Receipt plus payload data
+attestation. A real adapter or dispatch command remains deferred until a user
+selects a reviewed Profile and separately authorizes every required effect.

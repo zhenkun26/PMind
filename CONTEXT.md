@@ -87,6 +87,30 @@ accepted by a Downstream Executor.
 
 Avoid: “delivered,” “received,” or “running” when only a local Envelope exists.
 
+### Handoff Adapter
+
+A channel-specific component capable of transferring a verified Handoff
+Envelope to a Downstream Executor. Describing or selecting an Adapter does not
+run it or authorize its effects.
+
+Avoid: “Handoff” or “dispatch” when only Adapter metadata has been inspected.
+
+### Adapter Capability Profile
+
+A reviewed, declarative account of one Handoff Adapter's delivery mode,
+receipt, idempotency, retry, data, cost, and side-effect boundaries. A Profile
+is evidence for a decision, not an authorization or proof of implementation.
+
+Avoid: “Adapter configuration” when no executable Adapter has been configured.
+
+### Adapter Selection Proposal
+
+A pending, zero-effect decision artifact bound to one exact verified Handoff
+Envelope and one exact reviewed Adapter Capability Profile. It does not mean an
+Adapter has been selected, authorized, or run.
+
+Avoid: “Adapter selection” when only a Proposal exists.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

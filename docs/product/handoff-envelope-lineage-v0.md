@@ -60,7 +60,7 @@ Session revision
 3. Envelope metadata 与内嵌 Package 均和确定性重建一致；
 4. 当前状态仍是已准备、未交付；
 5. 禁止动作、停止条件和 Approval Points；
-6. 下一步只能探索 provider-specific Adapter 契约。
+6. 下一步只能创建 provider-neutral Adapter Capability Profile 与 pending Selection Proposal，并运行十文件只读预演。
 
 文案不得展示路径、摘要、Envelope/Session/Package/Proposal/Confirmation ID、原始 Intent、Clarification 原答、用户确认原文、Evidence 来源、source refs、Review owner、decision maker ref 或内部字段路径。动态内容必须经过共享 Markdown 安全层。
 
@@ -68,7 +68,7 @@ Session revision
 
 验证器没有文件写入、模型、网络、子进程、通知或外部服务调用。它不选择 Adapter、不启动 Downstream Executor、不生成交付回执，也不将已有 Handoff 授权扩大为渠道副作用授权。
 
-真实 Adapter 若需要网络、消息、进程、提交、推送、部署、费用、生产数据访问或其他外部效果，必须拥有独立契约、失败/重试/幂等策略、接收证明和相应授权。
+现已提供的 Adapter Profile 与 Selection Proposal 只描述并预演这些边界，不实现 Adapter。真实 Adapter 若需要网络、消息、进程、提交、推送、部署、费用、生产数据访问或其他外部效果，必须拥有独立契约、失败/重试/幂等策略、接收证明和相应授权。
 
 ## 命令与退出码
 

@@ -139,7 +139,7 @@ module PMind
                      "",
                      "## 下一步",
                      "",
-                     "可以开始探索 provider-specific Handoff Adapter 的契约，但本次验证未选择或调用任何适配器，也未启动 Downstream Executor。",
+                     "可以创建 provider-neutral Adapter Capability Profile 与 pending Selection Proposal，并用十文件只读预演器检查；本次验证未选择或调用任何适配器，也未启动 Downstream Executor。",
                      "",
                      "任何真实交付、网络、消息、进程、外部写入或其他渠道副作用仍须单独设计、验证并获得相应授权。"
                    ])

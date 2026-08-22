@@ -219,6 +219,14 @@ ruby scripts/verify_handoff_envelope_lineage.rb path/to/session-revision.yaml pa
 
 只有 Schema、authorization metadata 和完整内嵌 Package 都与确定性重建一致时，才可进入 Adapter 能力与副作用契约探索。等价 YAML 排版可以接受，任一来源或业务内容漂移必须停止。验证本身不选择或调用 Adapter，也不产生真实 Handoff。
 
+验证通过后，候选渠道必须先写成符合 [Handoff Adapter Capability Profile v0](handoff-adapter-profile-v0.md) 的 reviewed 声明，再创建符合 [Handoff Adapter Selection Proposal v0](handoff-adapter-selection-proposal-v0.md) 的 pending Proposal。用十文件只读预演器同时重放 Envelope lineage、检查 Profile 内部一致性并绑定两份精确文件：
+
+```sh
+ruby scripts/preview_handoff_adapter_selection.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml
+```
+
+只向用户展示 Adapter 可读名称、交付/回执/幂等/重试能力、未来需分别授权的副作用、数据分类和三种选择。当前步骤不得保存选择、实现或调用 Adapter、dispatch、启动进程、访问网络、写本地/外部状态、发送通知、产生费用或访问生产数据。现有 Envelope 没有覆盖完整 Prompt Package 的个人数据/密钥声明，因此两项兼容性必须显示为未知，并保留 dispatch 前独立内容审核。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -230,6 +238,8 @@ ruby scripts/verify_handoff_envelope_lineage.rb path/to/session-revision.yaml pa
 - Handoff Confirmation 只授权未来受控交接精确 Package；它不表示 Handoff 已发生，也不批准交接渠道可能产生的外部效果。
 - Handoff Envelope 的 `prepared` 状态只表示本地封装已创建；它不表示执行器已接收、已启动或产生结果，且不能改变任何 Approval Point。
 - Persisted Envelope 必须通过独立 lineage replay 才可进入 Adapter 探索；验证通过仍不表示已交付或已授权渠道副作用。
+- Adapter Capability Profile 只是 reviewed 声明，不是实现或授权；每个 `true` 副作用必须有同名的未来授权要求。
+- Adapter Selection Proposal 必须保持 pending、未选择、未 dispatch、零外部效果授权；其确认选项只能进入独立 Selection Confirmation Receipt，不能直接执行。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

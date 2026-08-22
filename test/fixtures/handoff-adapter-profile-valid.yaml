@@ -1,0 +1,40 @@
+schema_version: "0.1.0"
+adapter_profile_id: adapter-profile-20260822-001
+created_at: "2026-08-22T18:19:00+08:00"
+language: zh-CN
+adapter_key: reviewed_local_file_candidate
+display_name: 已审查的本地文件候选 Adapter
+status: reviewed
+reviewed_at: "2026-08-22T18:20:00+08:00"
+reviewer_ref: synthetic-adapter-reviewer-001
+recipient: coding_agent
+capabilities:
+  delivery_mode: local_file
+  receipt_mode: local_digest
+  idempotency:
+    supported: true
+    key_source: envelope_file_sha256
+  retry:
+    mode: none
+    maximum_attempts: 1
+effects:
+  local_file_write: true
+  network_access: false
+  process_start: false
+  notification: false
+  external_service_write: false
+  cost_incurred: false
+  production_data_access: false
+authorization_requirements:
+  selection_confirmation_required: true
+  dispatch_confirmation_required: true
+  required_effect_authorizations:
+    - local_file_write
+data_policy:
+  maximum_data_classification: restricted
+  personal_data_handling: forbidden
+  secret_handling: forbidden
+cost_policy:
+  can_incur_cost: false
+  disclosure_required_before_dispatch: false
+contains_secrets: false

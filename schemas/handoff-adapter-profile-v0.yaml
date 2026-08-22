@@ -1,0 +1,194 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-profile-v0.yaml"
+title: "PMind Handoff Adapter Capability Profile v0"
+description: "Reviewed, declarative capability and effect contract for one Handoff Adapter; it is not an execution authorization."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_profile_id
+  - created_at
+  - language
+  - adapter_key
+  - display_name
+  - status
+  - reviewed_at
+  - reviewer_ref
+  - recipient
+  - capabilities
+  - effects
+  - authorization_requirements
+  - data_policy
+  - cost_policy
+  - contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  adapter_profile_id:
+    type: string
+    pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$"
+  created_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  adapter_key:
+    type: string
+    pattern: "^[a-z][a-z0-9_]{2,63}$"
+  display_name:
+    type: string
+    minLength: 1
+  status:
+    enum:
+      - draft
+      - reviewed
+      - retired
+  reviewed_at:
+    type: string
+    format: date-time
+  reviewer_ref:
+    type: string
+    pattern: "^[A-Za-z0-9._:-]{3,128}$"
+  recipient:
+    const: coding_agent
+  capabilities:
+    type: object
+    additionalProperties: false
+    required:
+      - delivery_mode
+      - receipt_mode
+      - idempotency
+      - retry
+    properties:
+      delivery_mode:
+        enum:
+          - local_file
+          - local_process
+          - remote_api
+          - message_channel
+          - human_team
+      receipt_mode:
+        enum:
+          - local_digest
+          - provider_receipt
+          - human_acknowledgement
+          - none
+      idempotency:
+        type: object
+        additionalProperties: false
+        required:
+          - supported
+          - key_source
+        properties:
+          supported:
+            type: boolean
+          key_source:
+            enum:
+              - envelope_file_sha256
+              - provider_key
+              - not_applicable
+      retry:
+        type: object
+        additionalProperties: false
+        required:
+          - mode
+          - maximum_attempts
+        properties:
+          mode:
+            enum:
+              - none
+              - bounded
+          maximum_attempts:
+            type: integer
+            minimum: 1
+            maximum: 5
+  effects:
+    type: object
+    additionalProperties: false
+    required:
+      - local_file_write
+      - network_access
+      - process_start
+      - notification
+      - external_service_write
+      - cost_incurred
+      - production_data_access
+    properties:
+      local_file_write:
+        type: boolean
+      network_access:
+        type: boolean
+      process_start:
+        type: boolean
+      notification:
+        type: boolean
+      external_service_write:
+        type: boolean
+      cost_incurred:
+        type: boolean
+      production_data_access:
+        type: boolean
+  authorization_requirements:
+    type: object
+    additionalProperties: false
+    required:
+      - selection_confirmation_required
+      - dispatch_confirmation_required
+      - required_effect_authorizations
+    properties:
+      selection_confirmation_required:
+        const: true
+      dispatch_confirmation_required:
+        const: true
+      required_effect_authorizations:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: "#/$defs/effect_name"
+  data_policy:
+    type: object
+    additionalProperties: false
+    required:
+      - maximum_data_classification
+      - personal_data_handling
+      - secret_handling
+    properties:
+      maximum_data_classification:
+        $ref: "#/$defs/data_classification"
+      personal_data_handling:
+        enum:
+          - allowed
+          - forbidden
+      secret_handling:
+        const: forbidden
+  cost_policy:
+    type: object
+    additionalProperties: false
+    required:
+      - can_incur_cost
+      - disclosure_required_before_dispatch
+    properties:
+      can_incur_cost:
+        type: boolean
+      disclosure_required_before_dispatch:
+        type: boolean
+  contains_secrets:
+    const: false
+$defs:
+  effect_name:
+    type: string
+    enum:
+      - local_file_write
+      - network_access
+      - process_start
+      - notification
+      - external_service_write
+      - cost_incurred
+      - production_data_access
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
