@@ -89,4 +89,4 @@ ruby scripts/preview_handoff_adapter_selection_confirmation.rb SESSION_REVISION.
 - `0`：十一文件来源链、选择、时间和数据策略有效，安全结果文案写入 stdout；
 - `1`：任一来源漂移、选择组合非法、权限扩大、摘要/时间/数据策略无效，错误写入 stderr。
 
-成功不证明 Adapter 已实现、已配置、已 dispatch、已接收或产生结果，也不证明用户身份、外部事实或 PMind 商业效果。下一最小边界是覆盖完整 Envelope payload 的 Data Attestation；真实 Adapter 和 effect authorization 继续后置。
+成功不证明 Adapter 已实现、已配置、已 dispatch、已接收或产生结果，也不证明用户身份、外部事实或 PMind 商业效果。后续必须运行 [Handoff Payload Data Attestation v0](handoff-payload-data-attestation-v0.md)；兼容性通过后的下一边界是零授权 Adapter Effect Authorization Proposal，真实 Adapter 与 dispatch 继续后置。

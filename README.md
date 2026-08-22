@@ -35,6 +35,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Capability Profile contract](docs/product/handoff-adapter-profile-v0.md)
 - [Handoff Adapter Selection Proposal contract](docs/product/handoff-adapter-selection-proposal-v0.md)
 - [Handoff Adapter Selection Confirmation Receipt contract](docs/product/handoff-adapter-selection-confirmation-receipt-v0.md)
+- [Handoff Payload Data Attestation contract](docs/product/handoff-payload-data-attestation-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -114,6 +115,7 @@ ruby scripts/create_handoff_envelope.rb path/to/new-session.yaml path/to/draft-p
 ruby scripts/verify_handoff_envelope_lineage.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
 ruby scripts/preview_handoff_adapter_selection.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml
 ruby scripts/preview_handoff_adapter_selection_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml
+ruby scripts/preview_handoff_payload_data_attestation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -144,7 +146,11 @@ It does not implement or call an Adapter.
 The Adapter Selection Confirmation preview binds the user's exact choice to all
 ten prior files. Confirmed records the selected reviewed Profile, but dispatch,
 every effect authorization, and compatibility claims remain blocked; the next
-boundary is Payload Data Attestation.
+boundary is Payload Data Attestation. The twelve-file Payload Data Attestation
+preview then validates a completed full-payload review, derives classification,
+personal-data, and secret compatibility from the selected Profile policy, and
+either reports compatibility without authorization or blocks dispatch. It does
+not scan the payload itself, authorize effects, or call an Adapter.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -219,3 +225,7 @@ Executor Profile and four-role separation gates before any run may start.
   user's response digest. Confirmed records the selected Profile but cannot
   authorize dispatch or any Profile effect; payload personal-data and secret
   compatibility stay unknown and require separate attestation.
+- A Payload Data Attestation binds all eleven prior files and a completed review
+  of the full Envelope payload. Compatibility is derived from declared payload
+  facts and the selected Profile policy; compatible still means zero dispatch
+  and effect authority, while incompatible explicitly blocks dispatch.

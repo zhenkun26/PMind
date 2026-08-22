@@ -235,6 +235,14 @@ ruby scripts/preview_handoff_adapter_selection_confirmation.rb SESSION_REVISION.
 
 `confirmed` 只记录“针对这份精确 Envelope 选中这份已审查 Profile”；`modify_requested` 与 `rejected` 都保持未选择。三种状态均必须保持零 dispatch、零外部效果/高风险授权和空副作用授权集。由于完整 payload 中的个人数据与密钥兼容性仍未证实，下一边界是 provider-neutral Payload Data Attestation，而不是 Adapter 实现或 dispatch。
 
+只有 confirmed Adapter 选择才可进入 [Handoff Payload Data Attestation v0](handoff-payload-data-attestation-v0.md)。运行十二文件只读预演，完整重放来源链，校验已完成审核的 provenance，并由 Payload 事实与所选 Profile 数据策略派生兼容性：
+
+```sh
+ruby scripts/preview_handoff_payload_data_attestation.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml
+```
+
+`compatible` 只表示完整 Envelope payload 符合所选 Profile 的个人数据、密钥和分类策略；它仍不授权 dispatch 或任何 true effect。`incompatible` 必须明确阻断 dispatch，并要求移除/外置不兼容数据或选择新 Profile。预演器不自行扫描 Payload；输入 Attestation 必须由经批准的独立审核流程产生，原始命中片段不得写入工件或用户文案。兼容后的下一边界是 pending、零授权 Adapter Effect Authorization Proposal。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -249,6 +257,7 @@ ruby scripts/preview_handoff_adapter_selection_confirmation.rb SESSION_REVISION.
 - Adapter Capability Profile 只是 reviewed 声明，不是实现或授权；每个 `true` 副作用必须有同名的未来授权要求。
 - Adapter Selection Proposal 必须保持 pending、未选择、未 dispatch、零外部效果授权；其确认选项只能进入独立 Selection Confirmation Receipt，不能直接执行。
 - Adapter Selection Confirmation Receipt 只固定对 exact Envelope/Profile/Proposal 的选择；即使 `confirmed` 也不得视为 dispatch-ready、副作用授权或 payload 兼容性证据。
+- Payload Data Attestation 必须覆盖完整 exact Envelope payload，兼容性必须由 Payload 事实和已选 Profile 策略派生；`compatible` 不是 effect/dispatch authorization，`incompatible` 必须阻断继续。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

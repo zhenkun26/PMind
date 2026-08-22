@@ -208,7 +208,7 @@ module PMind
                      "",
                      "## 下一步",
                      "",
-                     "先建立覆盖完整 Envelope payload 的 Data Attestation。即使数据审核通过，也必须再对每一项 Adapter 副作用取得明确授权；本 Receipt 不能直接进入 dispatch。"
+                     "运行独立 Handoff Payload Data Attestation，审核完整 Envelope payload。即使数据审核通过，也必须再对每一项 Adapter 副作用取得明确授权；本 Receipt 不能直接进入 dispatch。"
                    ])
       lines.join("\n")
     end

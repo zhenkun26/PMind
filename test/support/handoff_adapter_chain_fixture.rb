@@ -41,6 +41,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_eleven_files(directory, envelope_classification: nil)
+    paths = write_ten_files(directory, envelope_classification: envelope_classification)
+    confirmation_path = File.join(directory, "adapter-selection-confirmation.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-adapter-selection-confirmation-receipt-valid.yaml")
+    write_yaml(confirmation_path, load_yaml(fixture_path))
+    paths << confirmation_path
+    refresh_selection_confirmation_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -59,6 +69,23 @@ class HandoffAdapterChainFixture
     proposal = load_yaml(paths.fetch(9))
     proposal["adapter_profile_file_sha256"] = digest(paths.fetch(8))
     write_yaml(paths.fetch(9), proposal)
+  end
+
+  def refresh_selection_confirmation_bindings(paths)
+    preview = PMind::HandoffAdapterSelectionPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(10))
+
+    receipt = load_yaml(paths.fetch(10))
+    preview.input_digests.each { |field, digest_value| receipt[field] = digest_value }
+    receipt["envelope_id"] = preview.envelope["envelope_id"]
+    receipt["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    receipt["adapter_selection_proposal_id"] = preview.proposal["adapter_selection_proposal_id"]
+    receipt["envelope_delivery_state"] = preview.envelope["delivery_state"]
+    receipt["adapter_profile_status"] = preview.profile["status"]
+    receipt["adapter_selection_proposal_status"] = preview.proposal.dig("confirmation", "status")
+    receipt["recipient"] = preview.envelope["recipient"]
+    receipt["data_classification"] = preview.proposal["data_classification"]
+    write_yaml(paths.fetch(10), receipt)
   end
 
   def load_yaml(path)

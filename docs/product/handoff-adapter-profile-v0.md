@@ -41,7 +41,7 @@ Adapter Capability Profile 是对一个候选 Handoff Adapter 的机器可读说
 
 现有 Handoff Envelope 只提供整个封装的数据分类；Confirmation Receipt 的个人数据和密钥声明只覆盖确认原文，不覆盖内嵌 Prompt Package。因此 Profile 可以声明自己的数据策略，但不能据此断言 Envelope 的个人数据或密钥兼容性。
 
-选择文案必须把这两项显示为未知，并在 dispatch 前保留独立内容审核。禁止把 `data_classification` 兼容写成“全部数据策略已通过”。
+选择文案必须把这两项显示为未知。用户确认选择后，必须运行 [Handoff Payload Data Attestation v0](handoff-payload-data-attestation-v0.md) 审核完整 Envelope payload；禁止把 `data_classification` 兼容或选择确认写成“全部数据策略已通过”。Profile v0 不声明 retention/export/purpose 策略，Attestation v0 也不得宣称这些维度兼容。
 
 ## 副作用边界
 

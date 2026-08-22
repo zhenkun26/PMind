@@ -120,6 +120,16 @@ which verified Envelope, but never authorizes dispatch or Adapter effects.
 Avoid: “Adapter authorized,” “ready to dispatch,” or “Adapter running” when
 only the selection has been recorded.
 
+### Payload Data Attestation
+
+An immutable result of a completed review of one exact Handoff Envelope
+payload against the selected Adapter Capability Profile's data policy. It
+records compatibility or a data blocker, but never authorizes dispatch or
+Adapter effects.
+
+Avoid: “dispatch approved” or “payload delivered” when only data compatibility
+has been established.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

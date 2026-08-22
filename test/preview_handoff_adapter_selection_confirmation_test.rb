@@ -10,7 +10,6 @@ require_relative "support/handoff_adapter_chain_fixture"
 
 class PreviewHandoffAdapterSelectionConfirmationTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
-  CONFIRMATION_FIXTURE = File.join(ROOT, "test/fixtures/handoff-adapter-selection-confirmation-receipt-valid.yaml")
   DIGEST_FIELDS = %w[
     source_session_file_sha256
     draft_package_file_sha256
@@ -288,30 +287,13 @@ class PreviewHandoffAdapterSelectionConfirmationTest < Minitest::Test
 
   def with_eleven_files(envelope_classification: nil)
     Dir.mktmpdir("pmind-adapter-selection-confirmation") do |directory|
-      paths = chain_fixture.write_ten_files(directory, envelope_classification: envelope_classification)
-      confirmation_path = File.join(directory, "adapter-selection-confirmation.yaml")
-      chain_fixture.write_yaml(confirmation_path, load_yaml(CONFIRMATION_FIXTURE))
-      paths << confirmation_path
-      refresh_confirmation_bindings(paths)
+      paths = chain_fixture.write_eleven_files(directory, envelope_classification: envelope_classification)
       yield paths
     end
   end
 
   def refresh_confirmation_bindings(paths)
-    preview = PMind::HandoffAdapterSelectionPreview.new(ROOT)
-    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(10))
-
-    receipt = load_yaml(paths.fetch(10))
-    preview.input_digests.each { |field, digest| receipt[field] = digest }
-    receipt["envelope_id"] = preview.envelope["envelope_id"]
-    receipt["adapter_profile_id"] = preview.profile["adapter_profile_id"]
-    receipt["adapter_selection_proposal_id"] = preview.proposal["adapter_selection_proposal_id"]
-    receipt["envelope_delivery_state"] = preview.envelope["delivery_state"]
-    receipt["adapter_profile_status"] = preview.profile["status"]
-    receipt["adapter_selection_proposal_status"] = preview.proposal.dig("confirmation", "status")
-    receipt["recipient"] = preview.envelope["recipient"]
-    receipt["data_classification"] = preview.proposal["data_classification"]
-    chain_fixture.write_yaml(paths.fetch(10), receipt)
+    chain_fixture.refresh_selection_confirmation_bindings(paths)
   end
 
   def set_choice(paths, decision, selected, response)

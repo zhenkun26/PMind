@@ -83,6 +83,8 @@ The experiment is paired:
 - `schemas/handoff-adapter-selection-proposal-v0.yaml`: machine-readable exact-byte bindings, compatibility unknowns, and no-selection/no-dispatch state;
 - `docs/product/handoff-adapter-selection-confirmation-receipt-v0.md`: exact ten-source choice capture, selected-not-dispatchable semantics, and safe three-state copy contract;
 - `schemas/handoff-adapter-selection-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject state, ten source digests, privacy declarations, and zero dispatch/effect authorization boundary;
+- `docs/product/handoff-payload-data-attestation-v0.md`: exact eleven-source complete-payload review, derived compatibility matrix, provenance rules, and safe compatible/blocked copy contract;
+- `schemas/handoff-payload-data-attestation-v0.yaml`: machine-readable payload facts, controlled categories, selected-Profile policy binding, derived compatibility, and zero dispatch/effect authorization boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -118,6 +120,7 @@ The experiment is paired:
 - `scripts/verify_handoff_envelope_lineage.rb`: read-only eight-file replay verifier for Envelope metadata, authorization lineage, and complete embedded Package content.
 - `scripts/preview_handoff_adapter_selection.rb`: read-only ten-file Envelope replay, reviewed Profile consistency validation, exact dual binding, and safe pending selection renderer.
 - `scripts/preview_handoff_adapter_selection_confirmation.rb`: read-only eleven-file Selection replay, exact choice binding, and selected-without-dispatch renderer.
+- `scripts/preview_handoff_payload_data_attestation.rb`: read-only twelve-file confirmed-Selection replay, complete-review provenance and compatibility validator, and compatible-without-authorization or blocked renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -139,6 +142,9 @@ ruby test/preview_handoff_proposal_test.rb
 ruby test/preview_handoff_confirmation_test.rb
 ruby test/create_handoff_envelope_test.rb
 ruby test/verify_handoff_envelope_lineage_test.rb
+ruby test/preview_handoff_adapter_selection_test.rb
+ruby test/preview_handoff_adapter_selection_confirmation_test.rb
+ruby test/preview_handoff_payload_data_attestation_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

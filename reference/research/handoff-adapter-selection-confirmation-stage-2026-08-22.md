@@ -57,4 +57,4 @@ Calibration preflight remains honestly BLOCKED at 3/6 because four real roles, s
 
 ## Next boundary
 
-Define a provider-neutral Handoff Payload Data Attestation bound to the exact Envelope bytes. It should separately declare/verify personal-data and secret presence, review method, reviewer or scanner provenance, retention/export constraints, and compatibility with the selected Profile. It must remain read-only and cannot authorize Adapter effects or dispatch. Only after that boundary should PMind design an effect-authorization proposal; a real Adapter remains deferred.
+The provider-neutral Handoff Payload Data Attestation is now implemented and documented in `handoff-payload-data-attestation-stage-2026-08-22.md`. It binds the exact eleven-file chain, derives classification/personal-data/secret compatibility from the selected Profile policy, and remains read-only with zero Adapter effects or dispatch authority. Retention/export/purpose compatibility is explicitly not claimed because Profile v0 lacks those policy fields. The next boundary is a pending, zero-authorization Adapter Effect Authorization Proposal; a real Adapter remains deferred.

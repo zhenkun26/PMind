@@ -1,0 +1,225 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-payload-data-attestation-v0.yaml"
+title: "PMind Handoff Payload Data Attestation v0"
+description: "Completed review of one exact Handoff Envelope payload against one selected Adapter Profile; never a dispatch or effect authorization."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - payload_data_attestation_id
+  - reviewed_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_selection_proposal_id
+  - adapter_selection_confirmation_id
+  - envelope_delivery_state
+  - adapter_profile_status
+  - adapter_selection_proposal_status
+  - selection_confirmation_decision
+  - adapter_selected
+  - recipient
+  - review_scope
+  - review_status
+  - review_method
+  - reviewer_ref
+  - scanner_ref
+  - scanner_version
+  - adapter_maximum_data_classification
+  - adapter_personal_data_handling
+  - adapter_secret_handling
+  - payload_contains_personal_data
+  - personal_data_categories
+  - payload_contains_secrets
+  - secret_categories
+  - personal_data_compatibility
+  - secret_compatibility
+  - data_classification_compatibility
+  - overall_data_compatibility
+  - payload_data_attestation_completed
+  - dispatch_authorized
+  - external_effects_authorized
+  - high_risk_authorization_inferred
+  - effect_authorizations_granted
+  - data_classification
+  - attestation_contains_personal_data
+  - attestation_contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  payload_data_attestation_id:
+    type: string
+    pattern: "^payload-data-attestation-[0-9]{8}-[0-9]{3}$"
+  reviewed_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  source_session_file_sha256:
+    $ref: "#/$defs/sha256"
+  draft_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  final_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_envelope_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_profile_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  package_id:
+    type: string
+    pattern: "^pkg-[0-9]{8}-[0-9]{3}$"
+  envelope_id:
+    type: string
+    pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$"
+  adapter_profile_id:
+    type: string
+    pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_proposal_id:
+    type: string
+    pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_confirmation_id:
+    type: string
+    pattern: "^adapter-selection-confirmation-[0-9]{8}-[0-9]{3}$"
+  envelope_delivery_state:
+    const: prepared
+  adapter_profile_status:
+    const: reviewed
+  adapter_selection_proposal_status:
+    const: pending
+  selection_confirmation_decision:
+    const: confirmed
+  adapter_selected:
+    const: true
+  recipient:
+    const: coding_agent
+  review_scope:
+    const: complete_handoff_envelope_payload
+  review_status:
+    const: completed
+  review_method:
+    type: string
+    enum:
+      - manual
+      - automated
+      - hybrid
+  reviewer_ref:
+    $ref: "#/$defs/provenance_ref"
+  scanner_ref:
+    $ref: "#/$defs/provenance_ref"
+  scanner_version:
+    $ref: "#/$defs/provenance_ref"
+  adapter_maximum_data_classification:
+    $ref: "#/$defs/data_classification"
+  adapter_personal_data_handling:
+    type: string
+    enum:
+      - allowed
+      - forbidden
+  adapter_secret_handling:
+    const: forbidden
+  payload_contains_personal_data:
+    type: boolean
+  personal_data_categories:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: "#/$defs/personal_data_category"
+  payload_contains_secrets:
+    type: boolean
+  secret_categories:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: "#/$defs/secret_category"
+  personal_data_compatibility:
+    $ref: "#/$defs/compatibility"
+  secret_compatibility:
+    $ref: "#/$defs/compatibility"
+  data_classification_compatibility:
+    $ref: "#/$defs/compatibility"
+  overall_data_compatibility:
+    $ref: "#/$defs/compatibility"
+  payload_data_attestation_completed:
+    const: true
+  dispatch_authorized:
+    const: false
+  external_effects_authorized:
+    const: false
+  high_risk_authorization_inferred:
+    const: false
+  effect_authorizations_granted:
+    type: array
+    maxItems: 0
+    items:
+      type: string
+  data_classification:
+    $ref: "#/$defs/data_classification"
+  attestation_contains_personal_data:
+    type: boolean
+  attestation_contains_secrets:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  provenance_ref:
+    type: string
+    minLength: 3
+    maxLength: 128
+    pattern: "^[A-Za-z0-9._:-]+$"
+  compatibility:
+    type: string
+    enum:
+      - compatible
+      - incompatible
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted
+  personal_data_category:
+    type: string
+    enum:
+      - identity
+      - contact
+      - financial
+      - authentication
+      - location
+      - health
+      - employment
+      - other
+  secret_category:
+    type: string
+    enum:
+      - api_key
+      - access_token
+      - private_key
+      - password
+      - connection_string
+      - other
