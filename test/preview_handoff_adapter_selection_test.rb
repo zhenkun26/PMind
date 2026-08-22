@@ -7,17 +7,10 @@ require "rbconfig"
 require "tmpdir"
 require "yaml"
 require_relative "../scripts/preview_handoff_adapter_selection"
+require_relative "support/handoff_adapter_chain_fixture"
 
 class PreviewHandoffAdapterSelectionTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
-  SESSION_FIXTURE = File.join(ROOT, "test/fixtures/clarification-session-revision-ready.yaml")
-  PACKAGE_FIXTURE = File.join(ROOT, "test/fixtures/prompt-package-valid.yaml")
-  COMPILATION_PROPOSAL_FIXTURE = File.join(ROOT, "test/fixtures/prompt-package-compilation-proposal-valid.yaml")
-  COMPILATION_CONFIRMATION_FIXTURE = File.join(ROOT, "test/fixtures/prompt-package-compilation-confirmation-receipt-valid.yaml")
-  HANDOFF_PROPOSAL_FIXTURE = File.join(ROOT, "test/fixtures/handoff-proposal-valid.yaml")
-  HANDOFF_CONFIRMATION_FIXTURE = File.join(ROOT, "test/fixtures/handoff-confirmation-receipt-valid.yaml")
-  ADAPTER_PROFILE_FIXTURE = File.join(ROOT, "test/fixtures/handoff-adapter-profile-valid.yaml")
-  ADAPTER_PROPOSAL_FIXTURE = File.join(ROOT, "test/fixtures/handoff-adapter-selection-proposal-valid.yaml")
 
   def test_valid_selection_proposal_previews_profile_without_selecting_or_dispatching
     with_ten_files do |paths|
@@ -90,6 +83,29 @@ class PreviewHandoffAdapterSelectionTest < Minitest::Test
         File.open(paths.fetch(index), "ab") { |file| file.write("# semantically equivalent drift\n") }
 
         assert_invalid(paths, field)
+      end
+    end
+  end
+
+  def test_preview_exposes_all_ten_same_replay_input_digests
+    fields = %w[
+      source_session_file_sha256
+      draft_package_file_sha256
+      compilation_proposal_file_sha256
+      compilation_confirmation_receipt_file_sha256
+      final_package_file_sha256
+      handoff_proposal_file_sha256
+      handoff_confirmation_receipt_file_sha256
+      handoff_envelope_file_sha256
+      adapter_profile_file_sha256
+      adapter_selection_proposal_file_sha256
+    ]
+    with_ten_files do |paths|
+      preview = adapter_preview
+
+      assert preview.preview_files(*paths), preview.errors.join("\n")
+      fields.each_with_index do |field, index|
+        assert_equal Digest::SHA256.file(paths.fetch(index)).hexdigest, preview.input_digests.fetch(field)
       end
     end
   end
@@ -328,99 +344,12 @@ class PreviewHandoffAdapterSelectionTest < Minitest::Test
 
   def with_ten_files(envelope_classification: nil)
     Dir.mktmpdir("pmind-adapter-selection") do |directory|
-      yield write_ten_files(directory, envelope_classification: envelope_classification)
+      yield chain_fixture.write_ten_files(directory, envelope_classification: envelope_classification)
     end
-  end
-
-  def write_ten_files(directory, envelope_classification: nil)
-    documents = [
-      SESSION_FIXTURE,
-      PACKAGE_FIXTURE,
-      COMPILATION_PROPOSAL_FIXTURE,
-      COMPILATION_CONFIRMATION_FIXTURE,
-      HANDOFF_PROPOSAL_FIXTURE,
-      HANDOFF_CONFIRMATION_FIXTURE,
-      ADAPTER_PROFILE_FIXTURE,
-      ADAPTER_PROPOSAL_FIXTURE
-    ].map { |path| load_yaml(path) }
-    session, package, compilation_proposal, compilation_confirmation, handoff_proposal, handoff_confirmation, profile, proposal = documents
-    paths = %w[
-      session-revision.yaml
-      draft-package.yaml
-      compilation-proposal.yaml
-      compilation-confirmation.yaml
-      final-package.yaml
-      handoff-proposal.yaml
-      handoff-confirmation.yaml
-      handoff-envelope.yaml
-      adapter-profile.yaml
-      adapter-selection-proposal.yaml
-    ].map { |name| File.join(directory, name) }
-
-    write_yaml(paths.fetch(0), session)
-    write_yaml(paths.fetch(1), package)
-    compilation_proposal["source_session_file_sha256"] = Digest::SHA256.file(paths.fetch(0)).hexdigest
-    compilation_proposal["draft_package_file_sha256"] = Digest::SHA256.file(paths.fetch(1)).hexdigest
-    write_yaml(paths.fetch(2), compilation_proposal)
-    compilation_confirmation["source_session_file_sha256"] = Digest::SHA256.file(paths.fetch(0)).hexdigest
-    compilation_confirmation["draft_package_file_sha256"] = Digest::SHA256.file(paths.fetch(1)).hexdigest
-    compilation_confirmation["compilation_proposal_file_sha256"] = Digest::SHA256.file(paths.fetch(2)).hexdigest
-    write_yaml(paths.fetch(3), compilation_confirmation)
-
-    package_creator = PMind::PromptPackageCreator.new(ROOT)
-    raise package_creator.errors.join("\n") unless package_creator.create_files(*paths.first(4), paths.fetch(4))
-    final_package = load_yaml(paths.fetch(4))
-    handoff_proposal["package_id"] = final_package["package_id"]
-    handoff_proposal["final_package_file_sha256"] = Digest::SHA256.file(paths.fetch(4)).hexdigest
-    handoff_proposal["package_handoff_ready"] = final_package.dig("handoff", "ready")
-    handoff_proposal["recipient"] = final_package.dig("handoff", "recipient")
-    write_yaml(paths.fetch(5), handoff_proposal)
-
-    digest_fields = %w[
-      source_session_file_sha256
-      draft_package_file_sha256
-      compilation_proposal_file_sha256
-      compilation_confirmation_receipt_file_sha256
-      final_package_file_sha256
-      handoff_proposal_file_sha256
-    ]
-    paths.first(6).zip(digest_fields).each do |source_path, field|
-      handoff_confirmation[field] = Digest::SHA256.file(source_path).hexdigest
-    end
-    handoff_confirmation["package_id"] = final_package["package_id"]
-    handoff_confirmation["handoff_proposal_id"] = handoff_proposal["handoff_proposal_id"]
-    handoff_confirmation["package_handoff_ready"] = final_package.dig("handoff", "ready")
-    handoff_confirmation["recipient"] = final_package.dig("handoff", "recipient")
-    handoff_confirmation["handoff_proposal_status"] = handoff_proposal.dig("confirmation", "status")
-    handoff_confirmation["data_classification"] = envelope_classification if envelope_classification
-    write_yaml(paths.fetch(6), handoff_confirmation)
-
-    envelope_creator = PMind::HandoffEnvelopeCreator.new(ROOT)
-    raise envelope_creator.errors.join("\n") unless envelope_creator.create_files(*paths.first(7), paths.fetch(7))
-    write_yaml(paths.fetch(8), profile)
-    write_yaml(paths.fetch(9), proposal)
-    refresh_proposal_bindings(paths)
-    paths
-  end
-
-  def refresh_proposal_bindings(paths)
-    envelope = load_yaml(paths.fetch(7))
-    profile = load_yaml(paths.fetch(8))
-    proposal = load_yaml(paths.fetch(9))
-    proposal["envelope_id"] = envelope["envelope_id"]
-    proposal["handoff_envelope_file_sha256"] = Digest::SHA256.file(paths.fetch(7)).hexdigest
-    proposal["envelope_delivery_state"] = envelope["delivery_state"]
-    proposal["recipient"] = envelope["recipient"]
-    proposal["adapter_profile_id"] = profile["adapter_profile_id"]
-    proposal["adapter_profile_file_sha256"] = Digest::SHA256.file(paths.fetch(8)).hexdigest
-    proposal["data_classification"] = envelope["data_classification"]
-    write_yaml(paths.fetch(9), proposal)
   end
 
   def refresh_profile_digest(paths)
-    proposal = load_yaml(paths.fetch(9))
-    proposal["adapter_profile_file_sha256"] = Digest::SHA256.file(paths.fetch(8)).hexdigest
-    write_yaml(paths.fetch(9), proposal)
+    chain_fixture.refresh_profile_digest(paths)
   end
 
   def mutate_yaml(path)
@@ -440,15 +369,14 @@ class PreviewHandoffAdapterSelectionTest < Minitest::Test
   end
 
   def write_yaml(path, document)
-    File.open(path, "wb", 0o600) { |file| file.write(YAML.dump(document)) }
+    chain_fixture.write_yaml(path, document)
   end
 
   def load_yaml(path)
-    YAML.safe_load(
-      File.read(path),
-      permitted_classes: [],
-      permitted_symbols: [],
-      aliases: false
-    )
+    chain_fixture.load_yaml(path)
+  end
+
+  def chain_fixture
+    @chain_fixture ||= HandoffAdapterChainFixture.new(ROOT)
   end
 end

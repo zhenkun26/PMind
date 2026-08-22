@@ -72,4 +72,4 @@ Session revision
 
 预演器是十文件只读过程，没有模型、网络、子进程、通知、外部服务调用或输出文件创建。合成 Fixture 不是实际 Adapter、真实用户选择、交付记录或产品效果证据。
 
-下一边界是把用户选择保存为独立 Adapter Selection Confirmation Receipt；confirmed 也只能证明“选中了哪份 Profile”，仍不能 dispatch。由于 Envelope 尚无覆盖完整 Package 的个人数据/密钥声明，真实 dispatch 前还必须建立独立 payload data review/attestation，并对 Profile 的每一个 `true` 副作用取得明确授权。
+独立 [Adapter Selection Confirmation Receipt v0](handoff-adapter-selection-confirmation-receipt-v0.md) 现已实现：confirmed 也只能证明“选中了哪份 Profile”，仍不能 dispatch。由于 Envelope 尚无覆盖完整 Package 的个人数据/密钥声明，下一边界是 provider-neutral Payload Data Attestation；此后仍需对 Profile 的每一个 `true` 副作用取得明确授权。

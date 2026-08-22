@@ -1,0 +1,138 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-selection-confirmation-receipt-v0.yaml"
+title: "PMind Handoff Adapter Selection Confirmation Receipt v0"
+description: "Immutable user choice bound to one exact ten-file Adapter Selection Proposal chain; never a dispatch authorization."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_selection_confirmation_id
+  - captured_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - envelope_id
+  - adapter_profile_id
+  - adapter_selection_proposal_id
+  - envelope_delivery_state
+  - adapter_profile_status
+  - adapter_selection_proposal_status
+  - recipient
+  - confirmation_decision
+  - adapter_selected
+  - dispatch_authorized
+  - external_effects_authorized
+  - high_risk_authorization_inferred
+  - effect_authorizations_granted
+  - payload_data_attestation_required
+  - personal_data_compatibility
+  - secret_compatibility
+  - user_response
+  - user_response_sha256
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+properties:
+  schema_version:
+    const: "0.1.0"
+  adapter_selection_confirmation_id:
+    type: string
+    pattern: "^adapter-selection-confirmation-[0-9]{8}-[0-9]{3}$"
+  captured_at:
+    type: string
+    format: date-time
+  language:
+    const: "zh-CN"
+  source_session_file_sha256:
+    $ref: "#/$defs/sha256"
+  draft_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  final_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_envelope_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_profile_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  envelope_id:
+    type: string
+    pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$"
+  adapter_profile_id:
+    type: string
+    pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_proposal_id:
+    type: string
+    pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$"
+  envelope_delivery_state:
+    const: prepared
+  adapter_profile_status:
+    const: reviewed
+  adapter_selection_proposal_status:
+    const: pending
+  recipient:
+    const: coding_agent
+  confirmation_decision:
+    type: string
+    enum:
+      - confirmed
+      - modify_requested
+      - rejected
+  adapter_selected:
+    type: boolean
+  dispatch_authorized:
+    const: false
+  external_effects_authorized:
+    const: false
+  high_risk_authorization_inferred:
+    const: false
+  effect_authorizations_granted:
+    type: array
+    maxItems: 0
+    items:
+      type: string
+  payload_data_attestation_required:
+    const: true
+  personal_data_compatibility:
+    const: unknown
+  secret_compatibility:
+    const: unknown
+  user_response:
+    type: string
+    minLength: 1
+    maxLength: 4000
+  user_response_sha256:
+    $ref: "#/$defs/sha256"
+  data_classification:
+    $ref: "#/$defs/data_classification"
+  contains_personal_data:
+    type: boolean
+  contains_secrets:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted

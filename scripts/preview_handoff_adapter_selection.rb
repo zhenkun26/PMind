@@ -20,6 +20,15 @@ module PMind
       cost_incurred
       production_data_access
     ].freeze
+    ENVELOPE_SOURCE_DIGEST_FIELDS = %w[
+      source_session_file_sha256
+      draft_package_file_sha256
+      compilation_proposal_file_sha256
+      compilation_confirmation_receipt_file_sha256
+      final_package_file_sha256
+      handoff_proposal_file_sha256
+      handoff_confirmation_receipt_file_sha256
+    ].freeze
     CLASSIFICATION_RANK = {
       "public" => 0,
       "internal" => 1,
@@ -55,7 +64,7 @@ module PMind
       "restricted" => "受限"
     }.freeze
 
-    attr_reader :errors, :envelope, :profile, :proposal, :input_bytes
+    attr_reader :errors, :envelope, :profile, :proposal, :input_bytes, :input_digests
 
     def initialize(root)
       @root = File.realpath(root)
@@ -64,6 +73,7 @@ module PMind
       @profile = nil
       @proposal = nil
       @input_bytes = nil
+      @input_digests = nil
     end
 
     def preview_files(session_path, draft_path, compilation_proposal_path, compilation_confirmation_path, package_path, handoff_proposal_path, handoff_confirmation_path, envelope_path, profile_path, proposal_path)
@@ -95,6 +105,13 @@ module PMind
         "adapter_profile" => profile_bytes,
         "adapter_selection_proposal" => proposal_bytes
       }
+      @input_digests = ENVELOPE_SOURCE_DIGEST_FIELDS.to_h do |field|
+        [field, verifier.expected_envelope.fetch("authorization").fetch(field)]
+      end.merge(
+        "handoff_envelope_file_sha256" => Digest::SHA256.hexdigest(verifier.envelope_bytes),
+        "adapter_profile_file_sha256" => Digest::SHA256.hexdigest(profile_bytes),
+        "adapter_selection_proposal_file_sha256" => Digest::SHA256.hexdigest(proposal_bytes)
+      )
 
       profile_valid = validate_schema(PROFILE_SCHEMA_PATH, profile_document, profile_path)
       proposal_valid = validate_schema(PROPOSAL_SCHEMA_PATH, proposal_document, proposal_path)
@@ -117,6 +134,7 @@ module PMind
       @profile = nil
       @proposal = nil
       @input_bytes = nil
+      @input_digests = nil
     end
 
     def load_yaml_file_with_bytes(path)
@@ -280,7 +298,7 @@ module PMind
                      "",
                      "## 请选择",
                      "",
-                     "1. 确认候选：允许后续独立步骤记录对当前 Profile 的选择；仍不 dispatch、不批准副作用。",
+                     "1. 确认候选：允许后续独立 Adapter Selection Confirmation Receipt 记录对当前 Profile 的选择；仍不 dispatch、不批准副作用。",
                      "2. 请求修改：更换或修订 Profile，并生成新的选择提案。",
                      "3. 拒绝候选：保留已验证的 Envelope，但不选择该 Adapter。",
                      "",

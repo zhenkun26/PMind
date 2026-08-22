@@ -43,4 +43,4 @@ The Profile uses a closed v0 vocabulary. New channel effects require a deliberat
 
 ## Next boundary
 
-Create an immutable Adapter Selection Confirmation Receipt that binds all ten files and captures confirm/modify/reject without dispatch. A confirmed Receipt may record which reviewed Profile was selected, but must keep dispatch and every effect authorization false. Before any real Adapter, add payload data attestation for personal-data/secret compatibility and obtain explicit authorization for every true Profile effect.
+The immutable Adapter Selection Confirmation Receipt is now implemented; see `reference/research/handoff-adapter-selection-confirmation-stage-2026-08-22.md`. It binds all ten files and captures confirm/modify/reject without dispatch. A confirmed Receipt records which reviewed Profile was selected while dispatch and every effect authorization remain false. The next boundary is provider-neutral Payload Data Attestation for personal-data/secret compatibility; effect authorization and a real Adapter remain deferred.

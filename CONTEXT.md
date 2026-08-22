@@ -111,6 +111,15 @@ Adapter has been selected, authorized, or run.
 
 Avoid: “Adapter selection” when only a Proposal exists.
 
+### Adapter Selection Confirmation Receipt
+
+An immutable record of a user's choice about one exact Adapter Selection
+Proposal. A confirmed Receipt records which reviewed Profile was selected for
+which verified Envelope, but never authorizes dispatch or Adapter effects.
+
+Avoid: “Adapter authorized,” “ready to dispatch,” or “Adapter running” when
+only the selection has been recorded.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

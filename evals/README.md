@@ -81,6 +81,8 @@ The experiment is paired:
 - `schemas/handoff-adapter-profile-v0.yaml`: machine-readable reviewed Adapter capability and exact true-effect authorization requirements;
 - `docs/product/handoff-adapter-selection-proposal-v0.md`: exact Envelope/Profile binding, pending zero-effect selection, and safe decision-copy contract;
 - `schemas/handoff-adapter-selection-proposal-v0.yaml`: machine-readable exact-byte bindings, compatibility unknowns, and no-selection/no-dispatch state;
+- `docs/product/handoff-adapter-selection-confirmation-receipt-v0.md`: exact ten-source choice capture, selected-not-dispatchable semantics, and safe three-state copy contract;
+- `schemas/handoff-adapter-selection-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject state, ten source digests, privacy declarations, and zero dispatch/effect authorization boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -115,6 +117,7 @@ The experiment is paired:
 - `scripts/create_handoff_envelope.rb`: deterministic, confirmed-only, no-overwrite `0600` local Envelope creator that performs no dispatch.
 - `scripts/verify_handoff_envelope_lineage.rb`: read-only eight-file replay verifier for Envelope metadata, authorization lineage, and complete embedded Package content.
 - `scripts/preview_handoff_adapter_selection.rb`: read-only ten-file Envelope replay, reviewed Profile consistency validation, exact dual binding, and safe pending selection renderer.
+- `scripts/preview_handoff_adapter_selection_confirmation.rb`: read-only eleven-file Selection replay, exact choice binding, and selected-without-dispatch renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.

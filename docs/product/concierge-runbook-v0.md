@@ -227,6 +227,14 @@ ruby scripts/preview_handoff_adapter_selection.rb SESSION_REVISION.yaml DRAFT_PA
 
 只向用户展示 Adapter 可读名称、交付/回执/幂等/重试能力、未来需分别授权的副作用、数据分类和三种选择。当前步骤不得保存选择、实现或调用 Adapter、dispatch、启动进程、访问网络、写本地/外部状态、发送通知、产生费用或访问生产数据。现有 Envelope 没有覆盖完整 Prompt Package 的个人数据/密钥声明，因此两项兼容性必须显示为未知，并保留 dispatch 前独立内容审核。
 
+用户的选择必须写入符合 [Handoff Adapter Selection Confirmation Receipt v0](handoff-adapter-selection-confirmation-receipt-v0.md) 的独立 Receipt，再用十一文件只读预演器重放完整来源链：
+
+```sh
+ruby scripts/preview_handoff_adapter_selection_confirmation.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml
+```
+
+`confirmed` 只记录“针对这份精确 Envelope 选中这份已审查 Profile”；`modify_requested` 与 `rejected` 都保持未选择。三种状态均必须保持零 dispatch、零外部效果/高风险授权和空副作用授权集。由于完整 payload 中的个人数据与密钥兼容性仍未证实，下一边界是 provider-neutral Payload Data Attestation，而不是 Adapter 实现或 dispatch。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -240,6 +248,7 @@ ruby scripts/preview_handoff_adapter_selection.rb SESSION_REVISION.yaml DRAFT_PA
 - Persisted Envelope 必须通过独立 lineage replay 才可进入 Adapter 探索；验证通过仍不表示已交付或已授权渠道副作用。
 - Adapter Capability Profile 只是 reviewed 声明，不是实现或授权；每个 `true` 副作用必须有同名的未来授权要求。
 - Adapter Selection Proposal 必须保持 pending、未选择、未 dispatch、零外部效果授权；其确认选项只能进入独立 Selection Confirmation Receipt，不能直接执行。
+- Adapter Selection Confirmation Receipt 只固定对 exact Envelope/Profile/Proposal 的选择；即使 `confirmed` 也不得视为 dispatch-ready、副作用授权或 payload 兼容性证据。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 
