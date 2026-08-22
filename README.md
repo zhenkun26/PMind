@@ -37,6 +37,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Selection Confirmation Receipt contract](docs/product/handoff-adapter-selection-confirmation-receipt-v0.md)
 - [Handoff Payload Data Attestation contract](docs/product/handoff-payload-data-attestation-v0.md)
 - [Handoff Adapter Effect Authorization Proposal contract](docs/product/handoff-adapter-effect-authorization-proposal-v0.md)
+- [Handoff Adapter Effect Authorization Confirmation Receipt contract](docs/product/handoff-adapter-effect-authorization-confirmation-receipt-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -118,6 +119,7 @@ ruby scripts/preview_handoff_adapter_selection.rb path/to/new-session.yaml path/
 ruby scripts/preview_handoff_adapter_selection_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml
 ruby scripts/preview_handoff_payload_data_attestation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml
 ruby scripts/preview_handoff_adapter_effect_authorization.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml
+ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -157,6 +159,10 @@ The thirteen-file Adapter Effect Authorization Proposal preview accepts only a
 compatible Attestation, enumerates exactly the selected Profile's true effects,
 and discloses cost and production-data implications. It remains pending, saves
 no choice, grants no effect, and does not dispatch or call an Adapter.
+The fourteen-file Effect Authorization Confirmation preview then records
+confirm, modify, or reject against that exact Proposal. Confirmed grants only
+the exact named effect set, while every state keeps effects non-executable and
+dispatch false; it still does not call an Adapter.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -240,3 +246,8 @@ Executor Profile and four-role separation gates before any run may start.
   no saved choice, no granted effect, and no dispatch authority; cost,
   production-data access, and unverified retention/export/purpose boundaries
   must be disclosed rather than inferred.
+- An Adapter Effect Authorization Confirmation Receipt binds all thirteen prior
+  files and the user's response digest. Confirmed grants all and only the exact
+  requested effect names, but those grants stay non-executable: implementation
+  attestation, provider contract tests, and independent dispatch confirmation
+  remain mandatory.

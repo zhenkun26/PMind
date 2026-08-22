@@ -10,7 +10,6 @@ require_relative "support/handoff_adapter_chain_fixture"
 
 class PreviewHandoffAdapterEffectAuthorizationTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
-  PROPOSAL_FIXTURE = File.join(ROOT, "test/fixtures/handoff-adapter-effect-authorization-proposal-valid.yaml")
   DIGEST_FIELDS = %w[
     source_session_file_sha256
     draft_package_file_sha256
@@ -340,38 +339,13 @@ class PreviewHandoffAdapterEffectAuthorizationTest < Minitest::Test
 
   def with_thirteen_files
     Dir.mktmpdir("pmind-adapter-effect-authorization") do |directory|
-      paths = chain_fixture.write_twelve_files(directory)
-      proposal_path = File.join(directory, "adapter-effect-authorization-proposal.yaml")
-      chain_fixture.write_yaml(proposal_path, load_yaml(PROPOSAL_FIXTURE))
-      paths << proposal_path
-      refresh_effect_proposal_bindings(paths)
+      paths = chain_fixture.write_thirteen_files(directory)
       yield paths
     end
   end
 
   def refresh_effect_proposal_bindings(paths)
-    preview = PMind::HandoffPayloadDataAttestationPreview.new(ROOT)
-    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(12))
-
-    proposal = load_yaml(paths.fetch(12))
-    preview.input_digests.each { |field, digest_value| proposal[field] = digest_value }
-    proposal["payload_data_attestation_file_sha256"] = preview.attestation_file_sha256
-    proposal["package_id"] = preview.envelope["package_id"]
-    proposal["envelope_id"] = preview.envelope["envelope_id"]
-    proposal["adapter_profile_id"] = preview.profile["adapter_profile_id"]
-    proposal["adapter_selection_proposal_id"] = preview.proposal["adapter_selection_proposal_id"]
-    proposal["adapter_selection_confirmation_id"] = preview.selection_confirmation["adapter_selection_confirmation_id"]
-    proposal["payload_data_attestation_id"] = preview.attestation["payload_data_attestation_id"]
-    proposal["envelope_delivery_state"] = preview.envelope["delivery_state"]
-    proposal["adapter_profile_status"] = preview.profile["status"]
-    proposal["adapter_selection_proposal_status"] = preview.proposal.dig("confirmation", "status")
-    proposal["selection_confirmation_decision"] = preview.selection_confirmation["confirmation_decision"]
-    proposal["adapter_selected"] = preview.selection_confirmation["adapter_selected"]
-    proposal["payload_data_attestation_completed"] = preview.attestation["payload_data_attestation_completed"]
-    proposal["overall_data_compatibility"] = preview.attestation["overall_data_compatibility"]
-    proposal["recipient"] = preview.envelope["recipient"]
-    proposal["data_classification"] = preview.attestation["data_classification"]
-    chain_fixture.write_yaml(paths.fetch(12), proposal)
+    chain_fixture.refresh_adapter_effect_authorization_proposal_bindings(paths)
   end
 
   def set_profile_effects(paths, true_effects)

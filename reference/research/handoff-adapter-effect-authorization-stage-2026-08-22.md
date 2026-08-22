@@ -52,4 +52,4 @@ Calibration preflight remains honestly BLOCKED at 3/6 because four real roles, s
 
 ## Next boundary
 
-Define an immutable Adapter Effect Authorization Confirmation Receipt bound to the exact thirteen-file chain. It may record confirm/modify/reject and the exact named effects the user authorized, but it must keep dispatch false. Real Adapter implementation attestation, provider contract tests, credentials, health checks, and an independent dispatch confirmation remain deferred.
+The immutable Adapter Effect Authorization Confirmation Receipt is now implemented and documented in `handoff-adapter-effect-authorization-confirmation-stage-2026-08-22.md`. It records confirm/modify/reject and exact named grants while keeping effects non-executable and dispatch false. The next boundary is a provider-neutral Adapter Implementation Attestation; credentials, health checks, and dispatch remain deferred.

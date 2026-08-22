@@ -140,6 +140,16 @@ does not record a user choice, grant an effect, or authorize dispatch.
 Avoid: “effects authorized,” “dispatch approved,” or “Adapter activated” when
 only the Proposal has been previewed.
 
+### Adapter Effect Authorization Confirmation Receipt
+
+An immutable record of a user's choice about one exact Adapter Effect
+Authorization Proposal. A confirmed Receipt grants consent only for the exact
+named effects in that Proposal; the effects remain non-executable until all
+implementation and dispatch gates pass.
+
+Avoid: “effects executed,” “dispatch authorized,” or “Adapter running” when
+only named effect consent has been recorded.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

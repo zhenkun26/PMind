@@ -249,7 +249,15 @@ ruby scripts/preview_handoff_payload_data_attestation.rb SESSION_REVISION.yaml D
 ruby scripts/preview_handoff_adapter_effect_authorization.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml
 ```
 
-Proposal 必须精确枚举 Profile 的全部 true effects，显式披露费用与生产数据访问，并保留 retention/export/purpose 尚未核验。零 effect 也是合法披露，但不能跳过未来 dispatch 确认。本步骤不得保存用户选择、授予任何 effect、实现或调用 Adapter。下一边界是独立 Adapter Effect Authorization Confirmation Receipt；该 Receipt 与 dispatch 确认仍须分离。
+Proposal 必须精确枚举 Profile 的全部 true effects，显式披露费用与生产数据访问，并保留 retention/export/purpose 尚未核验。零 effect 也是合法披露，但不能跳过未来 dispatch 确认。本步骤不得保存用户选择、授予任何 effect、实现或调用 Adapter。
+
+用户选择写入符合 [Adapter Effect Authorization Confirmation Receipt v0](handoff-adapter-effect-authorization-confirmation-receipt-v0.md) 的独立 Receipt，再运行十四文件只读预演：
+
+```sh
+ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml
+```
+
+confirmed 必须授予全部且仅 Proposal requested effects；modify/reject 必须为空，v0 不接受部分授权。任何状态都保持 effects 不可执行与 false dispatch，并继续要求 Adapter implementation attestation、provider contract test 和独立 dispatch confirmation。下一边界是 provider-neutral Adapter Implementation Attestation，而不是 Adapter 启动。
 
 ### 8. Quality Gate 与 Handoff
 
@@ -267,6 +275,7 @@ Proposal 必须精确枚举 Profile 的全部 true effects，显式披露费用�
 - Adapter Selection Confirmation Receipt 只固定对 exact Envelope/Profile/Proposal 的选择；即使 `confirmed` 也不得视为 dispatch-ready、副作用授权或 payload 兼容性证据。
 - Payload Data Attestation 必须覆盖完整 exact Envelope payload，兼容性必须由 Payload 事实和已选 Profile 策略派生；`compatible` 不是 effect/dispatch authorization，`incompatible` 必须阻断继续。
 - Adapter Effect Authorization Proposal 必须与 Profile true-effect 集合完全一致，并保持 pending、未保存选择、空授权集和 false dispatch；费用、生产数据与未核验数据策略不得被省略。
+- Adapter Effect Authorization Confirmation Receipt 只允许 confirmed=exact all grants 或 modify/reject=empty grants；具名授权仍不可执行，且不得绕过实现证明、contract test 或 dispatch 确认。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

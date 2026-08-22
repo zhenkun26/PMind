@@ -107,4 +107,4 @@ ruby scripts/preview_handoff_adapter_effect_authorization.rb SESSION_REVISION.ya
 
 预演器只读十三份本地 YAML，不保存选择、不写文件、不访问网络、不启动进程、不发送通知、不调用模型/Scanner/Adapter、不产生费用，也不访问生产数据。
 
-下一最小边界是独立 Adapter Effect Authorization Confirmation Receipt：它可以记录用户对精确 Proposal 的选择与具名 effect 授权，但仍不得自动 dispatch。真实 Adapter 实现还需要实现证明、provider contract test、凭据与健康检查边界；dispatch 必须有独立确认。
+下一最小边界 [Adapter Effect Authorization Confirmation Receipt v0](handoff-adapter-effect-authorization-confirmation-receipt-v0.md) 已实现：它记录用户对精确 Proposal 的选择与具名 effect 授权，但继续固定 effects 不可执行且不得自动 dispatch。真实 Adapter 实现还需要实现证明、provider contract test、凭据与健康检查边界；dispatch 必须有独立确认。
