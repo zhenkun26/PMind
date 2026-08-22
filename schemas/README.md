@@ -84,6 +84,12 @@ ruby scripts/preview_handoff_confirmation.rb path/to/new-session.yaml path/to/dr
 ruby scripts/create_handoff_envelope.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
 ```
 
+只读重放七份来源，并核对 persisted Envelope 的 Schema、authorization metadata 与完整内嵌 Package：
+
+```sh
+ruby scripts/verify_handoff_envelope_lineage.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh
@@ -97,6 +103,6 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-pac
 ruby scripts/validate_prompt_package.rb /absolute/or/relative/package.yaml
 ```
 
-退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb`、`create_prompt_package.rb` 与 `create_handoff_envelope.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；三个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package；Package Creator、lineage verifier 或 Handoff Proposal Preview 的成功不授权 Handoff。Handoff Confirmation Preview 可以验证显式授权已成立，但仍不执行 Handoff 或授权外部效果。Handoff Envelope Creator 只生成 `prepared` 本地封装，不代表交付、接收或执行。
+退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb`、`create_prompt_package.rb` 与 `create_handoff_envelope.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；三个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package；Package Creator、lineage verifier 或 Handoff Proposal Preview 的成功不授权 Handoff。Handoff Confirmation Preview 可以验证显式授权已成立，但仍不执行 Handoff 或授权外部效果。Handoff Envelope Creator 只生成 `prepared` 本地封装，不代表交付、接收或执行；Envelope lineage verifier 只允许进入 Adapter 契约探索，不选择或调用 Adapter。
 
 `test/fixtures/` 下的 Clarification Session、Answer Receipt、Revision Proposal、Confirmation Receipt、Compilation Proposal、Compilation Confirmation Receipt、Handoff Proposal、Handoff Confirmation Receipt 与 Prompt Package 只用于自动化测试，是合成示例，不是校准运行、真实用户交付物或 PMind 效果证据。

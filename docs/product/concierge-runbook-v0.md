@@ -211,6 +211,14 @@ ruby scripts/create_handoff_envelope.rb path/to/session-revision.yaml path/to/dr
 
 Creator 必须重跑完整七文件链，只接受明确确认，用 `0600` 权限封装精确最终 Package 与授权 lineage，并保持 `delivery_state: prepared`。Envelope 不得被描述为已交付、已接收或执行中；当前尚未选定下游运行时或渠道，必须先完成独立 Envelope lineage replay，之后才能设计 provider-specific adapter。任何需要网络、消息、进程或外部写入的真实交付仍须单独授权。
 
+创建后按 [Handoff Envelope Lineage Verification v0](handoff-envelope-lineage-v0.md) 只读重放七份来源，并逐字段核对 persisted Envelope：
+
+```sh
+ruby scripts/verify_handoff_envelope_lineage.rb path/to/session-revision.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
+```
+
+只有 Schema、authorization metadata 和完整内嵌 Package 都与确定性重建一致时，才可进入 Adapter 能力与副作用契约探索。等价 YAML 排版可以接受，任一来源或业务内容漂移必须停止。验证本身不选择或调用 Adapter，也不产生真实 Handoff。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -221,6 +229,7 @@ Creator 必须重跑完整七文件链，只接受明确确认，用 `0600` 权�
 - Handoff Proposal 的 pending 预演不能代替明确 Handoff Confirmation，也不能携带任何外部效果或高风险授权。
 - Handoff Confirmation 只授权未来受控交接精确 Package；它不表示 Handoff 已发生，也不批准交接渠道可能产生的外部效果。
 - Handoff Envelope 的 `prepared` 状态只表示本地封装已创建；它不表示执行器已接收、已启动或产生结果，且不能改变任何 Approval Point。
+- Persisted Envelope 必须通过独立 lineage replay 才可进入 Adapter 探索；验证通过仍不表示已交付或已授权渠道副作用。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

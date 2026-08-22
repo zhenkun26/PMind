@@ -80,4 +80,4 @@ ruby scripts/create_handoff_envelope.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml
 - `0`：完整七文件确认链有效且明确授权，在新路径创建有效 `0600` Envelope，安全文案写入 stdout；
 - `1`：来源/摘要/状态/数据策略无效、未确认、输出已存在或写入失败，错误写入 stderr 且不得保留新产物。
 
-成功只证明本地 Envelope 已按确认链准备完成；不证明真实 Handoff、下游接收、执行、外部效果、事实正确、Approval Point 获批或 PMind 商业效果成立。下一实现边界是独立 Handoff Envelope lineage verifier；验证器仍不得启动执行器或访问外部渠道。
+成功只证明本地 Envelope 已按确认链准备完成；不证明真实 Handoff、下游接收、执行、外部效果、事实正确、Approval Point 获批或 PMind 商业效果成立。创建后必须运行 [Handoff Envelope Lineage Verification v0](handoff-envelope-lineage-v0.md)；只有独立重放通过才可进入 Adapter 能力与副作用契约探索，仍不得启动执行器或访问外部渠道。

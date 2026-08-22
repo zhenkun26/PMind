@@ -195,7 +195,7 @@ module PMind
                      "",
                      "## 下一步",
                      "",
-                     "必须先独立重放 Envelope 的完整来源链。验证通过也只证明本地 Envelope 可供后续受控适配器使用；任何真实交付或外部效果仍需与所选渠道相匹配的单独授权。"
+                     "必须先运行独立的 Handoff Envelope lineage verifier，重放完整来源链。验证通过也只证明本地 Envelope 可供后续 Adapter 契约探索；任何真实交付或外部效果仍需与所选渠道相匹配的单独授权。"
                    ])
       lines.join("\n")
     end

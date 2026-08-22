@@ -1,6 +1,6 @@
 # Handoff Envelope stage — 2026-08-22
 
-- Status: implemented local contract slice
+- Status: creator and independent lineage verifier implemented
 - Scope: repository-local product and implementation exploration
 - External sources used: none
 - Evidence basis: PMind glossary, Prompt Package/Handoff contracts, existing creator and lineage patterns, repository safety policy
@@ -53,12 +53,22 @@ Prompt Package validator validates the embedded package. This avoids copying a
 large Schema into a second contract and preserves one source of truth, at the
 cost of requiring composed validation in the Creator and future verifier.
 
+## Lineage verification
+
+`scripts/verify_handoff_envelope_lineage.rb` now accepts the seven sources plus
+the persisted Envelope, rebuilds the expected Envelope without writing,
+validates the outer Schema and embedded Package independently, and compares
+metadata, authorization lineage, and complete business content field by field.
+Equivalent YAML layout may pass; source or semantic drift fails. Success copy
+still says not delivered and does not expose identifiers or source content.
+
 ## Next boundary
 
-Implement an independent Handoff Envelope lineage verifier that accepts the
-seven sources plus the persisted Envelope, rebuilds the expected Envelope
-without writing, validates the embedded Package independently, and compares
-metadata and complete business content field by field. Equivalent YAML layout
-may pass; source or semantic drift must fail. Only after that gate should PMind
-explore a provider-specific delivery adapter and its separate external-effect
-authorization model.
+Explore a provider-neutral Adapter Capability Profile and selection proposal
+before implementing any provider-specific delivery. The profile should make
+channel identity, required network/process/external-write effects, receipt
+semantics, idempotency, retry policy, data limits, cost, and additional
+Approval Points explicit. The selection preview must remain pending and
+zero-effect. A real adapter or dispatch command must not be introduced until a
+user selects a channel and separately authorizes every required external
+effect.

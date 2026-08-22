@@ -29,7 +29,10 @@ class CreateHandoffEnvelopeTest < Minitest::Test
       assert_includes copy, "Handoff Envelope 已创建，尚未交接"
       assert_includes copy, "已准备，未交付"
       assert_includes copy, "未启动 Downstream Executor"
+      assert_includes copy, "Handoff Envelope lineage verifier"
+      assert_includes copy, "Adapter 契约探索"
       assert_includes copy, "任何真实交付或外部效果仍需"
+      refute_includes copy, "尚未实现"
       assert File.file?(output)
       assert_equal 0o600, File.stat(output).mode & 0o777
 

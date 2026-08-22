@@ -31,6 +31,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Proposal contract](docs/product/handoff-proposal-v0.md)
 - [Handoff Confirmation Receipt contract](docs/product/handoff-confirmation-receipt-v0.md)
 - [Handoff Envelope Creation contract](docs/product/handoff-envelope-creation-v0.md)
+- [Handoff Envelope Lineage Verification contract](docs/product/handoff-envelope-lineage-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -107,6 +108,7 @@ ruby scripts/verify_prompt_package_lineage.rb path/to/new-session.yaml path/to/d
 ruby scripts/preview_handoff_proposal.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml
 ruby scripts/preview_handoff_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml
 ruby scripts/create_handoff_envelope.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
+ruby scripts/verify_handoff_envelope_lineage.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -125,7 +127,10 @@ external effects, pending Approval Points, and actual dispatch remain separate.
 The Handoff Envelope creator accepts only that confirmed state, replays all
 seven inputs, and writes a deterministic `0600` local bundle without overwrite.
 Its `prepared` state is not delivery, receipt, executor startup, or an external
-effect; independent Envelope lineage replay remains the next gate.
+effect. The independent verifier then rebuilds the Envelope from all seven
+sources and compares its metadata, authorization lineage, and complete embedded
+Package without modifying any input. Success permits Adapter contract
+exploration only, not dispatch.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -184,3 +189,7 @@ Executor Profile and four-role separation gates before any run may start.
   authorization lineage in a deterministic `0600` local file. `prepared` does
   not mean delivered or received; it cannot start an executor, infer new
   authority, or bypass an Approval Point.
+- A persisted Handoff Envelope is not trusted by presence alone. Its lineage
+  verifier must replay all seven sources and match the complete semantic
+  content before Adapter exploration; verification cannot dispatch, start an
+  executor, or authorize channel side effects.

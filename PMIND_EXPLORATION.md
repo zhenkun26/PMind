@@ -32,7 +32,8 @@
 - 已新增 Prompt Package Lineage Verification v0：五文件只读 verifier 会复用 Creator 的无写入构建 seam 重跑四份来源，独立校验 persisted Package 与 Session→Package lineage，再分别逐字段比较 compilation metadata 和完整业务内容；等价 YAML 可接受，来源或内容漂移会拒绝，验证不执行或授权 Handoff。
 - 已新增 Handoff Proposal v0：六文件只读 preview 会先重放最终 Package 的完整来源链，再以同一次读取的字节摘要绑定 pending Proposal；用户只看到交接对象、范围、允许/禁止动作、未决项、停止条件、Approval Points 和三种选择。Proposal 不保存选择、不授权 Handoff/外部效果/高风险动作，也不执行交接。
 - 已新增 Handoff Confirmation Receipt v0：七文件只读 preview 会重跑完整 Handoff Proposal 链，再校验用户确认、修改或拒绝选择、六份来源摘要、原文摘要、时间和数据策略；只有 confirmed 可令未来受控 Handoff 获得授权，所有状态继续禁止外部效果和高风险授权推导，预演本身不执行交接。
-- 已新增 Handoff Envelope Creation v0：confirmed-only Creator 会重跑完整七文件确认链，将精确最终 Prompt Package 与七份文件摘要封装到新的确定性 `0600` 本地文件；Envelope 固定为 `prepared`，拒绝覆盖、修改/拒绝选择和来源漂移，不启动执行器、模型、网络、进程、通知或外部服务，也不改变 Approval Point。独立 Envelope lineage replay 尚未实现。
+- 已新增 Handoff Envelope Creation v0：confirmed-only Creator 会重跑完整七文件确认链，将精确最终 Prompt Package 与七份文件摘要封装到新的确定性 `0600` 本地文件；Envelope 固定为 `prepared`，拒绝覆盖、修改/拒绝选择和来源漂移，不启动执行器、模型、网络、进程、通知或外部服务，也不改变 Approval Point。
+- 已新增 Handoff Envelope Lineage Verification v0：八文件只读 verifier 会复用 Creator 的无写入 seam 重建期望 Envelope，独立校验外壳与内嵌 Package，再逐字段比较 metadata、authorization lineage 和完整业务内容；等价 YAML 可接受，来源或语义漂移会拒绝。成功只允许进入 Adapter 能力与副作用契约探索，仍未交接或调用执行器。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
@@ -682,6 +683,7 @@ Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.
 创建后必须运行 ruby scripts/verify_prompt_package_lineage.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION OUTPUT，重跑来源链并逐字段核对 metadata 与业务内容。验证通过只允许进入受控 Handoff 决策，不会自动授权或执行 Handoff；验证失败不得继续。
 随后创建符合 docs/product/handoff-proposal-v0.md 的 pending Proposal，并运行 ruby scripts/preview_handoff_proposal.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL。预演会重跑完整 lineage 并绑定最终文件字节，只展示最小化 Handoff 决策文案；当前步骤不保存选择、不授权或执行 Handoff。下一边界是独立 Handoff Confirmation Receipt，不能把 Proposal 的“确认”选项当成已经确认。
 用户选择写入独立 Handoff Confirmation Receipt 后，用 ruby scripts/preview_handoff_confirmation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION 做七文件只读预演。只有 confirmed 与 handoff_authorized=true 的组合有效；修改和拒绝必须为 false。所有状态继续禁止外部效果和高风险授权推导，成功也不表示已发生 Handoff；不得直接调用外部 Agent 或虚构交接记录。
-七文件预演通过后，只有 confirmed + handoff_authorized=true 才可运行 ruby scripts/create_handoff_envelope.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION OUTPUT，在不存在的新路径创建 `0600` 本地 Envelope。Envelope 内嵌精确最终 Package 与七文件授权 lineage，状态固定为 prepared；成功不表示已交付、已接收或执行中。下一边界必须先实现独立 Envelope lineage verifier，再探索 provider-specific adapter；不得直接调用外部 Agent 或虚构交接记录。
+七文件预演通过后，只有 confirmed + handoff_authorized=true 才可运行 ruby scripts/create_handoff_envelope.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION OUTPUT，在不存在的新路径创建 `0600` 本地 Envelope。Envelope 内嵌精确最终 Package 与七文件授权 lineage，状态固定为 prepared；成功不表示已交付、已接收或执行中。
+创建后必须运行 ruby scripts/verify_handoff_envelope_lineage.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE，重跑七份来源并逐字段核对 Envelope metadata、authorization 与完整内嵌 Package。验证通过仍未交接，只允许下一轮探索 provider-neutral Adapter Capability Profile、渠道副作用分类和选择文案；不得直接调用外部 Agent 或虚构交接记录。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```
