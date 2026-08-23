@@ -91,6 +91,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_sixteen_files(directory, envelope_classification: nil)
+    paths = write_fifteen_files(directory, envelope_classification: envelope_classification)
+    attestation_path = File.join(directory, "adapter-runtime-readiness-attestation.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-adapter-runtime-readiness-attestation-valid.yaml")
+    write_yaml(attestation_path, load_yaml(fixture_path))
+    paths << attestation_path
+    refresh_adapter_runtime_readiness_attestation_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -244,6 +254,82 @@ class HandoffAdapterChainFixture
     document["undeclared_effects_detected"] = []
     document["data_classification"] = preview.confirmation["data_classification"]
     write_yaml(paths.fetch(14), document)
+  end
+
+  def refresh_adapter_runtime_readiness_attestation_bindings(paths)
+    preview = PMind::HandoffAdapterImplementationAttestationPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(15))
+
+    document = load_yaml(paths.fetch(15))
+    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
+    document["adapter_implementation_attestation_file_sha256"] = preview.implementation_attestation_file_sha256
+    document["package_id"] = preview.envelope["package_id"]
+    document["envelope_id"] = preview.envelope["envelope_id"]
+    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    document["adapter_selection_proposal_id"] = preview.selection_proposal["adapter_selection_proposal_id"]
+    document["adapter_selection_confirmation_id"] = preview.selection_confirmation["adapter_selection_confirmation_id"]
+    document["payload_data_attestation_id"] = preview.payload_attestation["payload_data_attestation_id"]
+    document["adapter_effect_authorization_proposal_id"] = preview.effect_proposal["adapter_effect_authorization_proposal_id"]
+    document["adapter_effect_authorization_confirmation_id"] = preview.effect_confirmation["adapter_effect_authorization_confirmation_id"]
+    document["adapter_implementation_attestation_id"] = preview.implementation_attestation["adapter_implementation_attestation_id"]
+    document["envelope_delivery_state"] = preview.envelope["delivery_state"]
+    document["adapter_profile_status"] = preview.profile["status"]
+    document["adapter_selection_proposal_status"] = preview.selection_proposal.dig("confirmation", "status")
+    document["selection_confirmation_decision"] = preview.selection_confirmation["confirmation_decision"]
+    document["adapter_selected"] = preview.selection_confirmation["adapter_selected"]
+    document["payload_data_attestation_completed"] = preview.payload_attestation["payload_data_attestation_completed"]
+    document["overall_data_compatibility"] = preview.payload_attestation["overall_data_compatibility"]
+    document["adapter_effect_authorization_proposal_status"] = preview.effect_proposal["proposal_status"]
+    document["effect_authorization_confirmation_decision"] = preview.effect_confirmation["confirmation_decision"]
+    document["effect_authorization_confirmed"] = preview.effect_confirmation["effect_authorization_confirmed"]
+    document["all_requested_effects_authorized"] = preview.effect_confirmation["all_requested_effects_authorized"]
+    document["adapter_implementation_attestation_completed"] = preview.implementation_attestation["adapter_implementation_attestation_completed"]
+    document["overall_implementation_compatibility"] = preview.implementation_attestation["overall_implementation_compatibility"]
+    document["recipient"] = preview.envelope["recipient"]
+    %w[implementation_kind implementation_ref implementation_version declared_implementation_sha256].each do |field|
+      document[field] = preview.implementation_attestation[field]
+    end
+    document["profile_declared_effects"] = preview.implementation_attestation["profile_declared_effects"].dup
+    document["authorized_effects"] = preview.implementation_attestation["authorized_effects"].dup
+    remote_effects = %w[network_access notification external_service_write cost_incurred production_data_access]
+    credential_effects = %w[notification external_service_write cost_incurred production_data_access]
+    credential_required = (document["authorized_effects"] & credential_effects).any?
+    health_required = (document["authorized_effects"] & remote_effects).any?
+    if credential_required
+      document["credential_requirement"] = "required"
+      document["credential_reference_status"] = "available"
+      document["credential_ref"] = "synthetic-secret-manager-ref-001"
+      document["credential_scope_compatibility"] = "compatible"
+      document["credential_expiry_status"] = "valid"
+      document["credential_readiness"] = "ready"
+    else
+      document["credential_requirement"] = "not_required"
+      document["credential_reference_status"] = "not_applicable"
+      document["credential_ref"] = "not_applicable"
+      document["credential_scope_compatibility"] = "not_applicable"
+      document["credential_expiry_status"] = "not_applicable"
+      document["credential_readiness"] = "not_applicable"
+    end
+    if health_required
+      document["provider_health_check_requirement"] = "required"
+      document["provider_health_evidence_status"] = "healthy"
+      document["provider_health_evidence_ref"] = "synthetic-health-evidence-001"
+      document["provider_health_evidence_sha256"] = "c" * 64
+      document["provider_health_checked_at"] = "2026-08-23T09:30:00+08:00"
+      document["provider_health_readiness"] = "ready"
+    else
+      document["provider_health_check_requirement"] = "not_required"
+      document["provider_health_evidence_status"] = "not_applicable"
+      document["provider_health_evidence_ref"] = "not_applicable"
+      document["provider_health_evidence_sha256"] = "not_applicable"
+      document["provider_health_checked_at"] = "not_applicable"
+      document["provider_health_readiness"] = "not_applicable"
+    end
+    cost_required = document["authorized_effects"].include?("cost_incurred")
+    document["cost_limit_authorization_required"] = cost_required
+    document["dispatch_cost_gate_status"] = cost_required ? "pending_authorization" : "not_applicable"
+    document["data_classification"] = preview.implementation_attestation["data_classification"]
+    write_yaml(paths.fetch(15), document)
   end
 
   def load_yaml(path)

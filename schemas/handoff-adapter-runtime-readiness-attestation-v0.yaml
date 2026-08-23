@@ -1,0 +1,245 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-runtime-readiness-attestation-v0.yaml"
+title: "PMind Handoff Adapter Runtime Readiness Attestation v0"
+description: "Completed review declaration for one exact compatible Adapter implementation and runtime evidence; never a credential check, health probe, effect execution, or dispatch authorization."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_runtime_readiness_attestation_id
+  - reviewed_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - adapter_effect_authorization_proposal_file_sha256
+  - adapter_effect_authorization_confirmation_receipt_file_sha256
+  - adapter_implementation_attestation_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_selection_proposal_id
+  - adapter_selection_confirmation_id
+  - payload_data_attestation_id
+  - adapter_effect_authorization_proposal_id
+  - adapter_effect_authorization_confirmation_id
+  - adapter_implementation_attestation_id
+  - envelope_delivery_state
+  - adapter_profile_status
+  - adapter_selection_proposal_status
+  - selection_confirmation_decision
+  - adapter_selected
+  - payload_data_attestation_completed
+  - overall_data_compatibility
+  - adapter_effect_authorization_proposal_status
+  - effect_authorization_confirmation_decision
+  - effect_authorization_confirmed
+  - all_requested_effects_authorized
+  - adapter_implementation_attestation_completed
+  - overall_implementation_compatibility
+  - recipient
+  - implementation_kind
+  - implementation_ref
+  - implementation_version
+  - declared_implementation_sha256
+  - profile_declared_effects
+  - authorized_effects
+  - runtime_environment_kind
+  - runtime_environment_ref
+  - runtime_configuration_review_scope
+  - runtime_configuration_review_status
+  - review_method
+  - reviewer_ref
+  - scanner_ref
+  - scanner_version
+  - delivery_configuration_compatibility
+  - receipt_configuration_compatibility
+  - idempotency_configuration_compatibility
+  - retry_configuration_compatibility
+  - effect_guard_configuration_compatibility
+  - data_policy_configuration_compatibility
+  - cost_policy_configuration_compatibility
+  - runtime_configuration_compatibility
+  - credential_requirement
+  - credential_reference_status
+  - credential_ref
+  - credential_scope_compatibility
+  - credential_expiry_status
+  - credential_readiness
+  - provider_health_check_requirement
+  - provider_health_evidence_status
+  - provider_health_evidence_ref
+  - provider_health_evidence_sha256
+  - provider_health_checked_at
+  - provider_health_readiness
+  - retention_policy_ref
+  - export_policy_ref
+  - purpose_binding_ref
+  - retention_compatibility
+  - export_compatibility
+  - purpose_compatibility
+  - retention_export_purpose_compatibility
+  - cost_limit_authorization_required
+  - cost_limit_authorized
+  - dispatch_cost_gate_status
+  - overall_runtime_readiness
+  - adapter_runtime_readiness_attestation_completed
+  - runtime_evidence_reviewed
+  - runtime_environment_accessed_by_preview
+  - provider_health_check_executed_by_preview
+  - credential_accessed_by_preview
+  - provider_credentials_verified_by_preview
+  - provider_health_verified_by_preview
+  - effects_executable
+  - dispatch_authorized
+  - high_risk_authorization_inferred
+  - adapter_dispatch_proposal_required
+  - dispatch_confirmation_required
+  - data_classification
+  - attestation_contains_personal_data
+  - attestation_contains_secrets
+  - credential_material_in_attestation
+properties:
+  schema_version: { const: "0.1.0" }
+  adapter_runtime_readiness_attestation_id:
+    type: string
+    pattern: "^adapter-runtime-readiness-attestation-[0-9]{8}-[0-9]{3}$"
+  reviewed_at: { type: string, format: date-time }
+  language: { const: zh-CN }
+  source_session_file_sha256: { $ref: "#/$defs/sha256" }
+  draft_package_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  final_package_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_envelope_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_profile_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  payload_data_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_implementation_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  package_id: { type: string, pattern: "^pkg-[0-9]{8}-[0-9]{3}$" }
+  envelope_id: { type: string, pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$" }
+  adapter_profile_id: { type: string, pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$" }
+  adapter_selection_proposal_id: { type: string, pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_selection_confirmation_id: { type: string, pattern: "^adapter-selection-confirmation-[0-9]{8}-[0-9]{3}$" }
+  payload_data_attestation_id: { type: string, pattern: "^payload-data-attestation-[0-9]{8}-[0-9]{3}$" }
+  adapter_effect_authorization_proposal_id: { type: string, pattern: "^adapter-effect-authorization-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_effect_authorization_confirmation_id: { type: string, pattern: "^adapter-effect-authorization-confirmation-[0-9]{8}-[0-9]{3}$" }
+  adapter_implementation_attestation_id: { type: string, pattern: "^adapter-implementation-attestation-[0-9]{8}-[0-9]{3}$" }
+  envelope_delivery_state: { const: prepared }
+  adapter_profile_status: { const: reviewed }
+  adapter_selection_proposal_status: { const: pending }
+  selection_confirmation_decision: { const: confirmed }
+  adapter_selected: { const: true }
+  payload_data_attestation_completed: { const: true }
+  overall_data_compatibility: { const: compatible }
+  adapter_effect_authorization_proposal_status: { const: pending }
+  effect_authorization_confirmation_decision: { const: confirmed }
+  effect_authorization_confirmed: { const: true }
+  all_requested_effects_authorized: { const: true }
+  adapter_implementation_attestation_completed: { const: true }
+  overall_implementation_compatibility: { const: compatible }
+  recipient: { const: coding_agent }
+  implementation_kind:
+    enum: [source_tree, package, container_image, managed_service]
+  implementation_ref: { $ref: "#/$defs/provenance_ref" }
+  implementation_version: { $ref: "#/$defs/provenance_ref" }
+  declared_implementation_sha256: { $ref: "#/$defs/sha256" }
+  profile_declared_effects: { $ref: "#/$defs/effects" }
+  authorized_effects: { $ref: "#/$defs/effects" }
+  runtime_environment_kind:
+    enum: [local_process, container, managed_service, remote_api]
+  runtime_environment_ref: { $ref: "#/$defs/provenance_ref" }
+  runtime_configuration_review_scope: { const: complete_adapter_runtime_configuration }
+  runtime_configuration_review_status: { const: completed }
+  review_method: { enum: [manual, automated, hybrid] }
+  reviewer_ref: { $ref: "#/$defs/provenance_ref" }
+  scanner_ref: { $ref: "#/$defs/provenance_ref" }
+  scanner_version: { $ref: "#/$defs/provenance_ref" }
+  delivery_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  receipt_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  idempotency_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  retry_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  effect_guard_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  data_policy_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  cost_policy_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  runtime_configuration_compatibility: { $ref: "#/$defs/compatibility" }
+  credential_requirement: { enum: [required, not_required] }
+  credential_reference_status: { enum: [available, missing, not_applicable] }
+  credential_ref: { $ref: "#/$defs/provenance_ref" }
+  credential_scope_compatibility: { enum: [compatible, incompatible, not_applicable] }
+  credential_expiry_status: { enum: [valid, expired, unknown, not_applicable] }
+  credential_readiness: { enum: [ready, blocked, not_applicable] }
+  provider_health_check_requirement: { enum: [required, not_required] }
+  provider_health_evidence_status: { enum: [healthy, unhealthy, unknown, not_applicable] }
+  provider_health_evidence_ref: { $ref: "#/$defs/provenance_ref" }
+  provider_health_evidence_sha256:
+    type: string
+    pattern: "^(?:[a-f0-9]{64}|not_applicable)$"
+  provider_health_checked_at:
+    type: string
+    minLength: 3
+    maxLength: 128
+  provider_health_readiness: { enum: [ready, blocked, not_applicable] }
+  retention_policy_ref: { $ref: "#/$defs/provenance_ref" }
+  export_policy_ref: { $ref: "#/$defs/provenance_ref" }
+  purpose_binding_ref: { $ref: "#/$defs/provenance_ref" }
+  retention_compatibility: { $ref: "#/$defs/compatibility" }
+  export_compatibility: { $ref: "#/$defs/compatibility" }
+  purpose_compatibility: { $ref: "#/$defs/compatibility" }
+  retention_export_purpose_compatibility: { $ref: "#/$defs/compatibility" }
+  cost_limit_authorization_required: { type: boolean }
+  cost_limit_authorized: { const: false }
+  dispatch_cost_gate_status: { enum: [pending_authorization, not_applicable] }
+  overall_runtime_readiness: { enum: [ready, blocked] }
+  adapter_runtime_readiness_attestation_completed: { const: true }
+  runtime_evidence_reviewed: { const: true }
+  runtime_environment_accessed_by_preview: { const: false }
+  provider_health_check_executed_by_preview: { const: false }
+  credential_accessed_by_preview: { const: false }
+  provider_credentials_verified_by_preview: { const: false }
+  provider_health_verified_by_preview: { const: false }
+  effects_executable: { const: false }
+  dispatch_authorized: { const: false }
+  high_risk_authorization_inferred: { const: false }
+  adapter_dispatch_proposal_required: { const: true }
+  dispatch_confirmation_required: { const: true }
+  data_classification: { $ref: "#/$defs/data_classification" }
+  attestation_contains_personal_data: { const: false }
+  attestation_contains_secrets: { const: false }
+  credential_material_in_attestation: { const: false }
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  provenance_ref:
+    type: string
+    minLength: 3
+    maxLength: 128
+    pattern: "^[A-Za-z0-9._:/@-]+$"
+  effect:
+    type: string
+    enum: [local_file_write, network_access, process_start, notification, external_service_write, cost_incurred, production_data_access]
+  effects:
+    type: array
+    uniqueItems: true
+    items: { $ref: "#/$defs/effect" }
+  compatibility:
+    type: string
+    enum: [compatible, incompatible]
+  data_classification:
+    type: string
+    enum: [public, internal, confidential, restricted]

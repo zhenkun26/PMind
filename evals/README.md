@@ -91,6 +91,8 @@ The experiment is paired:
 - `schemas/handoff-adapter-effect-authorization-confirmation-receipt-v0.yaml`: machine-readable exact-grant state machine, derived sensitive effects, and preserved implementation/dispatch gates;
 - `docs/product/handoff-adapter-implementation-attestation-v0.md`: exact fourteen-source implementation review, effect/contract derivation, and compatible-or-blocked copy contract;
 - `schemas/handoff-adapter-implementation-attestation-v0.yaml`: machine-readable implementation identity/provenance, observed-effect deltas, contract evidence, and false runtime/executable/dispatch boundary;
+- `docs/product/handoff-adapter-runtime-readiness-attestation-v0.md`: exact fifteen-source runtime review, credential/health/lifecycle derivation, and ready-or-blocked copy contract;
+- `schemas/handoff-adapter-runtime-readiness-attestation-v0.yaml`: machine-readable runtime configuration, credential-reference, provider-health, lifecycle, cost-gate, and false executable/dispatch boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -130,6 +132,7 @@ The experiment is paired:
 - `scripts/preview_handoff_adapter_effect_authorization.rb`: read-only thirteen-file compatible-Attestation replay, exact true-effect and disclosure validator, and pending zero-authorization renderer.
 - `scripts/preview_handoff_adapter_effect_authorization_confirmation.rb`: read-only fourteen-file Effect Proposal replay, exact named-grant state-machine validator, and non-executable/non-dispatch result renderer.
 - `scripts/preview_handoff_adapter_implementation_attestation.rb`: read-only fifteen-file confirmed-effect replay, implementation provenance/effect/contract declaration validator, and compatible-or-blocked renderer.
+- `scripts/preview_handoff_adapter_runtime_readiness_attestation.rb`: read-only sixteen-file compatible-implementation replay, submitted runtime-evidence validator, and ready-or-blocked renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -157,6 +160,7 @@ ruby test/preview_handoff_payload_data_attestation_test.rb
 ruby test/preview_handoff_adapter_effect_authorization_test.rb
 ruby test/preview_handoff_adapter_effect_authorization_confirmation_test.rb
 ruby test/preview_handoff_adapter_implementation_attestation_test.rb
+ruby test/preview_handoff_adapter_runtime_readiness_attestation_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

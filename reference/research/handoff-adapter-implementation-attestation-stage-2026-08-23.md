@@ -58,4 +58,4 @@ Calibration preflight remains honestly BLOCKED at 3/6 because four real roles, s
 
 ## Next boundary
 
-Define a provider-neutral Adapter Runtime Readiness Attestation that accepts only a compatible Implementation Attestation and binds independently produced credential-reference, provider-health, configuration, and environment evidence. It must not store credential material, perform dispatch, or infer authorization. Independent dispatch confirmation remains a later boundary.
+Implemented as the provider-neutral Adapter Runtime Readiness Attestation documented in `handoff-adapter-runtime-readiness-attestation-stage-2026-08-23.md`. It accepts only a compatible Implementation Attestation and validates submitted credential-reference, provider-health, configuration, environment, and data-lifecycle evidence without accessing them. The next boundary is a pending zero-dispatch Adapter Dispatch Proposal; independent dispatch confirmation remains later.

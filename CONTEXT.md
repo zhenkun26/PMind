@@ -161,6 +161,18 @@ executability, or dispatch.
 Avoid: “runtime ready,” “Adapter activated,” or “Adapter running” when only an
 implementation review declaration has been validated.
 
+### Adapter Runtime Readiness Attestation
+
+An immutable result of a completed review of one exact compatible Adapter
+implementation and runtime configuration against submitted credential-
+reference, provider-health, data-lifecycle, and environment evidence. It
+records ready or blocked, but never proves PMind performed the checks, makes
+effects executable, or authorizes dispatch.
+
+Avoid: “PMind verified the credentials,” “provider connected,” “Adapter
+running,” or “dispatch ready” when only a runtime review declaration has been
+validated.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

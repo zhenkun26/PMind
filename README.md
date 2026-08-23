@@ -39,6 +39,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Effect Authorization Proposal contract](docs/product/handoff-adapter-effect-authorization-proposal-v0.md)
 - [Handoff Adapter Effect Authorization Confirmation Receipt contract](docs/product/handoff-adapter-effect-authorization-confirmation-receipt-v0.md)
 - [Handoff Adapter Implementation Attestation contract](docs/product/handoff-adapter-implementation-attestation-v0.md)
+- [Handoff Adapter Runtime Readiness Attestation contract](docs/product/handoff-adapter-runtime-readiness-attestation-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -170,6 +171,11 @@ completed implementation-review declaration, derives effect conformance and
 provider contract-evidence compatibility, and either permits the next review
 boundary or blocks it. It does not load implementation code, run the submitted
 tests, inspect credentials, check provider health, or authorize dispatch.
+The sixteen-file Adapter Runtime Readiness Attestation preview accepts only a
+compatible implementation declaration and derives runtime configuration,
+credential-reference, submitted provider-health, and data-lifecycle readiness.
+It does not access the environment or credentials, execute a health check,
+start the Adapter, make effects executable, or authorize dispatch.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -263,3 +269,8 @@ Executor Profile and four-role separation gates before any run may start.
   and submitted contract-test declarations match the reviewed Profile; the
   preview does not load code or run tests, and credentials, provider health,
   runtime readiness, effect executability, and dispatch remain false.
+- An Adapter Runtime Readiness Attestation binds all fifteen prior files and
+  submitted configuration, credential-reference, health, retention, export,
+  and purpose evidence. Ready permits only a future zero-dispatch Proposal;
+  the preview performs no environment access or provider check, keeps effects
+  non-executable, and leaves cost and dispatch authorization independent.

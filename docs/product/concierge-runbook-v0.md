@@ -267,6 +267,14 @@ ruby scripts/preview_handoff_adapter_implementation_attestation.rb SESSION_REVIS
 
 `compatible` 只表示 observed effect 集合与 Profile 一致，且提交的 contract-test 声明为 passed 并覆盖七个 Profile 维度。预演器不装载实现、不运行测试、不核验凭据或 provider 健康；effects 仍不可执行且 dispatch=false。`incompatible` 是合法证明结果，但必须阻断 Runtime Readiness。下一边界是 provider-neutral Adapter Runtime Readiness Attestation，仍不是 Adapter 启动或 dispatch。
 
+只有 compatible exact Implementation Attestation 才可进入 [Handoff Adapter Runtime Readiness Attestation v0](handoff-adapter-runtime-readiness-attestation-v0.md)。运行十六文件只读预演，绑定完整实现链、运行配置、凭据引用、提交的 provider 健康证据与 retention/export/purpose 审核声明：
+
+```sh
+ruby scripts/preview_handoff_adapter_runtime_readiness_attestation.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml
+```
+
+`ready` 只表示提交的配置、凭据引用、健康和生命周期审核声明自洽。预演器不访问环境、凭据或 provider，不执行健康检查，不启动 Adapter；effects 仍不可执行且 dispatch=false。`blocked` 是合法证明结果并必须阻断后续 Proposal。若包含 cost effect，费用上限仍需独立确认。下一边界是 pending、零 dispatch 的 Adapter Dispatch Proposal，不是真实调用。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -285,6 +293,7 @@ ruby scripts/preview_handoff_adapter_implementation_attestation.rb SESSION_REVIS
 - Adapter Effect Authorization Proposal 必须与 Profile true-effect 集合完全一致，并保持 pending、未保存选择、空授权集和 false dispatch；费用、生产数据与未核验数据策略不得被省略。
 - Adapter Effect Authorization Confirmation Receipt 只允许 confirmed=exact all grants 或 modify/reject=empty grants；具名授权仍不可执行，且不得绕过实现证明、contract test 或 dispatch 确认。
 - Adapter Implementation Attestation 必须从 Profile、observed effects 与七项 contract-test 声明派生 compatible/incompatible；预演器不得把 submitted digest、测试或审核 provenance 写成已独立验证，也不得核验凭据、健康或授权 dispatch。
+- Adapter Runtime Readiness Attestation 必须从七项配置、凭据引用、提交的 health evidence 与 retention/export/purpose 声明派生 ready/blocked；预演器不得访问运行环境、读取凭据、执行健康检查、使 effect 可执行或授权 dispatch。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

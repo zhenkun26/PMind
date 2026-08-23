@@ -106,4 +106,4 @@ ruby scripts/preview_handoff_adapter_implementation_attestation.rb SESSION_REVIS
 - `0`：十五文件链、审核 provenance 与派生结果自洽；stdout 输出 compatible 或 blocked 文案；
 - `1`：来源漂移、身份/状态错误、非法 provenance、派生矛盾、时间/分类降级或门禁绕过；stderr 输出受控错误。
 
-预演器只读十五份本地 YAML。下一最小边界是 provider-neutral Adapter Runtime Readiness Attestation：只接受 compatible Implementation Attestation，绑定凭据引用、provider 健康与运行时条件的独立证据；真实 dispatch 仍需单独确认。
+预演器只读十五份本地 YAML。下一最小边界现已由 [Handoff Adapter Runtime Readiness Attestation v0](handoff-adapter-runtime-readiness-attestation-v0.md) 实现：它只接受 compatible Implementation Attestation，绑定凭据引用、provider 健康、运行配置与 retention/export/purpose 的提交证据；预演器仍不访问环境或 provider，真实 dispatch 仍需独立 Proposal 与确认。
