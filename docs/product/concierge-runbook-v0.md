@@ -275,6 +275,14 @@ ruby scripts/preview_handoff_adapter_runtime_readiness_attestation.rb SESSION_RE
 
 `ready` 只表示提交的配置、凭据引用、健康和生命周期审核声明自洽。预演器不访问环境、凭据或 provider，不执行健康检查，不启动 Adapter；effects 仍不可执行且 dispatch=false。`blocked` 是合法证明结果并必须阻断后续 Proposal。若包含 cost effect，费用上限仍需独立确认。下一边界是 pending、零 dispatch 的 Adapter Dispatch Proposal，不是真实调用。
 
+只有 ready exact Runtime Readiness Attestation 才可进入 [Handoff Adapter Dispatch Proposal v0](handoff-adapter-dispatch-proposal-v0.md)。运行十七文件只读预演，绑定 exact Envelope payload、Adapter、destination、幂等键、重试/超时、有效期、健康证据新鲜度、固定点费用上限和 stop conditions：
+
+```sh
+ruby scripts/preview_handoff_adapter_dispatch_proposal.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml
+```
+
+Proposal 必须保持 pending、未保存选择、effects 不可执行、Adapter/provider 未触达和 false dispatch。cost effect 必须披露正数固定点上限但保持未授权。确认选项只能进入独立 Dispatch Confirmation Receipt；本步骤不得读取凭据、调用 provider 或产生费用。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -294,6 +302,7 @@ ruby scripts/preview_handoff_adapter_runtime_readiness_attestation.rb SESSION_RE
 - Adapter Effect Authorization Confirmation Receipt 只允许 confirmed=exact all grants 或 modify/reject=empty grants；具名授权仍不可执行，且不得绕过实现证明、contract test 或 dispatch 确认。
 - Adapter Implementation Attestation 必须从 Profile、observed effects 与七项 contract-test 声明派生 compatible/incompatible；预演器不得把 submitted digest、测试或审核 provenance 写成已独立验证，也不得核验凭据、健康或授权 dispatch。
 - Adapter Runtime Readiness Attestation 必须从七项配置、凭据引用、提交的 health evidence 与 retention/export/purpose 声明派生 ready/blocked；预演器不得访问运行环境、读取凭据、执行健康检查、使 effect 可执行或授权 dispatch。
+- Adapter Dispatch Proposal 必须绑定 exact payload/destination、确定性幂等键、Profile 内尝试上限、有效期、费用上限和 canonical stop conditions；Proposal 只能 pending，不能保存选择、调用 provider、执行 effect 或授权 dispatch。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

@@ -101,6 +101,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_seventeen_files(directory, envelope_classification: nil)
+    paths = write_sixteen_files(directory, envelope_classification: envelope_classification)
+    proposal_path = File.join(directory, "adapter-dispatch-proposal.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-adapter-dispatch-proposal-valid.yaml")
+    write_yaml(proposal_path, load_yaml(fixture_path))
+    paths << proposal_path
+    refresh_adapter_dispatch_proposal_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -330,6 +340,87 @@ class HandoffAdapterChainFixture
     document["dispatch_cost_gate_status"] = cost_required ? "pending_authorization" : "not_applicable"
     document["data_classification"] = preview.implementation_attestation["data_classification"]
     write_yaml(paths.fetch(15), document)
+  end
+
+  def refresh_adapter_dispatch_proposal_bindings(paths)
+    preview = PMind::HandoffAdapterRuntimeReadinessAttestationPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(16))
+
+    document = load_yaml(paths.fetch(16))
+    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
+    document["adapter_runtime_readiness_attestation_file_sha256"] = preview.runtime_attestation_file_sha256
+    document["package_id"] = preview.envelope["package_id"]
+    document["envelope_id"] = preview.envelope["envelope_id"]
+    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    document["adapter_selection_proposal_id"] = preview.selection_proposal["adapter_selection_proposal_id"]
+    document["adapter_selection_confirmation_id"] = preview.selection_confirmation["adapter_selection_confirmation_id"]
+    document["payload_data_attestation_id"] = preview.payload_attestation["payload_data_attestation_id"]
+    document["adapter_effect_authorization_proposal_id"] = preview.effect_proposal["adapter_effect_authorization_proposal_id"]
+    document["adapter_effect_authorization_confirmation_id"] = preview.effect_confirmation["adapter_effect_authorization_confirmation_id"]
+    document["adapter_implementation_attestation_id"] = preview.implementation_attestation["adapter_implementation_attestation_id"]
+    document["adapter_runtime_readiness_attestation_id"] = preview.runtime_attestation["adapter_runtime_readiness_attestation_id"]
+    document["envelope_delivery_state"] = preview.envelope["delivery_state"]
+    document["adapter_profile_status"] = preview.profile["status"]
+    document["adapter_selection_proposal_status"] = preview.selection_proposal.dig("confirmation", "status")
+    document["selection_confirmation_decision"] = preview.selection_confirmation["confirmation_decision"]
+    document["adapter_selected"] = preview.selection_confirmation["adapter_selected"]
+    document["payload_data_attestation_completed"] = preview.payload_attestation["payload_data_attestation_completed"]
+    document["overall_data_compatibility"] = preview.payload_attestation["overall_data_compatibility"]
+    document["adapter_effect_authorization_proposal_status"] = preview.effect_proposal["proposal_status"]
+    document["effect_authorization_confirmation_decision"] = preview.effect_confirmation["confirmation_decision"]
+    document["effect_authorization_confirmed"] = preview.effect_confirmation["effect_authorization_confirmed"]
+    document["all_requested_effects_authorized"] = preview.effect_confirmation["all_requested_effects_authorized"]
+    document["adapter_implementation_attestation_completed"] = preview.implementation_attestation["adapter_implementation_attestation_completed"]
+    document["overall_implementation_compatibility"] = preview.implementation_attestation["overall_implementation_compatibility"]
+    document["adapter_runtime_readiness_attestation_completed"] = preview.runtime_attestation["adapter_runtime_readiness_attestation_completed"]
+    document["runtime_evidence_reviewed"] = preview.runtime_attestation["runtime_evidence_reviewed"]
+    document["overall_runtime_readiness"] = preview.runtime_attestation["overall_runtime_readiness"]
+    document["recipient"] = preview.envelope["recipient"]
+    document["adapter_key"] = preview.profile["adapter_key"]
+    %w[implementation_kind implementation_ref implementation_version declared_implementation_sha256].each do |field|
+      document[field] = preview.implementation_attestation[field]
+    end
+    document["runtime_environment_kind"] = preview.runtime_attestation["runtime_environment_kind"]
+    document["runtime_environment_ref"] = preview.runtime_attestation["runtime_environment_ref"]
+    document["delivery_mode"] = preview.profile.dig("capabilities", "delivery_mode")
+    document["receipt_mode"] = preview.profile.dig("capabilities", "receipt_mode")
+    document["adapter_idempotency_supported"] = preview.profile.dig("capabilities", "idempotency", "supported")
+    document["adapter_idempotency_key_source"] = preview.profile.dig("capabilities", "idempotency", "key_source")
+    document["adapter_retry_mode"] = preview.profile.dig("capabilities", "retry", "mode")
+    document["adapter_maximum_attempts"] = preview.profile.dig("capabilities", "retry", "maximum_attempts")
+    document["authorized_effects"] = preview.runtime_attestation["authorized_effects"].dup
+    document["dispatch_payload_file_sha256"] = preview.input_digests["handoff_envelope_file_sha256"]
+    document["dispatch_destination_kind"] = PMind::HandoffAdapterDispatchProposalPreview::DESTINATION_KIND.fetch(document["delivery_mode"])
+    document["dispatch_destination_ref"] = "synthetic-dispatch-destination-001"
+    document["dispatch_attempt_limit"] = 1
+    health_required = preview.runtime_attestation["provider_health_check_requirement"] == "required"
+    document["provider_health_freshness_requirement"] = health_required ? "required" : "not_required"
+    document["maximum_health_evidence_age_seconds"] = health_required ? 3600 : 0
+    document["provider_health_evidence_freshness"] = health_required ? "current" : "not_applicable"
+    cost_required = document["authorized_effects"].include?("cost_incurred")
+    document["cost_ceiling_required"] = cost_required
+    document["cost_ceiling_amount"] = cost_required ? "10.00" : "not_applicable"
+    document["cost_ceiling_currency"] = cost_required ? "USD" : "not_applicable"
+    document["cost_limit_authorization_status"] = cost_required ? "pending_confirmation" : "not_applicable"
+    stop_conditions = %w[
+      source_bytes_changed
+      authorization_changed
+      runtime_readiness_changed
+      proposal_not_yet_valid
+      proposal_expired
+      idempotency_conflict
+      unlisted_effect_requested
+      delivery_failure
+    ]
+    stop_conditions << "credential_not_ready" if preview.runtime_attestation["credential_requirement"] == "required"
+    stop_conditions << "provider_health_not_current" if health_required
+    stop_conditions << "cost_ceiling_would_be_exceeded" if cost_required
+    stop_conditions << "receipt_failure" unless document["receipt_mode"] == "none"
+    order = PMind::HandoffAdapterDispatchProposalPreview::STOP_CONDITION_ORDER
+    document["stop_conditions"] = order.select { |condition| stop_conditions.include?(condition) }
+    document["data_classification"] = preview.runtime_attestation["data_classification"]
+    document["idempotency_key_sha256"] = PMind::HandoffAdapterDispatchProposalPreview.derived_idempotency_key(document)
+    write_yaml(paths.fetch(16), document)
   end
 
   def load_yaml(path)

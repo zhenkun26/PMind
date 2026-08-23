@@ -1,0 +1,253 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-dispatch-proposal-v0.yaml"
+title: "PMind Handoff Adapter Dispatch Proposal v0"
+description: "Pending zero-dispatch decision artifact for one exact ready Adapter runtime, payload, destination, idempotency key, validity window, cost ceiling, and stop-condition set."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_dispatch_proposal_id
+  - proposed_at
+  - not_before
+  - expires_at
+  - validity_seconds
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - adapter_effect_authorization_proposal_file_sha256
+  - adapter_effect_authorization_confirmation_receipt_file_sha256
+  - adapter_implementation_attestation_file_sha256
+  - adapter_runtime_readiness_attestation_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_selection_proposal_id
+  - adapter_selection_confirmation_id
+  - payload_data_attestation_id
+  - adapter_effect_authorization_proposal_id
+  - adapter_effect_authorization_confirmation_id
+  - adapter_implementation_attestation_id
+  - adapter_runtime_readiness_attestation_id
+  - envelope_delivery_state
+  - adapter_profile_status
+  - adapter_selection_proposal_status
+  - selection_confirmation_decision
+  - adapter_selected
+  - payload_data_attestation_completed
+  - overall_data_compatibility
+  - adapter_effect_authorization_proposal_status
+  - effect_authorization_confirmation_decision
+  - effect_authorization_confirmed
+  - all_requested_effects_authorized
+  - adapter_implementation_attestation_completed
+  - overall_implementation_compatibility
+  - adapter_runtime_readiness_attestation_completed
+  - runtime_evidence_reviewed
+  - overall_runtime_readiness
+  - recipient
+  - adapter_key
+  - implementation_kind
+  - implementation_ref
+  - implementation_version
+  - declared_implementation_sha256
+  - runtime_environment_kind
+  - runtime_environment_ref
+  - delivery_mode
+  - receipt_mode
+  - adapter_idempotency_supported
+  - adapter_idempotency_key_source
+  - adapter_retry_mode
+  - adapter_maximum_attempts
+  - authorized_effects
+  - dispatch_payload_kind
+  - dispatch_payload_file_sha256
+  - dispatch_destination_kind
+  - dispatch_destination_ref
+  - idempotency_key_derivation
+  - idempotency_key_sha256
+  - dispatch_attempt_limit
+  - dispatch_timeout_seconds
+  - provider_health_freshness_requirement
+  - maximum_health_evidence_age_seconds
+  - provider_health_evidence_freshness
+  - cost_ceiling_required
+  - cost_ceiling_amount
+  - cost_ceiling_currency
+  - cost_limit_authorization_status
+  - cost_limit_authorized
+  - stop_conditions
+  - dispatch_proposal_status
+  - dispatch_choice_saved
+  - dispatch_confirmation_required
+  - dispatch_confirmation_receipt_present
+  - runtime_environment_accessed_by_preview
+  - credential_accessed_by_preview
+  - provider_health_check_executed_by_preview
+  - effects_executable
+  - adapter_started
+  - provider_called
+  - dispatch_authorized
+  - dispatch_attempted
+  - delivery_receipt_present
+  - external_write_performed
+  - cost_incurred
+  - high_risk_authorization_inferred
+  - data_classification
+  - proposal_contains_personal_data
+  - proposal_contains_secrets
+  - credential_material_in_proposal
+properties:
+  schema_version: { const: "0.1.0" }
+  adapter_dispatch_proposal_id:
+    type: string
+    pattern: "^adapter-dispatch-proposal-[0-9]{8}-[0-9]{3}$"
+  proposed_at: { type: string, format: date-time }
+  not_before: { type: string, format: date-time }
+  expires_at: { type: string, format: date-time }
+  validity_seconds: { type: integer, minimum: 60, maximum: 86400 }
+  language: { const: zh-CN }
+  source_session_file_sha256: { $ref: "#/$defs/sha256" }
+  draft_package_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  final_package_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_envelope_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_profile_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  payload_data_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_implementation_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_runtime_readiness_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  package_id: { type: string, pattern: "^pkg-[0-9]{8}-[0-9]{3}$" }
+  envelope_id: { type: string, pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$" }
+  adapter_profile_id: { type: string, pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$" }
+  adapter_selection_proposal_id: { type: string, pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_selection_confirmation_id: { type: string, pattern: "^adapter-selection-confirmation-[0-9]{8}-[0-9]{3}$" }
+  payload_data_attestation_id: { type: string, pattern: "^payload-data-attestation-[0-9]{8}-[0-9]{3}$" }
+  adapter_effect_authorization_proposal_id: { type: string, pattern: "^adapter-effect-authorization-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_effect_authorization_confirmation_id: { type: string, pattern: "^adapter-effect-authorization-confirmation-[0-9]{8}-[0-9]{3}$" }
+  adapter_implementation_attestation_id: { type: string, pattern: "^adapter-implementation-attestation-[0-9]{8}-[0-9]{3}$" }
+  adapter_runtime_readiness_attestation_id: { type: string, pattern: "^adapter-runtime-readiness-attestation-[0-9]{8}-[0-9]{3}$" }
+  envelope_delivery_state: { const: prepared }
+  adapter_profile_status: { const: reviewed }
+  adapter_selection_proposal_status: { const: pending }
+  selection_confirmation_decision: { const: confirmed }
+  adapter_selected: { const: true }
+  payload_data_attestation_completed: { const: true }
+  overall_data_compatibility: { const: compatible }
+  adapter_effect_authorization_proposal_status: { const: pending }
+  effect_authorization_confirmation_decision: { const: confirmed }
+  effect_authorization_confirmed: { const: true }
+  all_requested_effects_authorized: { const: true }
+  adapter_implementation_attestation_completed: { const: true }
+  overall_implementation_compatibility: { const: compatible }
+  adapter_runtime_readiness_attestation_completed: { const: true }
+  runtime_evidence_reviewed: { const: true }
+  overall_runtime_readiness: { const: ready }
+  recipient: { const: coding_agent }
+  adapter_key: { type: string, pattern: "^[a-z][a-z0-9_]{2,63}$" }
+  implementation_kind: { enum: [source_tree, package, container_image, managed_service] }
+  implementation_ref: { $ref: "#/$defs/provenance_ref" }
+  implementation_version: { $ref: "#/$defs/provenance_ref" }
+  declared_implementation_sha256: { $ref: "#/$defs/sha256" }
+  runtime_environment_kind: { enum: [local_process, container, managed_service, remote_api] }
+  runtime_environment_ref: { $ref: "#/$defs/provenance_ref" }
+  delivery_mode: { enum: [local_file, local_process, remote_api, message_channel, human_team] }
+  receipt_mode: { enum: [local_digest, provider_receipt, human_acknowledgement, none] }
+  adapter_idempotency_supported: { const: true }
+  adapter_idempotency_key_source: { enum: [envelope_file_sha256, provider_key] }
+  adapter_retry_mode: { enum: [none, bounded] }
+  adapter_maximum_attempts: { type: integer, minimum: 1, maximum: 5 }
+  authorized_effects: { $ref: "#/$defs/effects" }
+  dispatch_payload_kind: { const: handoff_envelope }
+  dispatch_payload_file_sha256: { $ref: "#/$defs/sha256" }
+  dispatch_destination_kind: { enum: [local_path, local_process_endpoint, provider_endpoint, message_destination, human_recipient] }
+  dispatch_destination_ref: { $ref: "#/$defs/provenance_ref" }
+  idempotency_key_derivation: { const: exact_dispatch_binding_sha256 }
+  idempotency_key_sha256: { $ref: "#/$defs/sha256" }
+  dispatch_attempt_limit: { type: integer, minimum: 1, maximum: 5 }
+  dispatch_timeout_seconds: { type: integer, minimum: 1, maximum: 3600 }
+  provider_health_freshness_requirement: { enum: [required, not_required] }
+  maximum_health_evidence_age_seconds: { type: integer, minimum: 0, maximum: 3600 }
+  provider_health_evidence_freshness: { enum: [current, not_applicable] }
+  cost_ceiling_required: { type: boolean }
+  cost_ceiling_amount:
+    type: string
+    pattern: "^(?:not_applicable|0\\.[0-9]{0,3}[1-9]|[1-9][0-9]{0,8}(?:\\.[0-9]{1,4})?)$"
+  cost_ceiling_currency:
+    type: string
+    pattern: "^(?:not_applicable|[A-Z]{3})$"
+  cost_limit_authorization_status: { enum: [pending_confirmation, not_applicable] }
+  cost_limit_authorized: { const: false }
+  stop_conditions:
+    type: array
+    uniqueItems: true
+    items: { $ref: "#/$defs/stop_condition" }
+  dispatch_proposal_status: { const: pending }
+  dispatch_choice_saved: { const: false }
+  dispatch_confirmation_required: { const: true }
+  dispatch_confirmation_receipt_present: { const: false }
+  runtime_environment_accessed_by_preview: { const: false }
+  credential_accessed_by_preview: { const: false }
+  provider_health_check_executed_by_preview: { const: false }
+  effects_executable: { const: false }
+  adapter_started: { const: false }
+  provider_called: { const: false }
+  dispatch_authorized: { const: false }
+  dispatch_attempted: { const: false }
+  delivery_receipt_present: { const: false }
+  external_write_performed: { const: false }
+  cost_incurred: { const: false }
+  high_risk_authorization_inferred: { const: false }
+  data_classification: { $ref: "#/$defs/data_classification" }
+  proposal_contains_personal_data: { const: false }
+  proposal_contains_secrets: { const: false }
+  credential_material_in_proposal: { const: false }
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  provenance_ref:
+    type: string
+    minLength: 3
+    maxLength: 128
+    pattern: "^[A-Za-z0-9._:/@-]+$"
+  effect:
+    type: string
+    enum: [local_file_write, network_access, process_start, notification, external_service_write, cost_incurred, production_data_access]
+  effects:
+    type: array
+    uniqueItems: true
+    items: { $ref: "#/$defs/effect" }
+  stop_condition:
+    type: string
+    enum:
+      - source_bytes_changed
+      - authorization_changed
+      - runtime_readiness_changed
+      - proposal_not_yet_valid
+      - proposal_expired
+      - idempotency_conflict
+      - credential_not_ready
+      - provider_health_not_current
+      - cost_ceiling_would_be_exceeded
+      - unlisted_effect_requested
+      - delivery_failure
+      - receipt_failure
+  data_classification:
+    type: string
+    enum: [public, internal, confidential, restricted]

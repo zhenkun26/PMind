@@ -59,4 +59,4 @@ Calibration preflight remains honestly BLOCKED at 3/6 because four real roles, s
 
 ## Next boundary
 
-Define a provider-neutral Adapter Dispatch Proposal that accepts only a ready Runtime Readiness Attestation and binds one exact payload, Adapter, recipient, idempotency key, cost ceiling, expiry, and stop conditions. It must remain pending with zero dispatch. A later independent dispatch confirmation and a Service-enforced executor remain required before any provider call.
+Implemented as the provider-neutral Adapter Dispatch Proposal documented in `handoff-adapter-dispatch-proposal-stage-2026-08-23.md`. It accepts only a ready Runtime Readiness Attestation and binds one exact payload, Adapter, destination, idempotency key, fixed-point cost ceiling, validity window, attempts/timeout, and stop conditions while remaining pending and zero-dispatch. The next boundary is an independent Dispatch Confirmation Receipt; a Service-enforced executor remains later.

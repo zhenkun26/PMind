@@ -173,6 +173,17 @@ Avoid: “PMind verified the credentials,” “provider connected,” “Adapte
 running,” or “dispatch ready” when only a runtime review declaration has been
 validated.
 
+### Adapter Dispatch Proposal
+
+A pending, zero-dispatch decision artifact bound to one exact ready Runtime
+Readiness Attestation, payload, Adapter, destination, idempotency key, validity
+window, cost ceiling, and stop-condition set. It presents one proposed dispatch
+for confirmation but never saves a choice, starts the Adapter, or calls the
+provider.
+
+Avoid: “dispatch authorized,” “delivery started,” or “provider called” when
+only a Dispatch Proposal has been previewed.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

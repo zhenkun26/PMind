@@ -40,6 +40,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Effect Authorization Confirmation Receipt contract](docs/product/handoff-adapter-effect-authorization-confirmation-receipt-v0.md)
 - [Handoff Adapter Implementation Attestation contract](docs/product/handoff-adapter-implementation-attestation-v0.md)
 - [Handoff Adapter Runtime Readiness Attestation contract](docs/product/handoff-adapter-runtime-readiness-attestation-v0.md)
+- [Handoff Adapter Dispatch Proposal contract](docs/product/handoff-adapter-dispatch-proposal-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -176,6 +177,10 @@ compatible implementation declaration and derives runtime configuration,
 credential-reference, submitted provider-health, and data-lifecycle readiness.
 It does not access the environment or credentials, execute a health check,
 start the Adapter, make effects executable, or authorize dispatch.
+The seventeen-file Adapter Dispatch Proposal preview then binds one exact
+payload, Adapter, destination, deterministic idempotency key, validity window,
+fixed-point cost ceiling, and canonical stop set. It remains pending, saves no
+choice, starts nothing, calls no provider, and performs no dispatch.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -274,3 +279,8 @@ Executor Profile and four-role separation gates before any run may start.
   and purpose evidence. Ready permits only a future zero-dispatch Proposal;
   the preview performs no environment access or provider check, keeps effects
   non-executable, and leaves cost and dispatch authorization independent.
+- An Adapter Dispatch Proposal binds all sixteen prior files and one exact
+  dispatch definition. It uses deterministic idempotency and bounded validity,
+  attempts, timeout, cost ceiling, and stop conditions, while keeping user
+  choice unsaved, effects non-executable, provider calls absent, and dispatch
+  unauthorized.

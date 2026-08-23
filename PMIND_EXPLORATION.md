@@ -41,16 +41,17 @@
 - 已新增 Adapter Effect Authorization Confirmation Receipt v0：十四文件只读 preview 将 confirm/modify/reject 绑定到 exact Proposal 和全部十三份来源。confirmed 必须授予全部且仅 requested effects，modify/reject 必须为空；零 effect 可以确认。具名授权仍固定不可执行、false dispatch，并保留实现证明、provider contract test、费用上限与独立 dispatch 确认门禁。下一边界是 provider-neutral Adapter Implementation Attestation，仍未实现或调用真实 Adapter。
 - 已新增 provider-neutral Adapter Implementation Attestation v0：十五文件只读 preview 只接受 confirmed exact Effect Receipt，绑定全部十四份来源、实现身份/审核 provenance、Profile true effects、observed effects 与 contract-test 证据声明，并确定性派生 effect conformance、contract compatibility 和 overall compatibility。不兼容是合法阻断结果；兼容也不表示预演器装载过实现或运行过测试，凭据、provider 健康、runtime readiness、effect executability 与 dispatch 均固定为 false。下一边界是 Runtime Readiness Attestation，仍未实现或调用真实 Adapter。
 - 已新增 provider-neutral Adapter Runtime Readiness Attestation v0：十六文件只读 preview 只接受 compatible exact Implementation Attestation，绑定全部十五份来源、运行环境/审核 provenance、七项配置、凭据引用、提交的 provider 健康证据与 retention/export/purpose 政策，并确定性派生 ready/blocked。预演器不访问环境或凭据、不执行健康检查、不启动进程或调用 provider；ready 也保持 effects 不可执行、dispatch=false，cost effect 的费用上限继续 pending。下一边界是零 dispatch 的 Adapter Dispatch Proposal，而不是真实执行。
+- 已新增 provider-neutral Adapter Dispatch Proposal v0：十七文件只读 preview 只接受 ready exact Runtime Attestation，绑定全部十六份来源、exact Envelope payload、Adapter/destination、确定性幂等键、Profile 内尝试次数、超时、有效期、健康证据新鲜度、正数固定点费用上限和 canonical stop conditions。Proposal 固定 pending、未保存选择、effects 不可执行、Adapter/provider 未触达、dispatch 未授权且未尝试、外部写入/费用为 false。下一边界是独立 Dispatch Confirmation Receipt，而不是真实执行。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
-- 用户已授权本地工作流引导，以及本次创建公开仓库、归档提交和推送。未来的提交、推送、Issue、Release、部署和产品依赖安装仍需按任务单独授权。
+- 用户已授权持续推进当前 PMind 落地目标，并允许每个完整轮次结束时自动 commit、push 和归档，无需逐轮点击；该 standing authorization 不包含 GitHub Issue/PR/Release、部署、依赖安装、真实 provider 调用、凭据使用、费用、数据迁移或其他外部系统写入。
 
 恢复工作时应遵循的原则：
 
 1. 先核验仓库和外部资料的最新状态。
 2. 保留用户已有变更，不覆盖、不删除、不擅自提交。
 3. 第三方 Skill 采用精选、固定版本、审查后本地化的方式，不整包无差别安装。
-4. 任何 GitHub Issue、远程提交、推送、部署、标签修改等外部写操作，都需要明确授权。
+4. 当前持续目标内的每轮 PMind commit/push 已获 standing authorization；GitHub Issue/PR/Release、部署、标签、依赖、provider、费用及其他外部写入仍需明确授权。
 5. Skill 中的流程建议不能替代系统、开发者、仓库级规则，也不能承担不可绕过的安全控制。
 
 ## 1. 原始项目设想
@@ -616,7 +617,9 @@ PMind 产品层
 ## 17. 下一步授权门槛与建议顺序
 
 本文最初写入不等于获得后续操作授权。用户随后已授权并完成第 1–4
-项的本地、可审查工作；其余操作仍应逐项明确授权：
+项的本地、可审查工作，并于 2026-08-23 授权持续推进后续最小切片、
+每轮自动 commit/push/归档；该授权不扩张到部署、依赖、真实 provider、
+凭据、费用、迁移、Issue/PR/Release 或其他外部状态：
 
 1. 已完成：核验并下载 `mattpocock/skills` 的候选 Skill；
 2. 已完成：创建 `.agents/skills/`、`AGENTS.md`、`CONTEXT.md`、`docs/`、`reference/` 等骨架；
@@ -694,5 +697,6 @@ Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.
 创建后必须运行 ruby scripts/verify_handoff_envelope_lineage.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE，重跑七份来源并逐字段核对 Envelope metadata、authorization 与完整内嵌 Package。验证通过仍未交接；随后用 ruby scripts/preview_handoff_adapter_selection.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL 重跑十文件链并预演 pending 选择。Profile 必须 reviewed 且副作用/授权、回执、幂等、重试、成本和数据分类一致；成功仍不表示已选择或 dispatch，个人数据/密钥兼容性保持 unknown。用户选择必须写入独立 Receipt，再用 ruby scripts/preview_handoff_adapter_selection_confirmation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION 执行十一文件只读预演。只有 confirmed 选择可再用 ruby scripts/preview_handoff_payload_data_attestation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION 执行十二文件只读审核契约校验。兼容只表示数据策略通过，仍未 dispatch、未授权任何副作用；不兼容必须阻断。兼容后用 ruby scripts/preview_handoff_adapter_effect_authorization.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL 执行十三文件只读副作用披露；Proposal 必须精确覆盖 Profile true effects，保持 pending、零选择、零授权和 false dispatch。用户选择必须写入独立 Receipt，再用 ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION 执行十四文件只读确认。confirmed 只授权 exact named effects，且所有 effects 仍不可执行、dispatch=false；modify/reject 必须为空授权。下一边界是 provider-neutral Adapter Implementation Attestation；不得直接调用外部 Agent 或虚构数据审核、用户授权、Adapter 实现或交付记录。
 更新：上述十四文件确认之后，只有 confirmed exact Receipt 才可用 ruby scripts/preview_handoff_adapter_implementation_attestation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION ADAPTER_IMPLEMENTATION_ATTESTATION 执行十五文件只读实现声明校验。compatible 只表示 observed effects 与提交的 contract-test 声明符合 Profile；预演器没有装载实现或运行测试，凭据、健康、runtime readiness、effects executable 和 dispatch 仍为 false。下一边界是 Runtime Readiness Attestation；不得直接调用外部 Agent 或虚构测试执行、Adapter 实现或交付记录。
 更新：只有 compatible exact Implementation Attestation 才可用 ruby scripts/preview_handoff_adapter_runtime_readiness_attestation.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION ADAPTER_IMPLEMENTATION_ATTESTATION ADAPTER_RUNTIME_READINESS_ATTESTATION 执行十六文件只读运行时声明校验。ready 只表示提交的配置、凭据引用、健康和 retention/export/purpose 声明自洽；预演器没有访问环境、读取凭据或执行健康检查，effects executable 和 dispatch 仍为 false。下一边界是 pending、零 dispatch 的 Adapter Dispatch Proposal；不得直接调用 provider 或虚构运行时证据、费用授权、dispatch 或交付记录。
+更新：只有 ready exact Runtime Attestation 才可用 ruby scripts/preview_handoff_adapter_dispatch_proposal.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION ADAPTER_IMPLEMENTATION_ATTESTATION ADAPTER_RUNTIME_READINESS_ATTESTATION ADAPTER_DISPATCH_PROPOSAL 执行十七文件只读 dispatch 提案校验。Proposal 只展示 exact payload/destination、幂等、时间、尝试/超时、费用和停止条件，保持 pending、零选择、零调用和 false dispatch。下一边界是独立 Dispatch Confirmation Receipt；不得把本 Proposal 或合成 fixture 当作真实费用授权、provider 调用、delivery 或产品效果记录。
 隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
 ```

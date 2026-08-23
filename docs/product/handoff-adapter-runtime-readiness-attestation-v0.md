@@ -107,4 +107,4 @@ ruby scripts/preview_handoff_adapter_runtime_readiness_attestation.rb SESSION_RE
 - `0`：十六文件链、审核 provenance 与派生结果自洽；stdout 输出 ready 或 blocked 文案；
 - `1`：上游不兼容、来源漂移、身份/状态错误、派生矛盾、时间/分类降级或门禁绕过；stderr 输出受控错误。
 
-预演器只读十六份本地 YAML。下一最小边界是 provider-neutral Adapter Dispatch Proposal：绑定精确 payload、Adapter、recipient、幂等键、费用上限、有效期与停止条件，保持 pending 与零 dispatch；真实执行仍需独立确认和受控 Service。
+预演器只读十六份本地 YAML。下一最小边界现已由 [Handoff Adapter Dispatch Proposal v0](handoff-adapter-dispatch-proposal-v0.md) 实现：它绑定精确 payload、Adapter、recipient、destination、幂等键、费用上限、有效期与停止条件，并保持 pending 与零 dispatch；真实执行仍需独立 Confirmation Receipt 和受控 Service。
