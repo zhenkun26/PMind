@@ -1,0 +1,141 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-local-execution-receipt-v0.yaml"
+title: "PMind Handoff Adapter Local Execution Receipt v0"
+description: "Immutable receipt for one actual, zero-cost, local-file-only reference dispatch bundle."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_execution_receipt_id
+  - executed_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - adapter_effect_authorization_proposal_file_sha256
+  - adapter_effect_authorization_confirmation_receipt_file_sha256
+  - adapter_implementation_attestation_file_sha256
+  - adapter_runtime_readiness_attestation_file_sha256
+  - adapter_dispatch_proposal_file_sha256
+  - adapter_dispatch_confirmation_receipt_file_sha256
+  - adapter_dispatch_execution_preflight_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_dispatch_proposal_id
+  - adapter_dispatch_confirmation_id
+  - adapter_dispatch_execution_preflight_id
+  - execution_mode
+  - dispatch_destination_kind
+  - dispatch_destination_ref
+  - delivery_mode
+  - receipt_mode
+  - idempotency_key_sha256
+  - idempotency_status
+  - attempt_number
+  - delivery_artifact_name
+  - delivery_artifact_file_sha256
+  - authorized_effects
+  - executed_effects
+  - execution_outcome
+  - adapter_started
+  - dispatch_attempted
+  - delivery_receipt_present
+  - local_file_write_performed
+  - external_write_performed
+  - provider_called
+  - credential_accessed
+  - network_accessed
+  - process_started
+  - cost_incurred
+  - cost_amount
+  - cost_currency
+  - high_risk_authorization_inferred
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+  - credential_material_in_receipt
+properties:
+  schema_version: { const: "0.1.0" }
+  adapter_execution_receipt_id:
+    type: string
+    pattern: "^adapter-execution-receipt-[a-f0-9]{24}$"
+  executed_at: { type: string, format: date-time }
+  language: { const: zh-CN }
+  source_session_file_sha256: { $ref: "#/$defs/sha256" }
+  draft_package_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  final_package_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_envelope_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_profile_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  payload_data_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_implementation_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_runtime_readiness_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_execution_preflight_file_sha256: { $ref: "#/$defs/sha256" }
+  package_id: { type: string, pattern: "^pkg-[0-9]{8}-[0-9]{3}$" }
+  envelope_id: { type: string, pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$" }
+  adapter_profile_id: { type: string, pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_proposal_id: { type: string, pattern: "^adapter-dispatch-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_confirmation_id: { type: string, pattern: "^adapter-dispatch-confirmation-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_execution_preflight_id: { type: string, pattern: "^adapter-dispatch-execution-preflight-[0-9]{8}-[0-9]{3}$" }
+  execution_mode: { const: local_reference }
+  dispatch_destination_kind: { const: local_path }
+  dispatch_destination_ref: { $ref: "#/$defs/safe_segment" }
+  delivery_mode: { const: local_file }
+  receipt_mode: { const: local_digest }
+  idempotency_key_sha256: { $ref: "#/$defs/sha256" }
+  idempotency_status: { const: committed }
+  attempt_number: { const: 1 }
+  delivery_artifact_name: { const: delivered-envelope.yaml }
+  delivery_artifact_file_sha256: { $ref: "#/$defs/sha256" }
+  authorized_effects: { $ref: "#/$defs/local_effects" }
+  executed_effects: { $ref: "#/$defs/local_effects" }
+  execution_outcome: { const: succeeded }
+  adapter_started: { const: true }
+  dispatch_attempted: { const: true }
+  delivery_receipt_present: { const: true }
+  local_file_write_performed: { const: true }
+  external_write_performed: { const: true }
+  provider_called: { const: false }
+  credential_accessed: { const: false }
+  network_accessed: { const: false }
+  process_started: { const: false }
+  cost_incurred: { const: false }
+  cost_amount: { const: "0" }
+  cost_currency: { const: not_applicable }
+  high_risk_authorization_inferred: { const: false }
+  data_classification: { enum: [public, internal, confidential, restricted] }
+  contains_personal_data: { const: false }
+  contains_secrets: { const: false }
+  credential_material_in_receipt: { const: false }
+$defs:
+  sha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+  safe_segment:
+    type: string
+    minLength: 1
+    maxLength: 128
+    pattern: "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+  local_effects:
+    type: array
+    minItems: 1
+    maxItems: 1
+    uniqueItems: true
+    items: { const: local_file_write }

@@ -62,4 +62,6 @@ ruby scripts/preview_handoff_adapter_dispatch_execution_preflight.rb SESSION_REV
 - `0`：十九文件链和 submitted evidence 自洽；ready 或 blocked 都是合法结果；
 - `1`：非 confirmed Receipt、来源漂移、非法证据/派生矩阵、时间/费用/分类矛盾或越权状态。
 
-下一边界需要真实受控 Service：原子预留幂等键、在执行瞬间重检 stop conditions、调用 exact Adapter，并无论成功/失败都创建不可变 Execution Receipt。该边界涉及真实凭据、provider、外部写入或费用，超出当前 standing authorization，不能由 repository fixture 代替。
+本地参考边界现由 `handoff-adapter-local-reference-execution-v0.md` 实现：它只接受 local-file-only、zero-cost、无凭据/provider 的 exact ready 子集，在显式隔离根目录中原子发布 Envelope + Execution Receipt。它不证明 submitted Preflight 中的其他 provider 场景。
+
+生产边界仍需要真实受控 Service：在执行瞬间重检 live stop conditions、使用 provider-specific Adapter，并无论成功/失败都创建不可变 Execution Receipt。真实凭据、provider、网络、生产写入或费用仍超出当前 standing authorization，不能由本地参考执行或 repository fixture 代替。

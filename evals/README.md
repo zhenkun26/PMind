@@ -99,6 +99,8 @@ The experiment is paired:
 - `schemas/handoff-adapter-dispatch-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject state, exact dispatch mirrors, derived cost authority, and false execution-result boundary;
 - `docs/product/handoff-adapter-dispatch-execution-preflight-v0.md`: exact eighteen-source submitted evidence, fixed-point budget, canonical blocker, and ready-or-blocked zero-execution contract;
 - `schemas/handoff-adapter-dispatch-execution-preflight-v0.yaml`: machine-readable point-in-time gate evidence, deterministic active stops, and false live-check/reservation/execution boundary;
+- `docs/product/handoff-adapter-local-reference-execution-v0.md`: current-window local-file-only execution, atomic bundle, idempotent verification, recovery, and safe copy contract;
+- `schemas/handoff-adapter-local-execution-receipt-v0.yaml`: machine-readable exact nineteen-file execution bindings, committed local attempt, and false provider/credential/network/process/cost boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -142,6 +144,7 @@ The experiment is paired:
 - `scripts/preview_handoff_adapter_dispatch_proposal.rb`: read-only seventeen-file ready-runtime replay, exact pending-dispatch validator, and zero-dispatch decision renderer.
 - `scripts/preview_handoff_adapter_dispatch_confirmation.rb`: read-only eighteen-file Dispatch Proposal replay, exact choice/cost validator, and authorized-without-execution renderer.
 - `scripts/preview_handoff_adapter_dispatch_execution_preflight.rb`: read-only nineteen-file confirmed-Receipt replay, submitted preflight evidence validator, and ready-or-blocked zero-execution renderer.
+- `scripts/execute_handoff_adapter_local_reference.rb`: atomic no-overwrite executor for the current, exact, local-file-only nineteen-file subset; writes only under an explicit isolated root and emits an immutable Receipt.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -173,6 +176,7 @@ ruby test/preview_handoff_adapter_runtime_readiness_attestation_test.rb
 ruby test/preview_handoff_adapter_dispatch_proposal_test.rb
 ruby test/preview_handoff_adapter_dispatch_confirmation_test.rb
 ruby test/preview_handoff_adapter_dispatch_execution_preflight_test.rb
+ruby test/execute_handoff_adapter_local_reference_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

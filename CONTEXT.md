@@ -205,6 +205,17 @@ but does not perform those external checks or execute the dispatch.
 Avoid: “live checks passed,” “idempotency reserved,” or “ready means executed”
 when only a repository-local Preflight declaration has been validated.
 
+### Adapter Execution Receipt
+
+An immutable outcome record for one actual Adapter dispatch attempt, bound to
+the exact authorized chain, payload, destination, idempotency key, executed
+effects, delivery evidence, time, and cost facts. The local reference producer
+records only an isolated local-file attempt; other producers require their own
+provider-specific evidence and authority.
+
+Avoid: “provider delivered,” “production-ready,” or “product effect proven”
+when a Receipt records only the local reference capability.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

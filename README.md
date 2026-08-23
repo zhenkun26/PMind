@@ -4,8 +4,9 @@ PMind explores how to turn a vague product intent into an evidence-backed,
 testable Prompt Package that a downstream agent or delivery team can execute.
 
 The repository is currently in a local-first Validation Sprint. Product
-contracts, Eval schemas, ten unrun seed cases, and three executable calibration
-Fixtures exist; product code and the runtime stack have not been selected yet.
+contracts, Eval schemas, ten unrun seed cases, three executable calibration
+Fixtures, and one local-file-only reference executor exist; the production
+runtime stack and provider Adapter have not been selected.
 
 Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 
@@ -43,6 +44,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Dispatch Proposal contract](docs/product/handoff-adapter-dispatch-proposal-v0.md)
 - [Handoff Adapter Dispatch Confirmation Receipt contract](docs/product/handoff-adapter-dispatch-confirmation-receipt-v0.md)
 - [Handoff Adapter Dispatch Execution Preflight contract](docs/product/handoff-adapter-dispatch-execution-preflight-v0.md)
+- [Handoff Adapter Local Reference Execution contract](docs/product/handoff-adapter-local-reference-execution-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -191,6 +193,12 @@ The nineteen-file Execution Preflight then validates submitted point-in-time
 validity, credential, health, destination, idempotency, effect-scope, and cost
 evidence into ready or blocked. It performs none of those external checks and
 never reserves or executes the dispatch.
+The local reference executor is a deliberately narrower next seam: for a
+currently valid ready chain with exactly one authorized local-file write, it
+atomically publishes the exact Envelope and immutable Execution Receipt inside
+an explicit isolated root. It verifies and reuses an exact existing bundle
+without a second write. It cannot call a provider, use credentials or network,
+start a process, access production data, or incur cost.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -302,3 +310,7 @@ Executor Profile and four-role separation gates before any run may start.
   derives a canonical ready-or-blocked gate from submitted point-in-time
   evidence. Ready still means zero execution; real Service activation requires
   explicit provider, credential, write, and cost scope.
+- A Local Reference Execution accepts only the local-file, local-digest,
+  zero-cost subset of a current ready chain. It performs one real isolated
+  local write and creates an immutable Receipt, but proves no provider delivery,
+  production readiness, calibration outcome, or product effect.

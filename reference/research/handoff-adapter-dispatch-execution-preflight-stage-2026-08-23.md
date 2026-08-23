@@ -53,6 +53,6 @@ A valid synthetic ready result does not prove live credentials, health, destinat
 
 The blocked checks remain blocked; none is reported as PASS. The accepted alternative evidence proves deterministic local submitted-evidence contract behavior only, not live Service readiness or execution.
 
-## Next boundary
+## Next boundary update
 
-Implementing an actual Service executor and immutable Execution Receipt is now the next technical boundary, but activating it requires explicit provider/runtime/credential/cost scope. Until that authority and real configuration exist, PMind must stop at a validated ready-or-blocked Preflight and must not fabricate execution.
+The repository now implements a real but deliberately local-only execution subset in `handoff-adapter-local-reference-execution-stage-2026-08-23.md`: exact `local_file` + `local_digest` + `local_file_write`, zero cost, no credential/provider, and an explicit isolated root. That result does not activate or validate any provider-backed Preflight. Production execution still requires explicit provider/runtime/credential/network/write/cost scope and real configuration; it must not be inferred from a local reference Receipt.

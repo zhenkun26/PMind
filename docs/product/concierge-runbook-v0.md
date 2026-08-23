@@ -297,7 +297,15 @@ confirmed 必须在 Proposal expiry 前捕获，但仍固定 effects 不可执�
 ruby scripts/preview_handoff_adapter_dispatch_execution_preflight.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml ADAPTER_DISPATCH_CONFIRMATION.yaml ADAPTER_DISPATCH_EXECUTION_PREFLIGHT.yaml
 ```
 
-ready 只表示提交的临执行证据自洽；preview 不执行 live check、不预留幂等、不调用 Adapter/provider。blocked 必须终止路径。真实 Service executor 与 Execution Receipt 需要单独的 provider/runtime/credential/write/cost 授权。
+ready 只表示提交的临执行证据自洽；preview 不执行 live check、不预留幂等、不调用 Adapter/provider。blocked 必须终止路径。
+
+对全部且仅 `local_file_write`、`local_file`、`local_digest`、zero-cost、credential/provider-health 均不需要的 ready 链，可进入 [Handoff Adapter Local Reference Execution v0](handoff-adapter-local-reference-execution-v0.md)。操作者必须先创建一个与仓库及十九份来源隔离的空本地根目录，再运行：
+
+```sh
+ruby scripts/execute_handoff_adapter_local_reference.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml ADAPTER_DISPATCH_CONFIRMATION.yaml ADAPTER_DISPATCH_EXECUTION_PREFLIGHT.yaml EXECUTION_ROOT
+```
+
+首次成功会真实执行一次隔离的本地文件写入，并原子发布 exact Envelope 与 Execution Receipt；相同幂等目标只允许验证并复用既有 exact bundle。执行器不覆盖最终目录，失败只清理自己创建的临时/锁目录。它不授权或实现 provider、凭据、网络、进程、生产数据或费用能力，不能作为企业生产交付或产品效果证据。任何其他 Profile 仍须停在 Preflight，等待单独的 provider/runtime/credential/write/cost 授权。
 
 ### 8. Quality Gate 与 Handoff
 
@@ -321,6 +329,7 @@ ready 只表示提交的临执行证据自洽；preview 不执行 live check、�
 - Adapter Dispatch Proposal 必须绑定 exact payload/destination、确定性幂等键、Profile 内尝试上限、有效期、费用上限和 canonical stop conditions；Proposal 只能 pending，不能保存选择、调用 provider、执行 effect 或授权 dispatch。
 - Adapter Dispatch Confirmation Receipt 必须把三态选择绑定到 exact Proposal；confirmed 只授权该 dispatch 与适用的 exact ceiling，仍不得记录 effect executable、Adapter/provider 启动、dispatch attempt、delivery、external write 或 cost。
 - Adapter Dispatch Execution Preflight 必须从 exact Receipt、时间、凭据/健康要求、destination/idempotency/effect checks 和 fixed-point budget 派生 canonical ready/blocked；ready 也不得记录 live check、reservation、execution、delivery 或 cost。
+- Local Reference Execution 只能接受当前有效、ready、exact local-file-only 链和隔离根目录；必须原子发布 exact Envelope + Receipt、验证式幂等复用、永不覆盖，并把 provider/credential/network/process/cost 保持为 false。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 
