@@ -121,6 +121,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_nineteen_files(directory, envelope_classification: nil)
+    paths = write_eighteen_files(directory, envelope_classification: envelope_classification)
+    preflight_path = File.join(directory, "adapter-dispatch-execution-preflight.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-adapter-dispatch-execution-preflight-valid.yaml")
+    write_yaml(preflight_path, load_yaml(fixture_path))
+    paths << preflight_path
+    refresh_adapter_dispatch_execution_preflight_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -469,6 +479,50 @@ class HandoffAdapterChainFixture
     document["service_execution_request_required"] = confirmed
     document["execution_receipt_required"] = confirmed
     write_yaml(paths.fetch(17), document)
+  end
+
+  def refresh_adapter_dispatch_execution_preflight_bindings(paths)
+    preview = PMind::HandoffAdapterDispatchConfirmationPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(18))
+
+    document = load_yaml(paths.fetch(18))
+    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
+    document["adapter_dispatch_confirmation_receipt_file_sha256"] = preview.dispatch_confirmation_file_sha256
+    document["package_id"] = preview.envelope["package_id"]
+    document["envelope_id"] = preview.envelope["envelope_id"]
+    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    document["adapter_dispatch_proposal_id"] = preview.dispatch_proposal["adapter_dispatch_proposal_id"]
+    document["adapter_dispatch_confirmation_id"] = preview.dispatch_confirmation["adapter_dispatch_confirmation_id"]
+    fields = %w[
+      confirmation_decision dispatch_authorized service_execution_request_required
+      dispatch_payload_file_sha256 dispatch_destination_kind dispatch_destination_ref
+      idempotency_key_sha256 not_before expires_at cost_ceiling_required
+      cost_ceiling_amount cost_ceiling_currency data_classification
+    ]
+    fields.each { |field| document[field] = preview.dispatch_confirmation[field] }
+    document["authorized_effects"] = preview.dispatch_confirmation["authorized_effects"].dup
+    document["stop_conditions"] = preview.dispatch_confirmation["stop_conditions"].dup
+    credential_required = preview.runtime_attestation["credential_requirement"] == "required"
+    document["credential_check"] = credential_required ? "passed" : "not_required"
+    health_required = preview.runtime_attestation["provider_health_check_requirement"] == "required"
+    document["provider_health_check"] = health_required ? "passed" : "not_required"
+    document["provider_health_checked_at"] = health_required ? "2026-08-23T10:29:00+08:00" : "not_applicable"
+    document["provider_health_evidence_ref"] = health_required ? "synthetic-preflight-health-001" : "not_applicable"
+    document["provider_health_evidence_sha256"] = health_required ? "e" * 64 : "not_applicable"
+    cost_required = preview.dispatch_confirmation["cost_ceiling_required"] == true
+    document["estimated_cost_amount"] = cost_required ? "5.00" : "not_applicable"
+    document["estimated_cost_currency"] = cost_required ? preview.dispatch_confirmation["cost_ceiling_currency"] : "not_applicable"
+    document["cost_budget_check"] = cost_required ? "passed" : "not_required"
+    document["validity_check"] = "passed"
+    document["destination_check"] = "passed"
+    document["idempotency_check"] = "passed"
+    document["effect_scope_check"] = "passed"
+    document["active_stop_conditions"] = []
+    document["overall_execution_preflight"] = "ready"
+    document["service_execution_gate_status"] = "ready_for_service"
+    document["execution_attempt_reservation_required"] = true
+    document["execution_receipt_required"] = true
+    write_yaml(paths.fetch(18), document)
   end
 
   def load_yaml(path)

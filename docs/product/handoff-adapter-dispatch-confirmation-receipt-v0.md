@@ -72,4 +72,4 @@ ruby scripts/preview_handoff_adapter_dispatch_confirmation.rb SESSION_REVISION.y
 - `0`：十八文件链、exact binding、选择状态机、时间、费用和数据边界自洽；stdout 输出受控文案；
 - `1`：上游 Proposal 无效、来源漂移、状态/身份/字段不一致、非法授权矩阵、过期确认、摘要或分类错误；stderr 输出受控错误。
 
-预演器只读十八份本地 YAML。下一最小边界是 provider-neutral Service Adapter Dispatch Execution Request / Preflight：只接受未过期 confirmed Receipt，重新建立实时门禁并仍可产生 blocked 结果。真实 provider 调用与 delivery/cost 结果需要更后的受控执行器和 Execution Receipt。
+预演器只读十八份本地 YAML。下一最小边界现已由 [Handoff Adapter Dispatch Execution Preflight v0](handoff-adapter-dispatch-execution-preflight-v0.md) 实现：它只接受 confirmed Receipt，验证提交的临执行证据并派生 ready/blocked，仍不执行 live check 或 dispatch。真实 provider 调用与 delivery/cost 结果需要更后的受控执行器和 Execution Receipt。

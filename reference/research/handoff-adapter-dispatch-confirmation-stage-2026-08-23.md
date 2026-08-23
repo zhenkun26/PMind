@@ -59,4 +59,4 @@ The blocked checks remain blocked; none is reported as PASS. The accepted altern
 
 ## Next boundary
 
-Define a provider-neutral Service Adapter Dispatch Execution Request / Preflight bound to this exact eighteen-file chain. It should accept only confirmed, unexpired authority and deterministically return ready or blocked after declared Service checks, without fabricating a provider call. Actual dispatch and its delivery/cost receipt remain separate.
+Implemented as the provider-neutral submitted-evidence Execution Preflight documented in `handoff-adapter-dispatch-execution-preflight-stage-2026-08-23.md`. It accepts only confirmed exact authority and derives ready or blocked without fabricating live checks. Actual Service execution and its delivery/cost receipt now require explicit external scope.

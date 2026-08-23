@@ -1,0 +1,212 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-dispatch-execution-preflight-v0.yaml"
+title: "PMind Handoff Adapter Dispatch Execution Preflight v0"
+description: "Submitted pre-execution evidence over one exact confirmed Adapter dispatch; ready never records execution or idempotency reservation."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_dispatch_execution_preflight_id
+  - checked_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - adapter_effect_authorization_proposal_file_sha256
+  - adapter_effect_authorization_confirmation_receipt_file_sha256
+  - adapter_implementation_attestation_file_sha256
+  - adapter_runtime_readiness_attestation_file_sha256
+  - adapter_dispatch_proposal_file_sha256
+  - adapter_dispatch_confirmation_receipt_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_dispatch_proposal_id
+  - adapter_dispatch_confirmation_id
+  - confirmation_decision
+  - dispatch_authorized
+  - service_execution_request_required
+  - dispatch_payload_file_sha256
+  - dispatch_destination_kind
+  - dispatch_destination_ref
+  - idempotency_key_sha256
+  - not_before
+  - expires_at
+  - authorized_effects
+  - stop_conditions
+  - cost_ceiling_required
+  - cost_ceiling_amount
+  - cost_ceiling_currency
+  - review_method
+  - reviewer_ref
+  - evidence_ref
+  - evidence_sha256
+  - source_binding_check
+  - authorization_check
+  - runtime_readiness_check
+  - validity_check
+  - credential_check
+  - provider_health_check
+  - provider_health_checked_at
+  - provider_health_evidence_ref
+  - provider_health_evidence_sha256
+  - destination_check
+  - idempotency_check
+  - effect_scope_check
+  - estimated_cost_amount
+  - estimated_cost_currency
+  - cost_budget_check
+  - active_stop_conditions
+  - overall_execution_preflight
+  - service_execution_gate_status
+  - execution_attempt_reservation_required
+  - execution_receipt_required
+  - runtime_environment_accessed_by_preview
+  - credential_accessed_by_preview
+  - provider_health_check_executed_by_preview
+  - destination_check_executed_by_preview
+  - idempotency_reserved
+  - effects_executable
+  - adapter_started
+  - provider_called
+  - dispatch_attempted
+  - delivery_receipt_present
+  - external_write_performed
+  - cost_incurred
+  - high_risk_authorization_inferred
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+  - credential_material_in_preflight
+properties:
+  schema_version: { const: "0.1.0" }
+  adapter_dispatch_execution_preflight_id:
+    type: string
+    pattern: "^adapter-dispatch-execution-preflight-[0-9]{8}-[0-9]{3}$"
+  checked_at: { type: string, format: date-time }
+  language: { const: zh-CN }
+  source_session_file_sha256: { $ref: "#/$defs/sha256" }
+  draft_package_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  final_package_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_envelope_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_profile_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  payload_data_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_implementation_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_runtime_readiness_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  package_id: { type: string, pattern: "^pkg-[0-9]{8}-[0-9]{3}$" }
+  envelope_id: { type: string, pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$" }
+  adapter_profile_id: { type: string, pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_proposal_id: { type: string, pattern: "^adapter-dispatch-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_confirmation_id: { type: string, pattern: "^adapter-dispatch-confirmation-[0-9]{8}-[0-9]{3}$" }
+  confirmation_decision: { const: confirmed }
+  dispatch_authorized: { const: true }
+  service_execution_request_required: { const: true }
+  dispatch_payload_file_sha256: { $ref: "#/$defs/sha256" }
+  dispatch_destination_kind: { enum: [local_path, local_process_endpoint, provider_endpoint, message_destination, human_recipient] }
+  dispatch_destination_ref: { $ref: "#/$defs/provenance_ref" }
+  idempotency_key_sha256: { $ref: "#/$defs/sha256" }
+  not_before: { type: string, format: date-time }
+  expires_at: { type: string, format: date-time }
+  authorized_effects: { $ref: "#/$defs/effects" }
+  stop_conditions:
+    type: array
+    uniqueItems: true
+    items: { $ref: "#/$defs/stop_condition" }
+  cost_ceiling_required: { type: boolean }
+  cost_ceiling_amount: { $ref: "#/$defs/cost_or_na" }
+  cost_ceiling_currency: { $ref: "#/$defs/currency_or_na" }
+  review_method: { enum: [manual, automated, hybrid] }
+  reviewer_ref: { $ref: "#/$defs/provenance_ref" }
+  evidence_ref: { $ref: "#/$defs/provenance_ref" }
+  evidence_sha256: { $ref: "#/$defs/sha256" }
+  source_binding_check: { const: passed }
+  authorization_check: { const: passed }
+  runtime_readiness_check: { const: passed }
+  validity_check: { enum: [passed, blocked] }
+  credential_check: { enum: [passed, blocked, not_required] }
+  provider_health_check: { enum: [passed, blocked, not_required] }
+  provider_health_checked_at: { type: string, minLength: 3, maxLength: 64 }
+  provider_health_evidence_ref: { type: string, minLength: 3, maxLength: 128 }
+  provider_health_evidence_sha256: { type: string, minLength: 3, maxLength: 64 }
+  destination_check: { enum: [passed, blocked] }
+  idempotency_check: { enum: [passed, blocked] }
+  effect_scope_check: { enum: [passed, blocked] }
+  estimated_cost_amount: { $ref: "#/$defs/cost_estimate_or_na" }
+  estimated_cost_currency: { $ref: "#/$defs/currency_or_na" }
+  cost_budget_check: { enum: [passed, blocked, not_required] }
+  active_stop_conditions:
+    type: array
+    uniqueItems: true
+    items: { $ref: "#/$defs/active_stop_condition" }
+  overall_execution_preflight: { enum: [ready, blocked] }
+  service_execution_gate_status: { enum: [ready_for_service, blocked] }
+  execution_attempt_reservation_required: { type: boolean }
+  execution_receipt_required: { type: boolean }
+  runtime_environment_accessed_by_preview: { const: false }
+  credential_accessed_by_preview: { const: false }
+  provider_health_check_executed_by_preview: { const: false }
+  destination_check_executed_by_preview: { const: false }
+  idempotency_reserved: { const: false }
+  effects_executable: { const: false }
+  adapter_started: { const: false }
+  provider_called: { const: false }
+  dispatch_attempted: { const: false }
+  delivery_receipt_present: { const: false }
+  external_write_performed: { const: false }
+  cost_incurred: { const: false }
+  high_risk_authorization_inferred: { const: false }
+  data_classification: { $ref: "#/$defs/data_classification" }
+  contains_personal_data: { const: false }
+  contains_secrets: { const: false }
+  credential_material_in_preflight: { const: false }
+$defs:
+  sha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+  provenance_ref:
+    type: string
+    minLength: 3
+    maxLength: 128
+    pattern: "^[A-Za-z0-9._:/@-]+$"
+  cost_or_na:
+    type: string
+    pattern: "^(?:not_applicable|0\\.[0-9]{0,3}[1-9]|[1-9][0-9]{0,8}(?:\\.[0-9]{1,4})?)$"
+  cost_estimate_or_na:
+    type: string
+    pattern: "^(?:not_applicable|0|0\\.[0-9]{1,4}|[1-9][0-9]{0,8}(?:\\.[0-9]{1,4})?)$"
+  currency_or_na:
+    type: string
+    pattern: "^(?:not_applicable|[A-Z]{3})$"
+  effect:
+    type: string
+    enum: [local_file_write, network_access, process_start, notification, external_service_write, cost_incurred, production_data_access]
+  effects:
+    type: array
+    uniqueItems: true
+    items: { $ref: "#/$defs/effect" }
+  stop_condition:
+    type: string
+    enum: [source_bytes_changed, authorization_changed, runtime_readiness_changed, proposal_not_yet_valid, proposal_expired, idempotency_conflict, credential_not_ready, provider_health_not_current, cost_ceiling_would_be_exceeded, unlisted_effect_requested, delivery_failure, receipt_failure]
+  active_stop_condition:
+    type: string
+    enum: [proposal_not_yet_valid, proposal_expired, idempotency_conflict, credential_not_ready, provider_health_not_current, cost_ceiling_would_be_exceeded, unlisted_effect_requested, delivery_failure]
+  data_classification:
+    type: string
+    enum: [public, internal, confidential, restricted]

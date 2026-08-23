@@ -42,6 +42,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Runtime Readiness Attestation contract](docs/product/handoff-adapter-runtime-readiness-attestation-v0.md)
 - [Handoff Adapter Dispatch Proposal contract](docs/product/handoff-adapter-dispatch-proposal-v0.md)
 - [Handoff Adapter Dispatch Confirmation Receipt contract](docs/product/handoff-adapter-dispatch-confirmation-receipt-v0.md)
+- [Handoff Adapter Dispatch Execution Preflight contract](docs/product/handoff-adapter-dispatch-execution-preflight-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -186,6 +187,10 @@ The eighteen-file Adapter Dispatch Confirmation preview records confirm,
 modify, or reject over that exact Proposal. Confirmation authorizes only the
 bound dispatch and exact ceiling, while effects remain non-executable and no
 Adapter start, provider call, attempt, delivery, write, or cost is recorded.
+The nineteen-file Execution Preflight then validates submitted point-in-time
+validity, credential, health, destination, idempotency, effect-scope, and cost
+evidence into ready or blocked. It performs none of those external checks and
+never reserves or executes the dispatch.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -293,3 +298,7 @@ Executor Profile and four-role separation gates before any run may start.
   derives exact dispatch and cost-ceiling authorization from confirm, modify,
   or reject. It never records execution; a later Service request/preflight and
   independent execution receipt remain required.
+- An Adapter Dispatch Execution Preflight binds all eighteen prior files and
+  derives a canonical ready-or-blocked gate from submitted point-in-time
+  evidence. Ready still means zero execution; real Service activation requires
+  explicit provider, credential, write, and cost scope.

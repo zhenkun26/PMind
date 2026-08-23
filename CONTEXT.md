@@ -195,6 +195,16 @@ cost.
 Avoid: “dispatch executed,” “provider contacted,” or “delivery complete” when
 only a Dispatch Confirmation Receipt has been validated.
 
+### Adapter Dispatch Execution Preflight
+
+A point-in-time, submitted-evidence gate over one exact confirmed Dispatch
+Receipt. It derives ready or blocked from validity, credential, provider-health,
+destination, idempotency, effect-scope, cost-budget, and stop-condition facts,
+but does not perform those external checks or execute the dispatch.
+
+Avoid: “live checks passed,” “idempotency reserved,” or “ready means executed”
+when only a repository-local Preflight declaration has been validated.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material
