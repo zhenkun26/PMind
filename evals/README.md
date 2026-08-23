@@ -160,6 +160,20 @@ Rubric are calibrated. No framework is assumed or installed at this stage.
 Run the current deterministic checks with:
 
 ```sh
+rake verify
+```
+
+The canonical full project status is:
+
+```sh
+rake
+```
+
+It runs the same local gates and then calibration preflight. The current exit
+is `2`: local verification passes, calibration remains 3/6 blocked. Individual
+commands below remain available for focused diagnosis:
+
+```sh
 ruby scripts/validate_evals.rb
 ruby test/validate_evals_test.rb
 ruby test/acceptance_result_test.rb

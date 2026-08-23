@@ -53,8 +53,23 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Calibration Fixtures](evals/fixtures/README.md)
 - [Calibration Readiness Copy contract](docs/product/calibration-readiness-copy-v0.md)
 
-Validate the current contracts and calibration manifest without installing
-dependencies:
+Run all deterministic local repository gates without installing dependencies:
+
+```sh
+rake verify
+```
+
+Run the stricter project status, which continues into calibration readiness:
+
+```sh
+rake
+```
+
+The default command currently exits `2` after local verification passes because
+calibration remains truthfully blocked at 3/6. See
+[Repository Verification Runner](docs/agents/repository-verification.md).
+
+Validate only the current Eval contracts and calibration manifest:
 
 ```sh
 ruby scripts/validate_evals.rb

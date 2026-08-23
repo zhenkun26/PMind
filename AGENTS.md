@@ -48,6 +48,9 @@ Keep these concerns distinct:
 - Record every external source with URL, retrieval date, version or commit,
   license, trust status, and actual reuse in `reference/`.
 - Do not claim PASS for an inferred, skipped, or blocked check.
+- Use `rake verify` for dependency-free local deterministic gates. Use default
+  `rake` or `rake status` for the stricter project status: it continues into
+  calibration preflight and must exit `2` while the Wave is honestly blocked.
 
 ## Agent skills
 
