@@ -113,4 +113,4 @@ ruby scripts/preview_handoff_adapter_dispatch_proposal.rb SESSION_REVISION.yaml 
 - `0`：十七文件链、exact dispatch binding 与 pending state 自洽；stdout 输出待确认文案；
 - `1`：runtime blocked、来源漂移、身份/能力错误、幂等/时间/健康/费用/stop-condition 矛盾、分类降级或权限绕过；stderr 输出受控错误。
 
-预演器只读十七份本地 YAML。下一最小边界是独立 Adapter Dispatch Confirmation Receipt：记录用户对 exact Proposal 的 confirmed/modify/reject 选择，仍不得直接调用 provider。真实执行还需要 Service 强制重放来源、有效期、幂等、健康、凭据、费用与停止条件。
+预演器只读十七份本地 YAML。下一最小边界现已由 [Handoff Adapter Dispatch Confirmation Receipt v0](handoff-adapter-dispatch-confirmation-receipt-v0.md) 实现：它记录用户对 exact Proposal 的 confirmed/modify/reject 选择，并继续固定零执行。真实 dispatch 仍需要 Service 强制重放来源、有效期、幂等、健康、凭据、费用与停止条件，以及独立执行回执。

@@ -283,6 +283,14 @@ ruby scripts/preview_handoff_adapter_dispatch_proposal.rb SESSION_REVISION.yaml 
 
 Proposal 必须保持 pending、未保存选择、effects 不可执行、Adapter/provider 未触达和 false dispatch。cost effect 必须披露正数固定点上限但保持未授权。确认选项只能进入独立 Dispatch Confirmation Receipt；本步骤不得读取凭据、调用 provider 或产生费用。
 
+用户选择必须写入 [Handoff Adapter Dispatch Confirmation Receipt v0](handoff-adapter-dispatch-confirmation-receipt-v0.md)。运行十八文件只读预演，confirmed 只授权 exact Proposal 和适用的 exact cost ceiling，modify/reject 保持零授权：
+
+```sh
+ruby scripts/preview_handoff_adapter_dispatch_confirmation.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml ADAPTER_DISPATCH_CONFIRMATION.yaml
+```
+
+confirmed 必须在 Proposal expiry 前捕获，但仍固定 effects 不可执行、Adapter/provider 未触达、dispatch 未尝试、无 delivery/write/cost。下一步只能进入独立 Service execution request / preflight；本 Receipt 不是执行结果。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -303,6 +311,7 @@ Proposal 必须保持 pending、未保存选择、effects 不可执行、Adapter
 - Adapter Implementation Attestation 必须从 Profile、observed effects 与七项 contract-test 声明派生 compatible/incompatible；预演器不得把 submitted digest、测试或审核 provenance 写成已独立验证，也不得核验凭据、健康或授权 dispatch。
 - Adapter Runtime Readiness Attestation 必须从七项配置、凭据引用、提交的 health evidence 与 retention/export/purpose 声明派生 ready/blocked；预演器不得访问运行环境、读取凭据、执行健康检查、使 effect 可执行或授权 dispatch。
 - Adapter Dispatch Proposal 必须绑定 exact payload/destination、确定性幂等键、Profile 内尝试上限、有效期、费用上限和 canonical stop conditions；Proposal 只能 pending，不能保存选择、调用 provider、执行 effect 或授权 dispatch。
+- Adapter Dispatch Confirmation Receipt 必须把三态选择绑定到 exact Proposal；confirmed 只授权该 dispatch 与适用的 exact ceiling，仍不得记录 effect executable、Adapter/provider 启动、dispatch attempt、delivery、external write 或 cost。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

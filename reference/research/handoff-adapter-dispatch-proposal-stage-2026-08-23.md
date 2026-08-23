@@ -62,4 +62,4 @@ The blocked checks remain blocked; none is reported as PASS. The accepted altern
 
 ## Next boundary
 
-Define an immutable Adapter Dispatch Confirmation Receipt bound to this exact seventeen-file Proposal chain. It records confirmed, modify-requested, or rejected and the exact cost-ceiling consent where applicable, but still performs no provider call. A later Service-enforced dispatch request/execution receipt boundary remains required.
+Implemented as the immutable Adapter Dispatch Confirmation Receipt documented in `handoff-adapter-dispatch-confirmation-stage-2026-08-23.md`. It records confirmed, modify-requested, or rejected and exact cost-ceiling consent where applicable while preserving zero execution. The next boundary is a Service-enforced Adapter Dispatch Execution Request / Preflight; actual provider activity and execution receipt remain later.

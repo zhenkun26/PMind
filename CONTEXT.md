@@ -184,6 +184,17 @@ provider.
 Avoid: “dispatch authorized,” “delivery started,” or “provider called” when
 only a Dispatch Proposal has been previewed.
 
+### Adapter Dispatch Confirmation Receipt
+
+An immutable confirm, modify, or reject choice bound to one exact Adapter
+Dispatch Proposal and all of its source bytes. A confirmed Receipt authorizes
+only that dispatch and its exact cost ceiling when applicable; it does not make
+effects executable or record an attempt, provider call, delivery, write, or
+cost.
+
+Avoid: “dispatch executed,” “provider contacted,” or “delivery complete” when
+only a Dispatch Confirmation Receipt has been validated.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

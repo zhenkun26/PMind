@@ -41,6 +41,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Implementation Attestation contract](docs/product/handoff-adapter-implementation-attestation-v0.md)
 - [Handoff Adapter Runtime Readiness Attestation contract](docs/product/handoff-adapter-runtime-readiness-attestation-v0.md)
 - [Handoff Adapter Dispatch Proposal contract](docs/product/handoff-adapter-dispatch-proposal-v0.md)
+- [Handoff Adapter Dispatch Confirmation Receipt contract](docs/product/handoff-adapter-dispatch-confirmation-receipt-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -181,6 +182,10 @@ The seventeen-file Adapter Dispatch Proposal preview then binds one exact
 payload, Adapter, destination, deterministic idempotency key, validity window,
 fixed-point cost ceiling, and canonical stop set. It remains pending, saves no
 choice, starts nothing, calls no provider, and performs no dispatch.
+The eighteen-file Adapter Dispatch Confirmation preview records confirm,
+modify, or reject over that exact Proposal. Confirmation authorizes only the
+bound dispatch and exact ceiling, while effects remain non-executable and no
+Adapter start, provider call, attempt, delivery, write, or cost is recorded.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -284,3 +289,7 @@ Executor Profile and four-role separation gates before any run may start.
   attempts, timeout, cost ceiling, and stop conditions, while keeping user
   choice unsaved, effects non-executable, provider calls absent, and dispatch
   unauthorized.
+- An Adapter Dispatch Confirmation Receipt binds all seventeen prior files and
+  derives exact dispatch and cost-ceiling authorization from confirm, modify,
+  or reject. It never records execution; a later Service request/preflight and
+  independent execution receipt remain required.

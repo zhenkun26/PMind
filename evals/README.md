@@ -95,6 +95,8 @@ The experiment is paired:
 - `schemas/handoff-adapter-runtime-readiness-attestation-v0.yaml`: machine-readable runtime configuration, credential-reference, provider-health, lifecycle, cost-gate, and false executable/dispatch boundary;
 - `docs/product/handoff-adapter-dispatch-proposal-v0.md`: exact sixteen-source dispatch decision, idempotency/time/cost/stop contract, and pending zero-dispatch copy;
 - `schemas/handoff-adapter-dispatch-proposal-v0.yaml`: machine-readable exact payload/destination, deterministic idempotency, fixed-point ceiling, canonical stops, and false execution/dispatch boundary;
+- `docs/product/handoff-adapter-dispatch-confirmation-receipt-v0.md`: exact seventeen-source dispatch choice, exact cost-ceiling consent, and authorization-without-execution contract;
+- `schemas/handoff-adapter-dispatch-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject state, exact dispatch mirrors, derived cost authority, and false execution-result boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -136,6 +138,7 @@ The experiment is paired:
 - `scripts/preview_handoff_adapter_implementation_attestation.rb`: read-only fifteen-file confirmed-effect replay, implementation provenance/effect/contract declaration validator, and compatible-or-blocked renderer.
 - `scripts/preview_handoff_adapter_runtime_readiness_attestation.rb`: read-only sixteen-file compatible-implementation replay, submitted runtime-evidence validator, and ready-or-blocked renderer.
 - `scripts/preview_handoff_adapter_dispatch_proposal.rb`: read-only seventeen-file ready-runtime replay, exact pending-dispatch validator, and zero-dispatch decision renderer.
+- `scripts/preview_handoff_adapter_dispatch_confirmation.rb`: read-only eighteen-file Dispatch Proposal replay, exact choice/cost validator, and authorized-without-execution renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -165,6 +168,7 @@ ruby test/preview_handoff_adapter_effect_authorization_confirmation_test.rb
 ruby test/preview_handoff_adapter_implementation_attestation_test.rb
 ruby test/preview_handoff_adapter_runtime_readiness_attestation_test.rb
 ruby test/preview_handoff_adapter_dispatch_proposal_test.rb
+ruby test/preview_handoff_adapter_dispatch_confirmation_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

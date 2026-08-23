@@ -111,6 +111,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_eighteen_files(directory, envelope_classification: nil)
+    paths = write_seventeen_files(directory, envelope_classification: envelope_classification)
+    confirmation_path = File.join(directory, "adapter-dispatch-confirmation.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-adapter-dispatch-confirmation-receipt-valid.yaml")
+    write_yaml(confirmation_path, load_yaml(fixture_path))
+    paths << confirmation_path
+    refresh_adapter_dispatch_confirmation_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -421,6 +431,44 @@ class HandoffAdapterChainFixture
     document["data_classification"] = preview.runtime_attestation["data_classification"]
     document["idempotency_key_sha256"] = PMind::HandoffAdapterDispatchProposalPreview.derived_idempotency_key(document)
     write_yaml(paths.fetch(16), document)
+  end
+
+  def refresh_adapter_dispatch_confirmation_bindings(paths)
+    preview = PMind::HandoffAdapterDispatchProposalPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(17))
+
+    document = load_yaml(paths.fetch(17))
+    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
+    document["adapter_dispatch_proposal_file_sha256"] = preview.dispatch_proposal_file_sha256
+    document["package_id"] = preview.envelope["package_id"]
+    document["envelope_id"] = preview.envelope["envelope_id"]
+    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    document["adapter_selection_proposal_id"] = preview.selection_proposal["adapter_selection_proposal_id"]
+    document["adapter_selection_confirmation_id"] = preview.selection_confirmation["adapter_selection_confirmation_id"]
+    document["payload_data_attestation_id"] = preview.payload_attestation["payload_data_attestation_id"]
+    document["adapter_effect_authorization_proposal_id"] = preview.effect_proposal["adapter_effect_authorization_proposal_id"]
+    document["adapter_effect_authorization_confirmation_id"] = preview.effect_confirmation["adapter_effect_authorization_confirmation_id"]
+    document["adapter_implementation_attestation_id"] = preview.implementation_attestation["adapter_implementation_attestation_id"]
+    document["adapter_runtime_readiness_attestation_id"] = preview.runtime_attestation["adapter_runtime_readiness_attestation_id"]
+    document["adapter_dispatch_proposal_id"] = preview.dispatch_proposal["adapter_dispatch_proposal_id"]
+    document["overall_runtime_readiness"] = preview.runtime_attestation["overall_runtime_readiness"]
+    document["dispatch_proposal_status"] = preview.dispatch_proposal["dispatch_proposal_status"]
+    fields = %w[
+      recipient adapter_key dispatch_payload_kind dispatch_payload_file_sha256
+      delivery_mode receipt_mode dispatch_destination_kind dispatch_destination_ref
+      idempotency_key_sha256 proposed_at not_before expires_at dispatch_attempt_limit
+      dispatch_timeout_seconds cost_ceiling_required cost_ceiling_amount
+      cost_ceiling_currency data_classification
+    ]
+    fields.each { |field| document[field] = preview.dispatch_proposal[field] }
+    document["authorized_effects"] = preview.dispatch_proposal["authorized_effects"].dup
+    document["stop_conditions"] = preview.dispatch_proposal["stop_conditions"].dup
+    confirmed = document["confirmation_decision"] == "confirmed"
+    document["dispatch_authorized"] = confirmed
+    document["cost_limit_authorized"] = confirmed && document["cost_ceiling_required"] == true
+    document["service_execution_request_required"] = confirmed
+    document["execution_receipt_required"] = confirmed
+    write_yaml(paths.fetch(17), document)
   end
 
   def load_yaml(path)
