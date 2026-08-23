@@ -168,6 +168,12 @@ ruby scripts/preview_handoff_adapter_dispatch_execution_preflight.rb path/to/new
 ruby scripts/execute_handoff_adapter_local_reference.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml path/to/adapter-runtime-readiness-attestation.yaml path/to/adapter-dispatch-proposal.yaml path/to/adapter-dispatch-confirmation.yaml path/to/adapter-dispatch-execution-preflight.yaml path/to/isolated-execution-root
 ```
 
+在不重新请求 dispatch 的情况下，只读审计相同 persisted bundle；当前时间可以晚于 expiry，但 Receipt 首次执行时间必须处于原窗口且不早于 Preflight：
+
+```sh
+ruby scripts/verify_handoff_adapter_local_execution_receipt.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml path/to/adapter-runtime-readiness-attestation.yaml path/to/adapter-dispatch-proposal.yaml path/to/adapter-dispatch-confirmation.yaml path/to/adapter-dispatch-execution-preflight.yaml path/to/isolated-execution-root
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh

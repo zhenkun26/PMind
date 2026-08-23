@@ -307,6 +307,14 @@ ruby scripts/execute_handoff_adapter_local_reference.rb SESSION_REVISION.yaml DR
 
 首次成功会真实执行一次隔离的本地文件写入，并原子发布 exact Envelope 与 Execution Receipt；相同幂等目标只允许验证并复用既有 exact bundle。执行器不覆盖最终目录，失败只清理自己创建的临时/锁目录。它不授权或实现 provider、凭据、网络、进程、生产数据或费用能力，不能作为企业生产交付或产品效果证据。任何其他 Profile 仍须停在 Preflight，等待单独的 provider/runtime/credential/write/cost 授权。
 
+创建后或后续审计时，按 [Local Execution Receipt Verification v0](handoff-adapter-local-execution-receipt-verification-v0.md) 使用相同十九文件和根目录运行只读 verifier：
+
+```sh
+ruby scripts/verify_handoff_adapter_local_execution_receipt.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml ADAPTER_DISPATCH_CONFIRMATION.yaml ADAPTER_DISPATCH_EXECUTION_PREFLIGHT.yaml EXECUTION_ROOT
+```
+
+verifier 不要求当前仍在窗口内，但必须证明首次执行发生在原窗口内且不早于 Preflight。成功只表示 persisted local bundle 自洽，不是 provider delivery receipt 或效果证据。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。

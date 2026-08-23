@@ -91,6 +91,18 @@ class ExecuteHandoffAdapterLocalReferenceTest < Minitest::Test
     end
   end
 
+  def test_execution_cannot_predate_exact_preflight
+    with_execution_chain do |paths, execution_root|
+      executor = PMind::HandoffAdapterLocalReferenceExecutor.new(
+        ROOT,
+        clock: -> { Time.iso8601("2026-08-23T10:29:59+08:00") }
+      )
+      refute executor.execute_files(*paths, execution_root)
+      assert_includes executor.errors.join("\n"), "cannot predate the exact Execution Preflight"
+      assert_empty Dir.children(execution_root)
+    end
+  end
+
   def test_blocked_preflight_never_executes
     with_execution_chain do |paths, execution_root|
       mutate_yaml(paths.fetch(18)) do |preflight|

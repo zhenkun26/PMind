@@ -68,4 +68,4 @@ ruby scripts/execute_handoff_adapter_local_reference.rb SESSION_REVISION.yaml DR
 
 ## 后续边界
 
-下一轮应实现独立、只读的 persisted Execution Receipt verifier，使审计者可在不重新请求执行的情况下验证 bundle。当前实现假设 execution root 由调用方独占且本地非对抗；共享敌对文件系统隔离不在本契约证明范围内。生产 provider executor 仍需明确 provider/runtime/credential/network/write/cost 范围、真实配置与独立验收，不能从本地参考成功推导。
+独立、只读的 persisted verifier 已由 `handoff-adapter-local-execution-receipt-verification-v0.md` 实现；幂等重放也复用同一 seam。首次 `executed_at` 必须在 confirmed 窗口内且不早于 Preflight，审计本身可在窗口过期后运行。当前实现假设 execution root 由调用方独占且本地非对抗；共享敌对文件系统隔离不在本契约证明范围内。生产 provider executor 仍需明确 provider/runtime/credential/network/write/cost 范围、真实配置与独立验收，不能从本地参考成功推导。
