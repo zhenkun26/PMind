@@ -40,4 +40,4 @@ The blocked checks remain blocked; none is reported as PASS. These results prove
 
 ## Remaining risk and next boundary
 
-This verifier assumes a caller-owned non-adversarial local filesystem and proves no remote receipt authenticity. The next smallest enterprise-oriented local boundary is a provider-neutral Execution Receipt verification interface specification that separates common immutable outcome fields from provider-specific evidence, without implementing or calling a provider. Real provider integration remains gated on external scope and configuration.
+This verifier assumes a caller-owned non-adversarial local filesystem and proves no remote receipt authenticity. The next implemented enterprise-oriented local boundary is an immutable Execution Verification Report: it persists one actual audit event rather than introducing a provider-neutral interface with only one implementation. Real provider integration remains gated on external scope and configuration.

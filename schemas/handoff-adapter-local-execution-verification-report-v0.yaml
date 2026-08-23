@@ -1,0 +1,138 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-local-execution-verification-report-v0.yaml"
+title: "PMind Handoff Adapter Local Execution Verification Report v0"
+description: "Immutable report for one actual read-only verification of an exact persisted local reference execution bundle."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - execution_verification_report_id
+  - verified_at
+  - language
+  - verifier_name
+  - verifier_version
+  - verification_scope
+  - verification_method
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - adapter_effect_authorization_proposal_file_sha256
+  - adapter_effect_authorization_confirmation_receipt_file_sha256
+  - adapter_implementation_attestation_file_sha256
+  - adapter_runtime_readiness_attestation_file_sha256
+  - adapter_dispatch_proposal_file_sha256
+  - adapter_dispatch_confirmation_receipt_file_sha256
+  - adapter_dispatch_execution_preflight_file_sha256
+  - delivery_artifact_file_sha256
+  - execution_receipt_file_sha256
+  - adapter_execution_receipt_id
+  - receipt_executed_at
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_dispatch_proposal_id
+  - adapter_dispatch_confirmation_id
+  - adapter_dispatch_execution_preflight_id
+  - source_chain_check
+  - local_scope_check
+  - bundle_inventory_check
+  - bundle_permissions_check
+  - receipt_schema_check
+  - canonical_receipt_check
+  - delivered_payload_check
+  - execution_window_check
+  - verification_time_order_check
+  - verification_outcome
+  - local_audit_file_write_performed
+  - external_write_performed
+  - original_bundle_modified
+  - source_files_modified
+  - dispatch_reattempted
+  - provider_called
+  - credential_accessed
+  - network_accessed
+  - process_started
+  - cost_incurred
+  - high_risk_authorization_inferred
+  - data_classification
+  - contains_personal_data
+  - contains_secrets
+  - credential_material_in_report
+properties:
+  schema_version: { const: "0.1.0" }
+  execution_verification_report_id:
+    type: string
+    pattern: "^execution-verification-report-[a-f0-9]{24}$"
+  verified_at: { type: string, format: date-time }
+  language: { const: zh-CN }
+  verifier_name: { const: pmind_local_execution_receipt_verifier }
+  verifier_version: { const: "0.1.0" }
+  verification_scope: { const: local_reference_bundle }
+  verification_method: { const: exact_source_and_bundle_replay }
+  source_session_file_sha256: { $ref: "#/$defs/sha256" }
+  draft_package_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  compilation_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  final_package_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  handoff_envelope_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_profile_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_selection_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  payload_data_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_effect_authorization_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_implementation_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_runtime_readiness_attestation_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_proposal_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_confirmation_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_dispatch_execution_preflight_file_sha256: { $ref: "#/$defs/sha256" }
+  delivery_artifact_file_sha256: { $ref: "#/$defs/sha256" }
+  execution_receipt_file_sha256: { $ref: "#/$defs/sha256" }
+  adapter_execution_receipt_id:
+    type: string
+    pattern: "^adapter-execution-receipt-[a-f0-9]{24}$"
+  receipt_executed_at: { type: string, format: date-time }
+  package_id: { type: string, pattern: "^pkg-[0-9]{8}-[0-9]{3}$" }
+  envelope_id: { type: string, pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$" }
+  adapter_profile_id: { type: string, pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_proposal_id: { type: string, pattern: "^adapter-dispatch-proposal-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_confirmation_id: { type: string, pattern: "^adapter-dispatch-confirmation-[0-9]{8}-[0-9]{3}$" }
+  adapter_dispatch_execution_preflight_id: { type: string, pattern: "^adapter-dispatch-execution-preflight-[0-9]{8}-[0-9]{3}$" }
+  source_chain_check: { const: passed }
+  local_scope_check: { const: passed }
+  bundle_inventory_check: { const: passed }
+  bundle_permissions_check: { const: passed }
+  receipt_schema_check: { const: passed }
+  canonical_receipt_check: { const: passed }
+  delivered_payload_check: { const: passed }
+  execution_window_check: { const: passed }
+  verification_time_order_check: { const: passed }
+  verification_outcome: { const: verified }
+  local_audit_file_write_performed: { const: true }
+  external_write_performed: { const: true }
+  original_bundle_modified: { const: false }
+  source_files_modified: { const: false }
+  dispatch_reattempted: { const: false }
+  provider_called: { const: false }
+  credential_accessed: { const: false }
+  network_accessed: { const: false }
+  process_started: { const: false }
+  cost_incurred: { const: false }
+  high_risk_authorization_inferred: { const: false }
+  data_classification: { enum: [public, internal, confidential, restricted] }
+  contains_personal_data: { const: false }
+  contains_secrets: { const: false }
+  credential_material_in_report: { const: false }
+$defs:
+  sha256: { type: string, pattern: "^[a-f0-9]{64}$" }

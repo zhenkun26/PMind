@@ -174,6 +174,12 @@ ruby scripts/execute_handoff_adapter_local_reference.rb path/to/new-session.yaml
 ruby scripts/verify_handoff_adapter_local_execution_receipt.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml path/to/adapter-runtime-readiness-attestation.yaml path/to/adapter-dispatch-proposal.yaml path/to/adapter-dispatch-confirmation.yaml path/to/adapter-dispatch-execution-preflight.yaml path/to/isolated-execution-root
 ```
 
+实际重放相同审计两次并比较最终字节快照，再在与仓库、来源和 execution root 隔离的 audit root 中独占创建一份 `0600` Verification Report：
+
+```sh
+ruby scripts/create_handoff_adapter_local_execution_verification_report.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml path/to/adapter-runtime-readiness-attestation.yaml path/to/adapter-dispatch-proposal.yaml path/to/adapter-dispatch-confirmation.yaml path/to/adapter-dispatch-execution-preflight.yaml path/to/isolated-execution-root path/to/isolated-audit-root
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh

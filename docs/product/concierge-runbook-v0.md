@@ -315,6 +315,14 @@ ruby scripts/verify_handoff_adapter_local_execution_receipt.rb SESSION_REVISION.
 
 verifier 不要求当前仍在窗口内，但必须证明首次执行发生在原窗口内且不早于 Preflight。成功只表示 persisted local bundle 自洽，不是 provider delivery receipt 或效果证据。
 
+需要保存一次实际审计事件时，先创建一个与仓库、来源和 execution root 隔离的 audit root，再按 [Local Execution Verification Report v0](handoff-adapter-local-execution-verification-report-v0.md) 运行：
+
+```sh
+ruby scripts/create_handoff_adapter_local_execution_verification_report.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml ADAPTER_DISPATCH_CONFIRMATION.yaml ADAPTER_DISPATCH_EXECUTION_PREFLIGHT.yaml EXECUTION_ROOT AUDIT_ROOT
+```
+
+creator 会执行两次 exact verifier 重放和最终摘要比较，只在全部通过后独占创建一个 `0600` 报告。报告如实记录本次本地审计写入，不覆盖既有文件、不修改来源/bundle、不重新 dispatch，也不证明 provider、生产、校准或产品效果。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。

@@ -216,6 +216,16 @@ provider-specific evidence and authority.
 Avoid: “provider delivered,” “production-ready,” or “product effect proven”
 when a Receipt records only the local reference capability.
 
+### Execution Verification Report
+
+An immutable record that one exact persisted Adapter Execution Receipt and its
+source chain passed an actual verifier at a stated time. A local report proves
+only that local audit event and cannot be promoted into provider, production,
+calibration, or product-effect evidence.
+
+Avoid: “provider receipt,” “delivery certified,” or “production verified” when
+the report covers only a local reference bundle.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

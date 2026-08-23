@@ -37,4 +37,4 @@ ruby scripts/verify_handoff_adapter_local_execution_receipt.rb SESSION_REVISION.
 - `0`：persisted bundle 与 exact historical chain 完全一致；
 - `1`：来源、scope、root、inventory、权限、Schema、字段、payload 或时间顺序不一致。
 
-成功只能证明该本地参考 bundle 自洽。生产 provider receipt verification 需要 provider-specific immutable evidence、真实身份/租户、远端 receipt、shared idempotency 和费用记账契约，仍未实现或授权。
+成功只能证明该本地参考 bundle 自洽。后续可用 [Local Execution Verification Report v0](handoff-adapter-local-execution-verification-report-v0.md) 把一次真实审计结果写入独立、不可覆盖的本地报告；报告创建本身仍不是 provider 或效果证据。生产 provider receipt verification 需要 provider-specific immutable evidence、真实身份/租户、远端 receipt、shared idempotency 和费用记账契约，仍未实现或授权。

@@ -46,6 +46,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Dispatch Execution Preflight contract](docs/product/handoff-adapter-dispatch-execution-preflight-v0.md)
 - [Handoff Adapter Local Reference Execution contract](docs/product/handoff-adapter-local-reference-execution-v0.md)
 - [Handoff Adapter Local Execution Receipt Verification contract](docs/product/handoff-adapter-local-execution-receipt-verification-v0.md)
+- [Handoff Adapter Local Execution Verification Report contract](docs/product/handoff-adapter-local-execution-verification-report-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -204,6 +205,11 @@ The independent persisted-Receipt verifier then audits the same bundle through
 the shared validation seam without re-entering execution. Historical receipts
 remain auditable after expiry only when their first execution occurred inside
 the original window and not before the exact Preflight.
+An audit-report creator can then repeat that verifier, bind the exact source,
+Envelope, and Receipt bytes, and exclusively persist one `0600` Verification
+Report under a separate audit root. This records a real local audit event, not
+a provider delivery, production certification, calibration result, or product
+effect.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
