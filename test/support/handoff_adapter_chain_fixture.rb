@@ -81,6 +81,16 @@ class HandoffAdapterChainFixture
     paths
   end
 
+  def write_fifteen_files(directory, envelope_classification: nil)
+    paths = write_fourteen_files(directory, envelope_classification: envelope_classification)
+    attestation_path = File.join(directory, "adapter-implementation-attestation.yaml")
+    fixture_path = File.join(@root, "test/fixtures/handoff-adapter-implementation-attestation-valid.yaml")
+    write_yaml(attestation_path, load_yaml(fixture_path))
+    paths << attestation_path
+    refresh_adapter_implementation_attestation_bindings(paths)
+    paths
+  end
+
   def refresh_proposal_bindings(paths)
     envelope = load_yaml(paths.fetch(7))
     profile = load_yaml(paths.fetch(8))
@@ -195,6 +205,45 @@ class HandoffAdapterChainFixture
     receipt["cost_disclosure_before_dispatch_required"] = preview.effect_proposal["cost_disclosure_required"]
     receipt["data_classification"] = preview.effect_proposal["data_classification"]
     write_yaml(paths.fetch(13), receipt)
+  end
+
+  def refresh_adapter_implementation_attestation_bindings(paths)
+    preview = PMind::HandoffAdapterEffectAuthorizationConfirmationPreview.new(@root)
+    raise preview.errors.join("\n") unless preview.preview_files(*paths.first(14))
+
+    document = load_yaml(paths.fetch(14))
+    preview.input_digests.each { |field, digest_value| document[field] = digest_value }
+    document["adapter_effect_authorization_confirmation_receipt_file_sha256"] = preview.confirmation_file_sha256
+    document["package_id"] = preview.envelope["package_id"]
+    document["envelope_id"] = preview.envelope["envelope_id"]
+    document["adapter_profile_id"] = preview.profile["adapter_profile_id"]
+    document["adapter_selection_proposal_id"] = preview.selection_proposal["adapter_selection_proposal_id"]
+    document["adapter_selection_confirmation_id"] = preview.selection_confirmation["adapter_selection_confirmation_id"]
+    document["payload_data_attestation_id"] = preview.attestation["payload_data_attestation_id"]
+    document["adapter_effect_authorization_proposal_id"] = preview.effect_proposal["adapter_effect_authorization_proposal_id"]
+    document["adapter_effect_authorization_confirmation_id"] = preview.confirmation["adapter_effect_authorization_confirmation_id"]
+    document["envelope_delivery_state"] = preview.envelope["delivery_state"]
+    document["adapter_profile_status"] = preview.profile["status"]
+    document["adapter_selection_proposal_status"] = preview.selection_proposal.dig("confirmation", "status")
+    document["selection_confirmation_decision"] = preview.selection_confirmation["confirmation_decision"]
+    document["adapter_selected"] = preview.selection_confirmation["adapter_selected"]
+    document["payload_data_attestation_completed"] = preview.attestation["payload_data_attestation_completed"]
+    document["overall_data_compatibility"] = preview.attestation["overall_data_compatibility"]
+    document["adapter_effect_authorization_proposal_status"] = preview.effect_proposal["proposal_status"]
+    document["effect_authorization_confirmation_decision"] = preview.confirmation["confirmation_decision"]
+    document["effect_authorization_confirmed"] = preview.confirmation["effect_authorization_confirmed"]
+    document["all_requested_effects_authorized"] = preview.confirmation["all_requested_effects_authorized"]
+    document["recipient"] = preview.envelope["recipient"]
+    declared_effects = PMind::HandoffAdapterSelectionPreview::EFFECT_FIELDS.select do |effect|
+      preview.profile.dig("effects", effect) == true
+    end
+    document["profile_declared_effects"] = declared_effects.dup
+    document["authorized_effects"] = preview.confirmation["effect_authorizations_granted"].dup
+    document["implementation_observed_effects"] = declared_effects.dup
+    document["missing_declared_effects"] = []
+    document["undeclared_effects_detected"] = []
+    document["data_classification"] = preview.confirmation["data_classification"]
+    write_yaml(paths.fetch(14), document)
   end
 
   def load_yaml(path)

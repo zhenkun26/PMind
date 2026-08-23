@@ -54,4 +54,4 @@ Calibration preflight remains honestly BLOCKED at 3/6 because four real roles, s
 
 ## Next boundary
 
-Define a provider-neutral Adapter Implementation Attestation bound to the exact Profile, Effect Authorization Confirmation Receipt, implementation identity, and contract-test evidence. It must prove that executable behavior does not exceed the reviewed capability/effect declaration while keeping credentials, health checks, and dispatch separate.
+Implemented on 2026-08-23 as a provider-neutral Adapter Implementation Attestation bound to the exact Profile, Effect Authorization Confirmation Receipt, implementation identity, observed-effect declaration, and contract-test evidence. The next boundary is Runtime Readiness Attestation; credentials, provider health, effect executability, and dispatch remain separate.

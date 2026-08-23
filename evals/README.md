@@ -85,6 +85,12 @@ The experiment is paired:
 - `schemas/handoff-adapter-selection-confirmation-receipt-v0.yaml`: machine-readable confirm/modify/reject state, ten source digests, privacy declarations, and zero dispatch/effect authorization boundary;
 - `docs/product/handoff-payload-data-attestation-v0.md`: exact eleven-source complete-payload review, derived compatibility matrix, provenance rules, and safe compatible/blocked copy contract;
 - `schemas/handoff-payload-data-attestation-v0.yaml`: machine-readable payload facts, controlled categories, selected-Profile policy binding, derived compatibility, and zero dispatch/effect authorization boundary;
+- `docs/product/handoff-adapter-effect-authorization-proposal-v0.md`: exact twelve-source true-effect disclosure, cost/production-data boundary, and pending zero-authority copy contract;
+- `schemas/handoff-adapter-effect-authorization-proposal-v0.yaml`: machine-readable true-effect set, disclosure, pending state, and zero effect/dispatch authorization boundary;
+- `docs/product/handoff-adapter-effect-authorization-confirmation-receipt-v0.md`: exact thirteen-source named-effect choice, non-executable grants, and safe three-state result-copy contract;
+- `schemas/handoff-adapter-effect-authorization-confirmation-receipt-v0.yaml`: machine-readable exact-grant state machine, derived sensitive effects, and preserved implementation/dispatch gates;
+- `docs/product/handoff-adapter-implementation-attestation-v0.md`: exact fourteen-source implementation review, effect/contract derivation, and compatible-or-blocked copy contract;
+- `schemas/handoff-adapter-implementation-attestation-v0.yaml`: machine-readable implementation identity/provenance, observed-effect deltas, contract evidence, and false runtime/executable/dispatch boundary;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -123,6 +129,7 @@ The experiment is paired:
 - `scripts/preview_handoff_payload_data_attestation.rb`: read-only twelve-file confirmed-Selection replay, complete-review provenance and compatibility validator, and compatible-without-authorization or blocked renderer.
 - `scripts/preview_handoff_adapter_effect_authorization.rb`: read-only thirteen-file compatible-Attestation replay, exact true-effect and disclosure validator, and pending zero-authorization renderer.
 - `scripts/preview_handoff_adapter_effect_authorization_confirmation.rb`: read-only fourteen-file Effect Proposal replay, exact named-grant state-machine validator, and non-executable/non-dispatch result renderer.
+- `scripts/preview_handoff_adapter_implementation_attestation.rb`: read-only fifteen-file confirmed-effect replay, implementation provenance/effect/contract declaration validator, and compatible-or-blocked renderer.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -149,6 +156,7 @@ ruby test/preview_handoff_adapter_selection_confirmation_test.rb
 ruby test/preview_handoff_payload_data_attestation_test.rb
 ruby test/preview_handoff_adapter_effect_authorization_test.rb
 ruby test/preview_handoff_adapter_effect_authorization_confirmation_test.rb
+ruby test/preview_handoff_adapter_implementation_attestation_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

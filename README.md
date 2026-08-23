@@ -38,6 +38,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Payload Data Attestation contract](docs/product/handoff-payload-data-attestation-v0.md)
 - [Handoff Adapter Effect Authorization Proposal contract](docs/product/handoff-adapter-effect-authorization-proposal-v0.md)
 - [Handoff Adapter Effect Authorization Confirmation Receipt contract](docs/product/handoff-adapter-effect-authorization-confirmation-receipt-v0.md)
+- [Handoff Adapter Implementation Attestation contract](docs/product/handoff-adapter-implementation-attestation-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -120,6 +121,7 @@ ruby scripts/preview_handoff_adapter_selection_confirmation.rb path/to/new-sessi
 ruby scripts/preview_handoff_payload_data_attestation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml
 ruby scripts/preview_handoff_adapter_effect_authorization.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml
 ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml
+ruby scripts/preview_handoff_adapter_implementation_attestation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml
 ```
 
 The creator replays the full chain, preserves the draft's business content,
@@ -163,6 +165,11 @@ The fourteen-file Effect Authorization Confirmation preview then records
 confirm, modify, or reject against that exact Proposal. Confirmed grants only
 the exact named effect set, while every state keeps effects non-executable and
 dispatch false; it still does not call an Adapter.
+The fifteen-file Adapter Implementation Attestation preview then validates a
+completed implementation-review declaration, derives effect conformance and
+provider contract-evidence compatibility, and either permits the next review
+boundary or blocks it. It does not load implementation code, run the submitted
+tests, inspect credentials, check provider health, or authorize dispatch.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See
@@ -251,3 +258,8 @@ Executor Profile and four-role separation gates before any run may start.
   requested effect names, but those grants stay non-executable: implementation
   attestation, provider contract tests, and independent dispatch confirmation
   remain mandatory.
+- An Adapter Implementation Attestation binds all fourteen prior files and one
+  declared implementation identity. Compatible means only that observed effect
+  and submitted contract-test declarations match the reviewed Profile; the
+  preview does not load code or run tests, and credentials, provider health,
+  runtime readiness, effect executability, and dispatch remain false.

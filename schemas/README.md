@@ -4,6 +4,7 @@
 
 当前产品 Schema：
 
+- `handoff-adapter-implementation-attestation-v0.yaml`：覆盖精确十四文件链、实现审核 provenance、Profile/observed effect 差异、provider contract-test 证据和 false runtime/executable/dispatch 边界；
 - `handoff-adapter-effect-authorization-confirmation-receipt-v0.yaml`：覆盖精确十三文件链、confirm/modify/reject、具名 effect grants、费用/生产数据派生和 false executable/dispatch 边界；
 - `handoff-adapter-effect-authorization-proposal-v0.yaml`：覆盖精确十二文件链、Profile true-effect 集合、费用/生产数据披露、pending 选择和零 effect/dispatch authorization 边界；
 - `handoff-adapter-profile-v0.yaml`：覆盖候选 Adapter 的交付、回执、幂等、重试、数据、成本、七类副作用与逐项授权要求；
@@ -21,7 +22,7 @@
 - `prompt-package-compilation-proposal-v0.yaml`：覆盖 ready Session revision、候选 Package、精确文件摘要、pending confirmation 和零授权边界；
 - `prompt-package-v0.yaml`：覆盖完整 Package 结构、稳定 ID、六个 Review Lenses、风险、Approval Points、执行契约、可选确认创建 lineage 和 Handoff。
 
-十六者均对应产品契约的 `0.1.0` 语义。结构通过不代表事实正确或产品效果通过；外部事实、用户决定和下游结果仍需按 Runbook 独立验证。
+十七者均对应产品契约的 `0.1.0` 语义。结构通过不代表事实正确或产品效果通过；外部事实、用户决定和下游结果仍需按 Runbook 独立验证。
 
 只读预演 Answer Receipt 是否适用于当前 Session，并生成不回显原答的确认文案：
 
@@ -126,6 +127,12 @@ ruby scripts/preview_handoff_adapter_effect_authorization.rb path/to/new-session
 ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml
 ```
 
+只读重放十四文件 confirmed effect 链，再校验实现审核 provenance、observed effects 与 provider contract-test 证据声明：
+
+```sh
+ruby scripts/preview_handoff_adapter_implementation_attestation.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh
@@ -139,6 +146,6 @@ ruby scripts/validate_clarification_session.rb path/to/session.yaml --prompt-pac
 ruby scripts/validate_prompt_package.rb /absolute/or/relative/package.yaml
 ```
 
-退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb`、`create_prompt_package.rb` 与 `create_handoff_envelope.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；三个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package；Package Creator、lineage verifier 或 Handoff Proposal Preview 的成功不授权 Handoff。Handoff Confirmation Preview 可以验证显式授权已成立，但仍不执行 Handoff 或授权外部效果。Handoff Envelope Creator 只生成 `prepared` 本地封装，不代表交付、接收或执行；Envelope lineage verifier 只允许进入 Adapter 契约探索。Adapter Selection Preview 只比较 exact Envelope 与 reviewed Profile，保持 pending、零选择、零 dispatch 和零外部效果授权。Adapter Selection Confirmation Preview 可以记录选择，但继续固定零 dispatch、零 effect authorization 和兼容性 unknown。Payload Data Attestation Preview 只验证已完成审核的声明并派生兼容或阻断结果，不运行 Scanner；即使兼容也继续零 dispatch 和零 effect authorization。Adapter Effect Authorization Proposal Preview 只精确披露 true effects 与费用/生产数据边界，保持 pending、零选择、零 effect/dispatch authorization。Effect Authorization Confirmation Preview 可记录 exact 具名 grants，但继续固定 effects 不可执行、dispatch false，并保留实现/contract-test/dispatch 门禁。五者都不实现或调用 Adapter。
+退出码为 `0` 表示对应契约成立；退出码为 `1` 表示无效输入、过期确认、未授权创建、lineage 漂移或写入失败。`create_clarification_revision.rb`、`create_prompt_package.rb` 与 `create_handoff_envelope.rb` 只创建用户指定的新文件，其余命令不修改输入、仓库或外部系统；三个创建命令都永不覆盖已有路径。Compilation Proposal/Confirmation Preview 的成功不创建最终 Package；Package Creator、lineage verifier 或 Handoff Proposal Preview 的成功不授权 Handoff。Handoff Confirmation Preview 可以验证显式授权已成立，但仍不执行 Handoff 或授权外部效果。Handoff Envelope Creator 只生成 `prepared` 本地封装，不代表交付、接收或执行；Envelope lineage verifier 只允许进入 Adapter 契约探索。Adapter Selection Preview 只比较 exact Envelope 与 reviewed Profile，保持 pending、零选择、零 dispatch 和零外部效果授权。Adapter Selection Confirmation Preview 可以记录选择，但继续固定零 dispatch、零 effect authorization 和兼容性 unknown。Payload Data Attestation Preview 只验证已完成审核的声明并派生兼容或阻断结果，不运行 Scanner；即使兼容也继续零 dispatch 和零 effect authorization。Adapter Effect Authorization Proposal Preview 只精确披露 true effects 与费用/生产数据边界，保持 pending、零选择、零 effect/dispatch authorization。Effect Authorization Confirmation Preview 可记录 exact 具名 grants，但继续固定 effects 不可执行、dispatch false。Implementation Attestation Preview 只验证实现与 contract-test 的提交声明，不装载实现、不运行测试，并继续固定凭据/健康/runtime/executable/dispatch 为 false。六者都不实现或调用 Adapter。
 
-`test/fixtures/` 下的 Clarification Session、Answer Receipt、Revision Proposal、Confirmation Receipt、Compilation Proposal、Compilation Confirmation Receipt、Handoff Proposal、Handoff Confirmation Receipt、Adapter Profile、Adapter Selection Proposal、Adapter Selection Confirmation Receipt、Payload Data Attestation、Adapter Effect Authorization Proposal、Adapter Effect Authorization Confirmation Receipt 与 Prompt Package 只用于自动化测试，是合成示例，不是校准运行、真实数据审核、真实授权、真实 Adapter、真实用户交付物或 PMind 效果证据。
+`test/fixtures/` 下的 Clarification Session、Answer Receipt、Revision Proposal、Confirmation Receipt、Compilation Proposal、Compilation Confirmation Receipt、Handoff Proposal、Handoff Confirmation Receipt、Adapter Profile、Adapter Selection Proposal、Adapter Selection Confirmation Receipt、Payload Data Attestation、Adapter Effect Authorization Proposal、Adapter Effect Authorization Confirmation Receipt、Adapter Implementation Attestation 与 Prompt Package 只用于自动化测试，是合成示例，不是校准运行、真实数据审核、真实授权、真实实现审核、真实 Adapter、真实用户交付物或 PMind 效果证据。

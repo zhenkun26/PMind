@@ -1,0 +1,340 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://pmind.local/schemas/handoff-adapter-implementation-attestation-v0.yaml"
+title: "PMind Handoff Adapter Implementation Attestation v0"
+description: "Completed review declaration for one exact Adapter implementation identity against one confirmed Profile and effect Receipt; never runtime readiness or dispatch authorization."
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - adapter_implementation_attestation_id
+  - reviewed_at
+  - language
+  - source_session_file_sha256
+  - draft_package_file_sha256
+  - compilation_proposal_file_sha256
+  - compilation_confirmation_receipt_file_sha256
+  - final_package_file_sha256
+  - handoff_proposal_file_sha256
+  - handoff_confirmation_receipt_file_sha256
+  - handoff_envelope_file_sha256
+  - adapter_profile_file_sha256
+  - adapter_selection_proposal_file_sha256
+  - adapter_selection_confirmation_receipt_file_sha256
+  - payload_data_attestation_file_sha256
+  - adapter_effect_authorization_proposal_file_sha256
+  - adapter_effect_authorization_confirmation_receipt_file_sha256
+  - package_id
+  - envelope_id
+  - adapter_profile_id
+  - adapter_selection_proposal_id
+  - adapter_selection_confirmation_id
+  - payload_data_attestation_id
+  - adapter_effect_authorization_proposal_id
+  - adapter_effect_authorization_confirmation_id
+  - envelope_delivery_state
+  - adapter_profile_status
+  - adapter_selection_proposal_status
+  - selection_confirmation_decision
+  - adapter_selected
+  - payload_data_attestation_completed
+  - overall_data_compatibility
+  - adapter_effect_authorization_proposal_status
+  - effect_authorization_confirmation_decision
+  - effect_authorization_confirmed
+  - all_requested_effects_authorized
+  - recipient
+  - implementation_kind
+  - implementation_ref
+  - implementation_version
+  - declared_implementation_sha256
+  - implementation_review_scope
+  - implementation_review_status
+  - review_method
+  - reviewer_ref
+  - scanner_ref
+  - scanner_version
+  - profile_declared_effects
+  - authorized_effects
+  - implementation_observed_effects
+  - missing_declared_effects
+  - undeclared_effects_detected
+  - profile_effect_conformance
+  - contract_test_status
+  - contract_test_suite_ref
+  - contract_test_suite_version
+  - contract_test_run_ref
+  - contract_test_result_sha256
+  - delivery_mode_covered
+  - receipt_mode_covered
+  - idempotency_covered
+  - retry_covered
+  - effect_boundaries_covered
+  - data_policy_covered
+  - cost_policy_covered
+  - provider_contract_compatibility
+  - overall_implementation_compatibility
+  - adapter_implementation_attestation_completed
+  - provider_contract_test_evidence_reviewed
+  - provider_contract_test_executed_by_preview
+  - implementation_artifact_loaded_by_preview
+  - provider_credentials_verified
+  - provider_health_verified
+  - runtime_readiness_verified
+  - effects_executable
+  - dispatch_authorized
+  - high_risk_authorization_inferred
+  - runtime_readiness_attestation_required
+  - dispatch_confirmation_required
+  - retention_export_purpose_compatibility
+  - data_classification
+  - attestation_contains_personal_data
+  - attestation_contains_secrets
+  - credential_material_in_attestation
+properties:
+  schema_version:
+    const: "0.1.0"
+  adapter_implementation_attestation_id:
+    type: string
+    pattern: "^adapter-implementation-attestation-[0-9]{8}-[0-9]{3}$"
+  reviewed_at:
+    type: string
+    format: date-time
+  language:
+    const: zh-CN
+  source_session_file_sha256:
+    $ref: "#/$defs/sha256"
+  draft_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  compilation_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  final_package_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  handoff_envelope_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_profile_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_selection_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  payload_data_attestation_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_effect_authorization_proposal_file_sha256:
+    $ref: "#/$defs/sha256"
+  adapter_effect_authorization_confirmation_receipt_file_sha256:
+    $ref: "#/$defs/sha256"
+  package_id:
+    type: string
+    pattern: "^pkg-[0-9]{8}-[0-9]{3}$"
+  envelope_id:
+    type: string
+    pattern: "^handoff-envelope-[0-9]{8}-[0-9]{3}$"
+  adapter_profile_id:
+    type: string
+    pattern: "^adapter-profile-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_proposal_id:
+    type: string
+    pattern: "^adapter-selection-proposal-[0-9]{8}-[0-9]{3}$"
+  adapter_selection_confirmation_id:
+    type: string
+    pattern: "^adapter-selection-confirmation-[0-9]{8}-[0-9]{3}$"
+  payload_data_attestation_id:
+    type: string
+    pattern: "^payload-data-attestation-[0-9]{8}-[0-9]{3}$"
+  adapter_effect_authorization_proposal_id:
+    type: string
+    pattern: "^adapter-effect-authorization-proposal-[0-9]{8}-[0-9]{3}$"
+  adapter_effect_authorization_confirmation_id:
+    type: string
+    pattern: "^adapter-effect-authorization-confirmation-[0-9]{8}-[0-9]{3}$"
+  envelope_delivery_state:
+    const: prepared
+  adapter_profile_status:
+    const: reviewed
+  adapter_selection_proposal_status:
+    const: pending
+  selection_confirmation_decision:
+    const: confirmed
+  adapter_selected:
+    const: true
+  payload_data_attestation_completed:
+    const: true
+  overall_data_compatibility:
+    const: compatible
+  adapter_effect_authorization_proposal_status:
+    const: pending
+  effect_authorization_confirmation_decision:
+    const: confirmed
+  effect_authorization_confirmed:
+    const: true
+  all_requested_effects_authorized:
+    const: true
+  recipient:
+    const: coding_agent
+  implementation_kind:
+    enum:
+      - source_tree
+      - package
+      - container_image
+      - managed_service
+  implementation_ref:
+    $ref: "#/$defs/provenance_ref"
+  implementation_version:
+    $ref: "#/$defs/provenance_ref"
+  declared_implementation_sha256:
+    $ref: "#/$defs/sha256"
+  implementation_review_scope:
+    const: complete_adapter_implementation
+  implementation_review_status:
+    const: completed
+  review_method:
+    enum:
+      - manual
+      - automated
+      - hybrid
+  reviewer_ref:
+    $ref: "#/$defs/provenance_ref"
+  scanner_ref:
+    $ref: "#/$defs/provenance_ref"
+  scanner_version:
+    $ref: "#/$defs/provenance_ref"
+  profile_declared_effects:
+    $ref: "#/$defs/known_effects"
+  authorized_effects:
+    $ref: "#/$defs/known_effects"
+  implementation_observed_effects:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: "#/$defs/observed_effect"
+  missing_declared_effects:
+    $ref: "#/$defs/known_effects"
+  undeclared_effects_detected:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: "#/$defs/observed_effect"
+  profile_effect_conformance:
+    $ref: "#/$defs/conformance"
+  contract_test_status:
+    enum:
+      - passed
+      - failed
+  contract_test_suite_ref:
+    $ref: "#/$defs/provenance_ref"
+  contract_test_suite_version:
+    $ref: "#/$defs/provenance_ref"
+  contract_test_run_ref:
+    $ref: "#/$defs/provenance_ref"
+  contract_test_result_sha256:
+    $ref: "#/$defs/sha256"
+  delivery_mode_covered:
+    type: boolean
+  receipt_mode_covered:
+    type: boolean
+  idempotency_covered:
+    type: boolean
+  retry_covered:
+    type: boolean
+  effect_boundaries_covered:
+    type: boolean
+  data_policy_covered:
+    type: boolean
+  cost_policy_covered:
+    type: boolean
+  provider_contract_compatibility:
+    $ref: "#/$defs/compatibility"
+  overall_implementation_compatibility:
+    $ref: "#/$defs/compatibility"
+  adapter_implementation_attestation_completed:
+    const: true
+  provider_contract_test_evidence_reviewed:
+    const: true
+  provider_contract_test_executed_by_preview:
+    const: false
+  implementation_artifact_loaded_by_preview:
+    const: false
+  provider_credentials_verified:
+    const: false
+  provider_health_verified:
+    const: false
+  runtime_readiness_verified:
+    const: false
+  effects_executable:
+    const: false
+  dispatch_authorized:
+    const: false
+  high_risk_authorization_inferred:
+    const: false
+  runtime_readiness_attestation_required:
+    const: true
+  dispatch_confirmation_required:
+    const: true
+  retention_export_purpose_compatibility:
+    const: not_attested
+  data_classification:
+    $ref: "#/$defs/data_classification"
+  attestation_contains_personal_data:
+    const: false
+  attestation_contains_secrets:
+    const: false
+  credential_material_in_attestation:
+    const: false
+$defs:
+  sha256:
+    type: string
+    pattern: "^[a-f0-9]{64}$"
+  provenance_ref:
+    type: string
+    minLength: 3
+    maxLength: 128
+    pattern: "^[A-Za-z0-9._:/@-]+$"
+  known_effect:
+    type: string
+    enum:
+      - local_file_write
+      - network_access
+      - process_start
+      - notification
+      - external_service_write
+      - cost_incurred
+      - production_data_access
+  observed_effect:
+    type: string
+    enum:
+      - local_file_write
+      - network_access
+      - process_start
+      - notification
+      - external_service_write
+      - cost_incurred
+      - production_data_access
+      - other
+  known_effects:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: "#/$defs/known_effect"
+  conformance:
+    type: string
+    enum:
+      - conformant
+      - nonconformant
+  compatibility:
+    type: string
+    enum:
+      - compatible
+      - incompatible
+  data_classification:
+    type: string
+    enum:
+      - public
+      - internal
+      - confidential
+      - restricted

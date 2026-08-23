@@ -98,4 +98,4 @@ ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb SESSIO
 
 预演器只读十四份本地 YAML，不创建或修改 Receipt，不执行 effect、不写文件、不访问网络、不启动进程、不发送通知、不产生费用、不访问生产数据，也不调用模型、Scanner 或 Adapter。
 
-下一最小边界是 provider-neutral Adapter Implementation Attestation：绑定 exact Profile、effect authorization Receipt 与可审查实现/测试证据，证明实现没有超出声明能力。真实凭据、provider 健康检查和 dispatch 确认继续后置。
+下一边界现已由 [Handoff Adapter Implementation Attestation v0](handoff-adapter-implementation-attestation-v0.md) 实现：它绑定 exact Profile、effect authorization Receipt 与提交的实现/contract-test 审核声明，派生兼容或阻断结果。该预演不装载实现、不运行测试；真实凭据、provider 健康检查和 dispatch 确认继续后置。

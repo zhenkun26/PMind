@@ -259,6 +259,14 @@ ruby scripts/preview_handoff_adapter_effect_authorization_confirmation.rb SESSIO
 
 confirmed 必须授予全部且仅 Proposal requested effects；modify/reject 必须为空，v0 不接受部分授权。任何状态都保持 effects 不可执行与 false dispatch，并继续要求 Adapter implementation attestation、provider contract test 和独立 dispatch confirmation。下一边界是 provider-neutral Adapter Implementation Attestation，而不是 Adapter 启动。
 
+只有 confirmed exact Effect Authorization Receipt 才可进入 [Handoff Adapter Implementation Attestation v0](handoff-adapter-implementation-attestation-v0.md)。运行十五文件只读预演，绑定完整授权链、实现审核 provenance、observed effects 与 provider contract-test 证据声明：
+
+```sh
+ruby scripts/preview_handoff_adapter_implementation_attestation.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml
+```
+
+`compatible` 只表示 observed effect 集合与 Profile 一致，且提交的 contract-test 声明为 passed 并覆盖七个 Profile 维度。预演器不装载实现、不运行测试、不核验凭据或 provider 健康；effects 仍不可执行且 dispatch=false。`incompatible` 是合法证明结果，但必须阻断 Runtime Readiness。下一边界是 provider-neutral Adapter Runtime Readiness Attestation，仍不是 Adapter 启动或 dispatch。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。
@@ -276,6 +284,7 @@ confirmed 必须授予全部且仅 Proposal requested effects；modify/reject �
 - Payload Data Attestation 必须覆盖完整 exact Envelope payload，兼容性必须由 Payload 事实和已选 Profile 策略派生；`compatible` 不是 effect/dispatch authorization，`incompatible` 必须阻断继续。
 - Adapter Effect Authorization Proposal 必须与 Profile true-effect 集合完全一致，并保持 pending、未保存选择、空授权集和 false dispatch；费用、生产数据与未核验数据策略不得被省略。
 - Adapter Effect Authorization Confirmation Receipt 只允许 confirmed=exact all grants 或 modify/reject=empty grants；具名授权仍不可执行，且不得绕过实现证明、contract test 或 dispatch 确认。
+- Adapter Implementation Attestation 必须从 Profile、observed effects 与七项 contract-test 声明派生 compatible/incompatible；预演器不得把 submitted digest、测试或审核 provenance 写成已独立验证，也不得核验凭据、健康或授权 dispatch。
 
 产出：可交接 Package 或带明确阻塞原因的未就绪 Package。
 

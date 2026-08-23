@@ -150,6 +150,17 @@ implementation and dispatch gates pass.
 Avoid: “effects executed,” “dispatch authorized,” or “Adapter running” when
 only named effect consent has been recorded.
 
+### Adapter Implementation Attestation
+
+An immutable result of a completed review of one exact Adapter implementation
+identity against one exact reviewed Capability Profile and confirmed named-
+effect Receipt. It records compatibility or an implementation blocker, but
+never proves runtime readiness, credentials, provider health, effect
+executability, or dispatch.
+
+Avoid: “runtime ready,” “Adapter activated,” or “Adapter running” when only an
+implementation review declaration has been validated.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material
