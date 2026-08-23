@@ -51,6 +51,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
+- [Calibration Readiness Copy contract](docs/product/calibration-readiness-copy-v0.md)
 
 Validate the current contracts and calibration manifest without installing
 dependencies:
@@ -222,6 +223,10 @@ calibration arm copies outside the repository. See
 prepared copy is not by itself an executor sandbox or a completed experiment.
 `scripts/calibration_preflight.rb` combines those receipts with the tracked
 Executor Profile and four-role separation gates before any run may start.
+`scripts/render_calibration_readiness_copy.rb` projects that six-gate result
+into privacy-minimized operator copy: the current truthful 3/6 state asks only
+for four opaque role assignments, six frozen Executor decisions, and an
+external verified workspace set, without echoing paths or internal blockers.
 
 ## Current boundaries
 

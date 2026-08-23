@@ -48,6 +48,14 @@
    ruby scripts/calibration_preflight.rb --workspace-set /absolute/path/calibration-001
    ```
 
+   需要交给角色协调者时，使用安全文案 renderer；它不会回显 workspace 路径、人员引用或配置值：
+
+   ```sh
+   ruby scripts/render_calibration_readiness_copy.rb --workspace-set /absolute/path/calibration-001
+   ```
+
+   renderer 的 blocked 输出是可展示结果，不会解除任何 gate；只有原 preflight 的 `READY` 才允许启动。
+
 5. 按清单中的 `arm_order` 运行；主持人只回答实际提出的问题。
 6. 两名评审独立评分前三例，按 `consensus` / `needs_adjudication` / `adjudicated` 保存原始分歧和一致率；没有独立第三评审时，分歧结果保持未计分。
 7. 若 Rubric 可一致使用，再准备剩余七例；若不可一致，提升协议版本后重跑受影响案例。

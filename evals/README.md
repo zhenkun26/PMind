@@ -122,6 +122,7 @@ The experiment is paired:
 - `scripts/validate_evals.rb`: dependency-free structural, artifact-path, success-formula, and adjudication-state checks.
 - `scripts/prepare_calibration_workspaces.rb`: no-overwrite preparation and verification of external arm copies.
 - `scripts/calibration_preflight.rb`: read-only readiness report across contracts, roles, executor, and arm copies.
+- `scripts/render_calibration_readiness_copy.rb`: safe read-only projection of the six calibration gates into at most three actionable operator input groups.
 - `scripts/validate_prompt_package.rb`: read-only Prompt Package structure, reference, Review Lens, approval, and Handoff validator.
 - `scripts/validate_clarification_session.rb`: read-only Clarification Session state and optional Session-to-Package lineage validator.
 - `scripts/render_clarification_copy.rb`: read-only validated Session-to-user-Markdown renderer.
@@ -188,10 +189,14 @@ ruby test/verify_handoff_adapter_local_execution_receipt_test.rb
 ruby test/create_handoff_adapter_local_execution_verification_report_test.rb
 ruby test/verify_handoff_adapter_local_execution_verification_report_test.rb
 ruby scripts/calibration_preflight.rb
+ruby test/render_calibration_readiness_copy_test.rb
+ruby scripts/render_calibration_readiness_copy.rb
 ```
 
-The last command currently exits with a blocked status by design; it must not be
-treated as a failed experiment.
+`calibration_preflight.rb` currently exits with a blocked status by design; it
+must not be treated as a failed experiment. The copy renderer treats this same
+blocked state as a valid display result and exits successfully, while still
+forbidding calibration execution and effect claims.
 
 ## Measurement contract status
 
