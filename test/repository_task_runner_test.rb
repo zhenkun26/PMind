@@ -3,6 +3,8 @@
 require "minitest/autorun"
 require "open3"
 require "rbconfig"
+require "tmpdir"
+require_relative "../scripts/prepare_calibration_workspaces"
 
 class RepositoryTaskRunnerTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
@@ -51,15 +53,34 @@ class RepositoryTaskRunnerTest < Minitest::Test
     assert_includes stdout, "PMIND_EVAL_VALIDATION_PASS"
   end
 
-  def test_calibration_task_preserves_the_truthful_blocked_exit
+  def test_calibration_task_requires_explicit_workspace_evidence
     stdout, stderr, status = run_rake("calibration")
 
     assert_equal 2, status.exitstatus, stderr
-    assert_includes stdout, "PMIND_CALIBRATION_PREFLIGHT_BLOCKED gates=3/6"
-    assert_includes stdout, "GATE roles_assigned=false"
-    assert_includes stdout, "GATE executor_frozen=false"
+    assert_includes stdout, "PMIND_CALIBRATION_PREFLIGHT_BLOCKED gates=5/6"
+    assert_includes stdout, "GATE roles_assigned=true"
+    assert_includes stdout, "GATE executor_frozen=true"
     assert_includes stdout, "GATE isolated_workspaces_ready=false"
     refute_includes stdout, "PMIND_LOCAL_DETERMINISTIC_VERIFICATION_PASS"
+  end
+
+  def test_calibration_task_accepts_an_explicit_verified_workspace_set
+    Dir.mktmpdir("pmind-rake-calibration") do |parent|
+      workspace_set = File.join(parent, "calibration-001")
+      PMind::CalibrationWorkspacePreparer.new(ROOT).prepare(
+        output: workspace_set,
+        prepared_at: "2026-08-23T12:00:00Z"
+      )
+
+      stdout, stderr, status = run_rake(
+        "calibration",
+        environment: { "PMIND_CALIBRATION_WORKSPACE_SET" => workspace_set }
+      )
+
+      assert status.success?, stderr
+      assert_includes stdout, "PMIND_CALIBRATION_PREFLIGHT_READY gates=6/6"
+      assert_includes stdout, "GATE isolated_workspaces_ready=true"
+    end
   end
 
   def test_unknown_task_fails_without_running_verification
@@ -72,7 +93,8 @@ class RepositoryTaskRunnerTest < Minitest::Test
 
   private
 
-  def run_rake(*arguments)
-    Open3.capture3(*RAKE_COMMAND, *arguments, chdir: ROOT)
+  def run_rake(*arguments, environment: {})
+    clean_environment = { "PMIND_CALIBRATION_WORKSPACE_SET" => nil }.merge(environment)
+    Open3.capture3(clean_environment, *RAKE_COMMAND, *arguments, chdir: ROOT)
   end
 end

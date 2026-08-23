@@ -8,13 +8,17 @@
 
 三例横跨 `coding_handoff`、`technical_selection` 和 `product_exploration`，用于先校准流程与 Rubric，不用于估算 PMind 的产品效果。
 
-## 为什么当前是 `blocked`
+## 当前状态：`ready`，尚未运行
 
-三个最小 Fixture 已创建并冻结 workspace digest，隔离工作区准备器、Executor Profile 契约和统一 preflight 也已实现；但当前会话只有一名操作者，Profile 仍有六项真实决策未确定，尚未为一次真实 Wave 生成运行副本。此时直接生成输出并自行评分仍会泄露 oracle、混淆角色并把模拟结果误写成产品证据。
+三个最小 Fixture 已创建并冻结 workspace digest。用户已确认四个角色由四名不同的真实参与者承担，身份映射在线下保管；仓库只保存四个 assignment-scoped opaque refs。Executor Profile 已冻结为精确 Codex CLI 版本和二进制摘要、已实际响应的 `gpt-5.6-terra` 标识、standard/medium、禁网和 arm-only 工具策略、每臂 30 分钟及一次计分尝试。
 
-运行记账契约也已准备完成：Case Schema `0.2.0` 固定模型、Profile、Workspace Set、工作区 revision、返工和耗时证据，Acceptance Result Schema `0.1.0` 强制双评审与三态裁决。仓库验证器会核对运行目录、成功公式和最终运行结论。该准备状态不会解除角色、Profile 或隔离工作区门禁。
+六个 baseline/PMind 副本已在获批的仓库外路径生成并通过独立验证，`oracle_included=false`。向 preflight 提交该 exact workspace set 时，六个启动门禁全部通过；未提交路径时仍应返回 5/6 blocked，因为仓库内的 ready 声明不能代替当前进程对外部证据的复验。
 
-`blocked` 是 Quality Gate 的正确结果，不是执行失败。它阻止新增 `run_records`，但不阻止继续准备 Fixture 和角色。
+进一步的本机探测确认：复制隔离与 Runtime Arm Isolation 不是同一件事。冻结 CLI 的普通 `workspace-write`/广域只读配置仍可读取 sibling arm；最小 named permission profile 可在 `codex sandbox` shell probe 中拒绝 sibling arm，但当前冻结 CLI 尚无已验证的 `codex exec` 端到端应用路径。因此 Workspace Set 层仍为 6/6 ready，计分启动保持 blocked，直到实际 Codex launch path 用同一配置证明当前 arm 可读写且仓库、oracle、其他五个 arm 不可读。
+
+运行记账契约也已准备完成：Case Schema `0.2.0` 固定模型、Profile、Workspace Set、工作区 revision、返工和耗时证据，Acceptance Result Schema `0.1.0` 强制双评审与三态裁决。仓库验证器会核对运行目录、成功公式和最终运行结论。
+
+当前 `ready` 只授权按冻结 Runbook 启动三案例 Wave。它不是任何案例 PASS、First-pass Delivery Success、商业化结论或生产 Adapter 授权；在真实两臂输出和双评审结果存在前，`run_records` 与 Acceptance Result 仍为空。
 
 ## 启动条件
 
@@ -48,15 +52,31 @@
    ruby scripts/calibration_preflight.rb --workspace-set /absolute/path/calibration-001
    ```
 
+   使用仓库统一状态入口时，通过任务专用环境变量提交同一证据：
+
+   ```sh
+   PMIND_CALIBRATION_WORKSPACE_SET=/absolute/path/calibration-001 rake status
+   ```
+
    需要交给角色协调者时，使用安全文案 renderer；它不会回显 workspace 路径、人员引用或配置值：
 
    ```sh
    ruby scripts/render_calibration_readiness_copy.rb --workspace-set /absolute/path/calibration-001
    ```
 
-   renderer 的 blocked 输出是可展示结果，不会解除任何 gate；只有原 preflight 的 `READY` 才允许启动。
+   renderer 的 blocked 输出是可展示结果，不会解除任何 gate；原 preflight 的 `READY` 只允许进入角色协调与 Runtime Arm Isolation 准备，不能单独授权计分启动。
 
-5. 按清单中的 `arm_order` 运行；主持人只回答实际提出的问题。
+   为四个真实参与者生成最小披露 Briefing 时，使用只读 role renderer：
+
+   ```sh
+   ruby scripts/render_calibration_role_briefing.rb \
+     --workspace-set /absolute/path/calibration-001 \
+     --role facilitator
+   ```
+
+   可用角色为 `facilitator`、`pmind_operator`、`reviewer_1`、`reviewer_2`。它不会写 packet、运行模型或启动 arm。当前主持人文案会明确显示 Runtime Arm Isolation 尚无端到端证据，因此不得把 Briefing 当作计分启动授权。
+
+5. 先对实际 Codex launch path 完成 Runtime Arm Isolation probe；在探测与计分运行使用同一权限配置前，不得启动。通过后才按清单中的 `arm_order` 运行；主持人只回答实际提出的问题。
 6. 两名评审独立评分前三例，按 `consensus` / `needs_adjudication` / `adjudicated` 保存原始分歧和一致率；没有独立第三评审时，分歧结果保持未计分。
 7. 若 Rubric 可一致使用，再准备剩余七例；若不可一致，提升协议版本后重跑受影响案例。
 

@@ -1,24 +1,29 @@
 schema_version: "0.1.0"
 wave_id: calibration-001
-status: blocked
-can_start: false
+status: ready
+can_start: true
 protocols:
   case_schema_version: "0.2.0"
   prompt_package_version: "0.1.0"
   rubric_version: "0.1.0"
   runbook_version: "0.1.0"
 executor_config:
-  status: unfrozen
+  status: frozen
   profile_path: evals/calibration/executor-profiles/calibration-001.yaml
+  profile_revision: d038299d3d5d686fc2b86495b23bdb237e379336097c015cd5809d31f7b8a190
 roles:
   facilitator:
-    status: unassigned
+    status: assigned
+    assignee_ref: role-b605d9fa-ab76-4876-9a6f-67c08c6fa8d7
   pmind_operator:
-    status: unassigned
+    status: assigned
+    assignee_ref: role-878c0789-20fe-4431-b509-7acdcaf7e533
   reviewer_1:
-    status: unassigned
+    status: assigned
+    assignee_ref: role-c963a6b1-57f1-4556-890f-49f431b9a697
   reviewer_2:
-    status: unassigned
+    status: assigned
+    assignee_ref: role-879f2684-7141-478b-b2a8-7a40beac8129
 cases:
   - case_id: seed-001
     arm_order: baseline_then_pmind
@@ -47,11 +52,8 @@ cases:
 start_gates:
   contracts_valid: true
   rubric_frozen: true
-  roles_assigned: false
+  roles_assigned: true
   fixtures_ready: true
-  executor_frozen: false
-  isolated_workspaces_ready: false
-blocked_reasons:
-  - "独立案例主持人、PMind 操作者和两名评审尚未分配。"
-  - "Executor Profile 仍缺执行器版本、模型版本、推理设置、工具策略、时限和尝试次数。"
-  - "隔离工作区准备器已就绪，但本 Wave 尚未在冻结执行器后生成并验证 baseline/PMind 运行副本。"
+  executor_frozen: true
+  isolated_workspaces_ready: true
+blocked_reasons: []

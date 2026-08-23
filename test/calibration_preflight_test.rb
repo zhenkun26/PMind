@@ -7,22 +7,23 @@ require_relative "../scripts/calibration_preflight"
 class CalibrationPreflightTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
 
-  def test_current_wave_reports_only_real_readiness_blockers
+  def test_current_wave_without_workspace_evidence_reports_only_that_blocker
     result = PMind::CalibrationPreflight.new(ROOT).run
 
     assert_equal "blocked", result.status
     assert_equal true, result.gates["contracts_valid"]
     assert_equal true, result.gates["rubric_frozen"]
     assert_equal true, result.gates["fixtures_ready"]
-    assert_equal false, result.gates["roles_assigned"]
-    assert_equal false, result.gates["executor_frozen"]
+    assert_equal true, result.gates["roles_assigned"]
+    assert_equal true, result.gates["executor_frozen"]
     assert_equal false, result.gates["isolated_workspaces_ready"]
-    assert result.blockers.any? { |blocker| blocker.include?("roles unassigned") }
-    assert result.blockers.any? { |blocker| blocker.include?("executor profile unresolved") }
+    refute result.blockers.any? { |blocker| blocker.include?("roles unassigned") }
+    refute result.blockers.any? { |blocker| blocker.include?("executor profile unresolved") }
     assert result.blockers.any? { |blocker| blocker.include?("workspace set was not supplied") }
+    assert result.blockers.any? { |blocker| blocker.include?("isolated_workspaces_ready") }
   end
 
-  def test_verified_workspace_set_clears_only_the_isolation_blocker
+  def test_verified_workspace_set_makes_the_current_wave_ready
     Dir.mktmpdir("pmind-preflight-test-") do |parent|
       output = File.join(parent, "calibration-001")
       PMind::CalibrationWorkspacePreparer.new(ROOT).prepare(
@@ -32,10 +33,10 @@ class CalibrationPreflightTest < Minitest::Test
 
       result = PMind::CalibrationPreflight.new(ROOT).run(workspace_set: output)
 
-      assert_equal "blocked", result.status
+      assert_equal "ready", result.status
       assert_equal true, result.gates["isolated_workspaces_ready"]
       refute result.blockers.any? { |blocker| blocker.include?("workspace set was not supplied") }
-      assert result.blockers.any? { |blocker| blocker.include?("isolated_workspaces_ready") }
+      assert_empty result.blockers
     end
   end
 

@@ -59,16 +59,17 @@ module PMind
       [
         "# 校准启动门禁已通过",
         "",
-        "全部 #{result.gates.length}/#{result.gates.length} 个门禁已有可验证证据。可以按冻结的 arm order 和 Runbook 进入三案例校准。",
+        "全部 #{result.gates.length}/#{result.gates.length} 个 Workspace Set 启动门禁已有可验证证据。可以进入角色协调与运行时隔离准备；计分启动仍需实际 launch path 的 arm-only 读写证明。",
         "",
         "## 启动前复核",
         "",
         "- 四个角色继续保持互异，评审不得读取另一位评审结果",
         "- 两个实验臂继续使用同一冻结 Executor Profile 和各自隔离工作区",
+        "- 实际 launch path 必须证明仓库、oracle 和其他五个 arm 不可读；工作目录或 workspace-write 本身不等于该证明",
         "- 不读取 oracle，不改变 Rubric，不执行外部写入，不接触生产数据或秘密",
         "- 只有真实运行和双评审结果可以写入 run_records 与 Acceptance Result",
         "",
-        "本状态只表示校准可以开始，不表示任何案例、产品效果或商业化目标已经通过。"
+        "本状态只表示仓库与 Workspace Set 层可以进入启动准备，不表示 Runtime Arm Isolation、任何案例、产品效果或商业化目标已经通过。"
       ].join("\n")
     end
 

@@ -9,15 +9,15 @@ require_relative "../scripts/render_calibration_readiness_copy"
 class RenderCalibrationReadinessCopyTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
 
-  def test_current_blocked_wave_renders_three_safe_input_groups
+  def test_ready_wave_without_submitted_workspace_renders_one_safe_input_group
     copy = renderer.render
 
     assert_includes copy, "校准尚未就绪"
-    assert_includes copy, "3/6 个启动门禁通过"
+    assert_includes copy, "5/6 个启动门禁通过"
     assert_includes copy, "保持 blocked 是正确结果"
-    assert_equal 3, copy.scan(/^\d+\. /).length
-    assert_includes copy, "四个互异的本地 opaque ID"
-    assert_includes copy, "执行器版本、模型版本、推理设置"
+    assert_equal 1, copy.scan(/^\d+\. /).length
+    refute_includes copy, "四个互异的本地 opaque ID"
+    refute_includes copy, "执行器版本、模型版本、推理设置"
     assert_includes copy, "仓库外准备并验证六个"
     assert_includes copy, "再同步 Wave manifest 与重新计算的 gate"
     assert_includes copy, "不要启动校准、写入 run_records"
@@ -25,7 +25,7 @@ class RenderCalibrationReadinessCopyTest < Minitest::Test
     refute_includes copy, File.join(ROOT, "evals")
   end
 
-  def test_verified_workspace_set_removes_only_the_workspace_action
+  def test_verified_workspace_set_renders_ready_state
     Dir.mktmpdir("pmind-readiness-copy") do |parent|
       output = File.join(parent, "calibration-001")
       PMind::CalibrationWorkspacePreparer.new(ROOT).prepare(
@@ -34,8 +34,8 @@ class RenderCalibrationReadinessCopyTest < Minitest::Test
       )
 
       copy = renderer.render(workspace_set: output)
-      assert_includes copy, "4/6 个启动门禁通过"
-      assert_equal 2, copy.scan(/^\d+\. /).length
+      assert_includes copy, "校准启动门禁已通过"
+      assert_includes copy, "6/6 个 Workspace Set 启动门禁"
       refute_includes copy, "仓库外准备并验证六个"
       refute_includes copy, output
     end
@@ -45,7 +45,7 @@ class RenderCalibrationReadinessCopyTest < Minitest::Test
     submitted = "/private/invalid/calibration-workspaces"
     copy = renderer.render(workspace_set: submitted)
 
-    assert_includes copy, "3/6 个启动门禁通过"
+    assert_includes copy, "5/6 个启动门禁通过"
     assert_includes copy, "仓库外准备并验证六个"
     refute_includes copy, submitted
     refute_includes copy, "workspace set is invalid"
@@ -65,9 +65,10 @@ class RenderCalibrationReadinessCopyTest < Minitest::Test
     copy = PMind::CalibrationReadinessCopyRenderer.new(ROOT, preflight: fake_preflight).render
 
     assert_includes copy, "校准启动门禁已通过"
-    assert_includes copy, "6/6 个门禁"
-    assert_includes copy, "可以按冻结的 arm order"
-    assert_includes copy, "不表示任何案例、产品效果或商业化目标已经通过"
+    assert_includes copy, "6/6 个 Workspace Set 启动门禁"
+    assert_includes copy, "可以进入角色协调与运行时隔离准备"
+    assert_includes copy, "计分启动仍需实际 launch path"
+    assert_includes copy, "不表示 Runtime Arm Isolation、任何案例、产品效果或商业化目标已经通过"
     refute_includes copy, "请按顺序补齐"
   end
 
@@ -80,7 +81,7 @@ class RenderCalibrationReadinessCopyTest < Minitest::Test
 
     assert status.success?, stderr
     assert_includes stdout, "校准尚未就绪"
-    assert_includes stdout, "3/6 个启动门禁通过"
+    assert_includes stdout, "5/6 个启动门禁通过"
     assert_equal "", stderr
   end
 

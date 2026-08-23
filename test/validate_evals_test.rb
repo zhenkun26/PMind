@@ -44,9 +44,14 @@ class ValidateEvalsTest < Minitest::Test
   def test_ready_wave_rejects_unassigned_roles_and_unfrozen_executor
     validator = PMind::EvalValidator.new(ROOT)
     manifest = validator.load_yaml("evals/calibration/wave-01.yaml")
-    manifest["can_start"] = true
-    manifest["status"] = "ready"
-    manifest["blocked_reasons"] = []
+    manifest["roles"].each_value do |assignment|
+      assignment["status"] = "unassigned"
+      assignment.delete("assignee_ref")
+    end
+    manifest["executor_config"]["status"] = "unfrozen"
+    manifest["executor_config"].delete("profile_revision")
+    manifest["start_gates"]["roles_assigned"] = false
+    manifest["start_gates"]["executor_frozen"] = false
     case_ids = %w[seed-001 seed-006 seed-009]
 
     refute validator.validate_calibration(manifest, case_ids, "mutated-wave")
@@ -83,7 +88,7 @@ class ValidateEvalsTest < Minitest::Test
   def test_executor_profile_unresolved_fields_must_match_missing_decisions
     validator = PMind::EvalValidator.new(ROOT)
     profile = validator.load_yaml("evals/calibration/executor-profiles/calibration-001.yaml")
-    profile["unresolved_fields"].delete("model_version")
+    profile.delete("model_version")
 
     refute validator.validate_executor_profile(profile, "mutated-profile")
     assert validator.errors.any? { |error| error.include?("must exactly match missing executor decisions") }
@@ -117,6 +122,7 @@ class ValidateEvalsTest < Minitest::Test
       assignment["status"] = "assigned"
       assignment["assignee_ref"] = "person-#{index + 1}"
     end
+    manifest["start_gates"]["roles_assigned"] = false
     profile_path = "evals/calibration/executor-profiles/calibration-001.yaml"
     profile = validator.load_yaml(profile_path)
 

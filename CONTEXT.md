@@ -226,6 +226,30 @@ calibration, or product-effect evidence.
 Avoid: “provider receipt,” “delivery certified,” or “production verified” when
 the report covers only a local reference bundle.
 
+### Calibration Workspace Readiness
+
+A repository preflight result proving that the frozen Wave, roles, Executor
+Profile, Fixtures, and six external arm copies are internally consistent. It
+does not prove that a running Downstream Executor is unable to read another arm
+or the repository oracle.
+
+Avoid: “runtime isolated” or “safe to launch” when only Workspace Set copying
+and digest verification have passed.
+
+### Runtime Arm Isolation
+
+An enforced execution boundary that lets one scored Downstream Executor read
+and write only its assigned arm while denying the PMind repository, oracle,
+other arms, network tools, Git, dependency installation, and external writes.
+It requires an end-to-end probe of the actual launch path, not a prompt-level
+instruction or working-directory convention.
+
+### Calibration Role Briefing
+
+A read-only, least-privilege projection of one ready Wave for exactly one real
+participant role. A Briefing coordinates responsibilities and allowed inputs;
+it does not start an arm, persist a run, or prove Runtime Arm Isolation.
+
 ### First-pass Delivery Success
 
 A Handoff that the Downstream Executor completes without material

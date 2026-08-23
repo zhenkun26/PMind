@@ -8,6 +8,7 @@ require "yaml"
 
 ROOT = File.expand_path(__dir__)
 RUBY = RbConfig.ruby
+CALIBRATION_WORKSPACE_ENV = "PMIND_CALIBRATION_WORKSPACE_SET"
 
 def run_live(*command)
   success = system(*command, chdir: ROOT)
@@ -108,7 +109,10 @@ end
 
 desc "Run the real calibration readiness gate and preserve exit 2 when blocked"
 task :calibration do
-  system(RUBY, "scripts/calibration_preflight.rb", chdir: ROOT)
+  command = [RUBY, "scripts/calibration_preflight.rb"]
+  workspace_set = ENV[CALIBRATION_WORKSPACE_ENV]
+  command.concat(["--workspace-set", workspace_set]) unless workspace_set.to_s.empty?
+  system(*command, chdir: ROOT)
   status = $?
   exit status.exitstatus if [0, 2].include?(status.exitstatus)
 

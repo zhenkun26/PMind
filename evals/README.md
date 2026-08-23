@@ -5,8 +5,10 @@
 - Current rubric: `evals/rubrics/first-pass-success-v0.md` (`0.1.0`)
 - Seed set: 10 synthetic, ready, unrun cases under `evals/cases/seed/`
 - Calibration fixtures: 3 synthetic, executable fixtures under `evals/fixtures/`
-- Calibration: `evals/calibration/wave-01.yaml` remains blocked until roles,
-  executor settings, and isolated arm workspaces are ready
+- Calibration workspace layer: `evals/calibration/wave-01.yaml` is `6/6` ready
+  when the exact verified external Workspace Set is submitted; no arm has run
+- Scored launch: blocked until the actual Codex launch path proves Runtime Arm
+  Isolation, including denied reads of the repository, oracle, and other arms
 - Runtime framework: intentionally not selected
 
 PMind will be evaluated by downstream delivery outcomes, not by whether an
@@ -123,6 +125,11 @@ The experiment is paired:
 - `scripts/prepare_calibration_workspaces.rb`: no-overwrite preparation and verification of external arm copies.
 - `scripts/calibration_preflight.rb`: read-only readiness report across contracts, roles, executor, and arm copies.
 - `scripts/render_calibration_readiness_copy.rb`: safe read-only projection of the six calibration gates into at most three actionable operator input groups.
+- `docs/product/calibration-role-briefing-copy-v0.md`: role-by-role disclosure,
+  launch-blocker, and non-claim contract for human handoff.
+- `scripts/render_calibration_role_briefing.rb`: read-only facilitator,
+  PMind-operator, and independent-reviewer Briefing renderer; it emits no
+  speculative executor launch command while Runtime Arm Isolation is unproven.
 - `scripts/validate_prompt_package.rb`: read-only Prompt Package structure, reference, Review Lens, approval, and Handoff validator.
 - `scripts/validate_clarification_session.rb`: read-only Clarification Session state and optional Session-to-Package lineage validator.
 - `scripts/render_clarification_copy.rb`: read-only validated Session-to-user-Markdown renderer.
@@ -163,14 +170,16 @@ Run the current deterministic checks with:
 rake verify
 ```
 
-The canonical full project status is:
+The canonical full project status with current external workspace evidence is:
 
 ```sh
-rake
+PMIND_CALIBRATION_WORKSPACE_SET=/absolute/path/calibration-001 rake
 ```
 
-It runs the same local gates and then calibration preflight. The current exit
-is `2`: local verification passes, calibration remains 3/6 blocked. Individual
+It runs the same local gates and then calibration preflight. With the verified
+Wave 01 workspace set, the current expected exit is `0` and calibration
+readiness is 6/6. Without the task-specific path, exit `2` and 5/6 remain the
+truthful result because the external evidence was not presented. Individual
 commands below remain available for focused diagnosis:
 
 ```sh
@@ -205,12 +214,17 @@ ruby test/verify_handoff_adapter_local_execution_verification_report_test.rb
 ruby scripts/calibration_preflight.rb
 ruby test/render_calibration_readiness_copy_test.rb
 ruby scripts/render_calibration_readiness_copy.rb
+ruby test/render_calibration_role_briefing_test.rb
+ruby scripts/render_calibration_role_briefing.rb --workspace-set /absolute/path/calibration-001 --role facilitator
 ```
 
-`calibration_preflight.rb` currently exits with a blocked status by design; it
-must not be treated as a failed experiment. The copy renderer treats this same
-blocked state as a valid display result and exits successfully, while still
-forbidding calibration execution and effect claims.
+`calibration_preflight.rb` exits ready only when the verified external workspace
+set is supplied. A missing-path blocked result is not a failed experiment; the
+copy renderer presents it as a valid display result while still forbidding
+execution. A ready result permits only the frozen three-case protocol and is
+not a product-effect claim. It also does not prove Runtime Arm Isolation: the
+current role Briefing renderer deliberately withholds a scored launch command
+until the actual agent launch path denies repository/oracle/other-arm reads.
 
 ## Measurement contract status
 

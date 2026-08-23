@@ -1,8 +1,26 @@
 schema_version: "0.1.0"
 profile_id: executor-calibration-001
 wave_id: calibration-001
-status: draft
+status: frozen
 executor_type: coding_agent
+executor_version: "codex-cli 0.149.0-alpha.4.1; sha256:09db9560f6f9dec139d3324254fb3c8fdbad5ecce1d8c794113dc15294f6aefd"
+model_version: gpt-5.6-terra
+reasoning_settings: "standard; effort=medium; pro=false; fresh_context_per_arm=true"
+tool_policy:
+  workspace_access: arm_only
+  oracle_access: prohibited
+  other_arm_access: prohibited
+  external_writes: prohibited
+  git_operations: prohibited
+  dependency_installation: prohibited
+  network_access: disabled
+  allowed_tools:
+    - file_read
+    - file_write
+    - shell
+    - local_test
+time_limit_minutes: 30
+max_attempts: 1
 fairness:
   same_profile_all_cases: true
   same_profile_both_arms: true
@@ -11,10 +29,4 @@ safety:
   secrets_allowed: false
   production_data_allowed: false
   automatic_external_actions_allowed: false
-unresolved_fields:
-  - executor_version
-  - model_version
-  - reasoning_settings
-  - tool_policy
-  - time_limit_minutes
-  - max_attempts
+unresolved_fields: []

@@ -1,5 +1,5 @@
 schema_version: 1
-updated_at: "2026-08-21"
+updated_at: "2026-08-23"
 references:
   - id: mattpocock-skills
     type: github_repository
@@ -11,3 +11,25 @@ references:
     used_for:
       - engineering_workflow_methods
       - repository_skills
+  - id: openai-codex-cli-reference-2026-08-23
+    type: official_documentation
+    path: reference/research/calibration-role-briefing-and-runtime-isolation-2026-08-23.md
+    source_url: https://learn.chatgpt.com/docs/developer-commands?surface=cli
+    retrieved_at: "2026-08-23"
+    version: live_documentation
+    license: documentation_terms
+    trust_status: official_primary_source
+    used_for:
+      - codex_exec_and_sandbox_interface
+      - calibration_runtime_isolation_boundary
+  - id: openai-codex-config-reference-2026-08-23
+    type: official_documentation
+    path: reference/research/calibration-role-briefing-and-runtime-isolation-2026-08-23.md
+    source_url: https://learn.chatgpt.com/docs/config-file/config-reference
+    retrieved_at: "2026-08-23"
+    version: live_documentation
+    license: documentation_terms
+    trust_status: official_primary_source
+    used_for:
+      - named_filesystem_permission_profiles
+      - calibration_runtime_isolation_boundary

@@ -2,7 +2,7 @@
 
 > 文档用途：在模型上下文压缩、人员交接或会话中断后，恢复 PMind 当前阶段的完整探索结论。
 >
-> 状态：Validation Sprint 第 0 阶段已归档，第 1 阶段校准准备中；已有严格隔离的本地文件参考执行器，尚未进入生产 Agent/provider 运行时实现。
+> 状态：Validation Sprint 第 0 阶段已归档，第 1 阶段三案例校准的仓库/Workspace Set 层已 6/6 READY、实际计分启动因 Runtime Arm Isolation 尚未端到端证明而 blocked；已有严格隔离的本地文件参考执行器，尚未进入生产 Agent/provider 运行时实现。
 >
 > 快照日期：2026-08-23（Asia/Shanghai）。价格、产品能力、仓库状态和第三方 Skill 内容均可能在此日期后变化，实施前应重新核验。
 
@@ -17,7 +17,7 @@
 - 本文最初是仓库的第一份项目文档，现已补充治理、领域、Reference、Eval 和 Skill 文件。
 - 已从 `mattpocock/skills` 精选并本地化 12 个仓库级 Skill，固定上游 commit 为 `0ab1b63a410a03d3627979a109c8695de27af954`；详情见 `reference/github/mattpocock__skills/`。
 - 已创建 Prompt Package、Clarification、Review Lenses、Concierge Runbook、Eval Schema、Rubric 和 10 个尚未运行的合成种子案例；阶段决策见 `reference/research/next-execution-stage-2026-08-21.md`。
-- 已创建首批 3 案例校准 Wave、无依赖验证器、3 个合成 Fixture、仓库外隔离工作区准备器、Executor Profile 契约和统一 preflight；Fixture 已冻结 workspace digest 并通过基础自检，但由于四个角色未分配、Profile 仍有六项未决字段且本次 Wave 的运行副本未就绪，Wave 保持 `blocked`。
+- 已创建首批 3 案例校准 Wave、无依赖验证器、3 个合成 Fixture、仓库外隔离工作区准备器、Executor Profile 契约和统一 preflight；用户已确认四名不同真实参与者并在线下保管身份映射，仓库保存四个随机 assignment-scoped opaque refs；Profile 已冻结 exact Codex CLI 版本/二进制摘要、实际响应的 `gpt-5.6-terra` 标识、standard/medium、禁网 arm-only 工具策略、30 分钟和一次计分尝试；获批仓库外路径的六个同源副本已验证且不含 oracle。提交 exact workspace set 时仓库/Workspace Set 层为 6/6 READY，但 Runtime Arm Isolation 尚未形成 actual `codex exec` 端到端证明，因此计分启动 blocked，仍为 0 条运行和 0 条验收结果。
 - 已将 Case Schema 升级到 `0.2.0`，补齐模型、Profile、Workspace Set、工作区结果 revision、返工与分段耗时溯源；新增 Acceptance Result Schema `0.1.0` 和 `consensus` / `needs_adjudication` / `adjudicated` 三态验证。10 个种子案例完成无数据迁移，当前仍为 0 条运行、0 条验收结果。
 - 已将 Prompt Package v0 落成 `schemas/prompt-package-v0.yaml`、依赖无关的只读校验 CLI 和合成测试夹具；稳定 ID、引用、六个 Review Lenses、Approval Point 状态与 Handoff 授权边界现在可机器校验。测试夹具不是实际 Package 或效果证据。
 - 已将 Clarification Session v0 落成 `schemas/clarification-session-v0.yaml`、依赖无关的只读校验 CLI 和合成测试夹具；不可变 Intake、九维 gap、问题优先级、连续轮次、Compile Gate 与 Session → Package lineage 现在可机器校验。校验器不会代替用户回答或自动生成 Package。
@@ -48,8 +48,9 @@
 - 已新增 Local Execution Receipt Verification v0：独立 verifier 只读重放十九文件和 persisted bundle，检查 exact inventory、0700/0600、非 symlink、Schema、canonical Receipt、Envelope 字节和首次时间顺序；当前时间可晚于 expiry，但 `executed_at` 必须在原 confirmed 窗口内且不早于 Preflight。执行器幂等复用与独立审计共享同一验证 seam；损坏内容只报告、不修复或覆盖，成功也不证明 provider/生产/校准/产品效果。
 - 已新增 Local Execution Verification Report v0：creator 对十九文件和 persisted bundle 执行两次独立 verifier 重放，要求真实 `verified_at` 不早于 Receipt，比较最终 exact 来源/Envelope/Receipt 摘要，并只在与仓库、来源和 execution root 隔离的 audit root 中独占创建一个 `0600` 报告。报告如实记录本地 external write，绝不覆盖、重新 dispatch 或推导 provider/生产/校准/产品效果；下一边界是报告自身的独立只读 verifier。
 - 已新增 Local Execution Verification Report Verification v0：独立 verifier 不实例化 creator 或进入写路径，先重放十九文件和 persisted bundle，再按报告自身 historical `verified_at` 重建 exact 字段与确定性文件名，并校验常规非 symlink `0600` 文件和隔离父目录。等价 YAML 排版可接受，语义/权限/路径/来源/bundle 漂移会拒绝；本地 execution→Receipt→审计→报告→独立报告验证链至此闭合，不应继续默认增加本地包装层。
-- 已新增 Calibration Readiness Copy v0：只读 renderer 把现有六门禁 preflight 投影为隐私最小化操作者文案，不解析或回显自由文本 blocker。当前真实 3/6 状态只请求三组输入：四个互异 opaque role refs、六项冻结 Executor 决策、仓库外 workspace set；workspace 验证后自动收敛为两组。blocked/ready 都是可展示结果，但 blocked 明确禁止启动或写 run_records，ready 也不代表产品效果。
-- 已新增无依赖 Repository Task Runner：复用系统 Ruby 2.6.10 与 Rake 12.3.3，不安装 gem 或启用 CI。`rake verify` 串行执行严格 warning compilation、安全 YAML、Markdown 本地链接、完整 Minitest 和 Eval validator；默认 `rake`/`rake status` 再运行真实 calibration preflight，当前必须在本地 PASS 后以 3/6 BLOCKED 和 exit 2 结束。task-runner blocker 已解除，Ruby 静态类型、专用 lint 与 CI 仍诚实 BLOCKED。
+- 已新增 Calibration Readiness Copy v0：只读 renderer 把现有六门禁 preflight 投影为隐私最小化操作者文案，不解析或回显自由文本 blocker。当前未提交外部 workspace 路径时安全显示 5/6 和一组输入，提交 verified workspace set 时显示 6/6 ready；blocked/ready 都是可展示结果，6/6 只允许进入角色协调与运行时隔离准备，不代表实际 launch、产品效果或商业化通过。
+- 已新增 Calibration Role Briefing Copy v0 和只读 renderer：主持人获得冻结顺序、两臂路径、oracle 位置和停止条件；PMind 操作者只获得 sanitized Intake 与 PMind 工作区；每位评审只获得自己的 opaque ref、Rubric 和事后 oracle 位置。Renderer 零写入、零模型调用、零 run record，并因 `workspace-write` 尚不能证明 arm-only 读取而明确 withholding scored launch command。
+- 已新增无依赖 Repository Task Runner：复用系统 Ruby 2.6.10 与 Rake 12.3.3，不安装 gem 或启用 CI。`rake verify` 串行执行严格 warning compilation、安全 YAML、Markdown 本地链接、完整 Minitest 和 Eval validator；默认 `rake`/`rake status` 再运行真实 calibration preflight，并通过任务专用 `PMIND_CALIBRATION_WORKSPACE_SET` 把外部证据作为单个 argv 提交。当前有 exact workspace 时应以 6/6 READY 和 exit 0 结束，未提交时仍诚实 5/6 BLOCKED、exit 2。Ruby 静态类型、专用 lint 与 CI 仍诚实 BLOCKED，按用户决策后置到 Wave 01 启动后。
 - 尚未运行基线/PMind 对照案例；空 `run_records` 不代表通过验证。
 - 尚未确定最终技术栈、托管模式、首个下游执行平台和商业版本边界。
 - 用户已授权持续推进当前 PMind 落地目标，并允许每个完整轮次结束时自动 commit、push 和归档，无需逐轮点击；该 standing authorization 不包含 GitHub Issue/PR/Release、部署、依赖安装、真实 provider 调用、凭据使用、费用、数据迁移或其他外部系统写入。
@@ -686,7 +687,7 @@ docs: capture PMind product and implementation exploration
 先完整阅读仓库根目录 PMIND_EXPLORATION.md。
 PMind 当前处于 Validation Sprint 第 1 阶段：公开仓库、12 个本地化 Skill、产品契约、10 个未运行种子案例和 3 个校准 Fixture 已存在。
 先运行 ruby scripts/validate_evals.rb，并读取 evals/calibration/wave-01.yaml 与 evals/fixtures/README.md。
-不得把 Fixture 基础自检当成 PMind 效果证据；当前 Wave 仍因角色、执行器配置和双臂隔离工作区未就绪而 blocked。
+不得把 Fixture 基础自检当成 PMind 效果证据；当前 Wave 的角色、冻结执行器与外部双臂工作区已在 exact workspace set 下达到仓库/Workspace Set 层 6/6 READY，但 actual Codex launch 的 Runtime Arm Isolation 尚未证明，计分启动 blocked，且尚未产生任何运行或验收结果。
 Case Schema 现为 0.2.0，Acceptance Result Schema 为 0.1.0；运行产物路径、成功公式以及 consensus / needs_adjudication / adjudicated 三态已由验证器覆盖，但当前仍为 0 条运行和 0 条验收结果。
 Prompt Package v0 的机器契约位于 schemas/prompt-package-v0.yaml，可用 ruby scripts/validate_prompt_package.rb PATH 做只读校验；不得把 test/fixtures 下的合成 Package 当作真实产出。
 Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.yaml，可用 ruby scripts/validate_clarification_session.rb SESSION 做状态校验，或加入 --prompt-package PACKAGE 校验编译 lineage；不得虚构用户答案、授权、假设或决策来让会话进入 ready_to_compile。
@@ -710,7 +711,7 @@ Clarification Session v0 的机器契约位于 schemas/clarification-session-v0.
 更新：只有 confirmed exact Dispatch Receipt 才可用 ruby scripts/preview_handoff_adapter_dispatch_execution_preflight.rb SESSION_REVISION DRAFT_PACKAGE COMPILATION_PROPOSAL COMPILATION_CONFIRMATION FINAL_PACKAGE HANDOFF_PROPOSAL HANDOFF_CONFIRMATION ENVELOPE ADAPTER_PROFILE ADAPTER_SELECTION_PROPOSAL ADAPTER_SELECTION_CONFIRMATION PAYLOAD_DATA_ATTESTATION ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION ADAPTER_IMPLEMENTATION_ATTESTATION ADAPTER_RUNTIME_READINESS_ATTESTATION ADAPTER_DISPATCH_PROPOSAL ADAPTER_DISPATCH_CONFIRMATION ADAPTER_DISPATCH_EXECUTION_PREFLIGHT 执行十九文件只读临执行证据校验。ready/blocked 都只验证 submitted evidence；preview 不执行 live check、凭据访问、幂等预留或 dispatch。下一边界是真实 Service executor + Execution Receipt，必须先获得明确 provider/runtime/credential/write/cost 范围，不得用合成 Preflight 冒充执行。
 更新：对上述十九文件中当前有效且 ready 的严格本地子集，可运行 ruby scripts/execute_handoff_adapter_local_reference.rb 后接十九个文件和一个现存、非 symlink、与仓库/来源隔离的 EXECUTION_ROOT。只允许 exact `local_file`、`local_digest`、`local_file_write`、zero-cost、无 credential/provider；成功原子创建 `<safe-destination-ref>/delivered-envelope.yaml + execution-receipt.yaml`，相同幂等结果只能验证复用，绝不覆盖。它是真实本地写入，不是 provider 交付、生产部署、校准运行或产品效果。下一最小本地边界是独立只读 persisted Receipt verifier；provider executor 仍需新的明确授权与真实配置。
 更新：上述 persisted bundle 可用 ruby scripts/verify_handoff_adapter_local_execution_receipt.rb 后接相同十九文件和 EXECUTION_ROOT 做独立只读审计。审计不重新请求执行，不使用当前窗口，只验证首次 `executed_at` 位于原窗口且不早于 exact Preflight；它与执行器幂等复用共用 canonical Receipt seam。需要持久审计事件时，再运行 ruby scripts/create_handoff_adapter_local_execution_verification_report.rb 后接同一十九文件、EXECUTION_ROOT 和独立 AUDIT_ROOT；它双重放并独占创建 `0600` 报告。随后必须运行 ruby scripts/verify_handoff_adapter_local_execution_verification_report.rb 后接同一十九文件、EXECUTION_ROOT 和 VERIFICATION_REPORT 做独立零写入重放。本地审计链至此闭合；下一轮应回到企业落地门禁，不继续增加本地包装，也不得把报告当作 provider 或效果证据。
-更新：回到 Validation Gate 后，可运行 ruby scripts/render_calibration_readiness_copy.rb [--workspace-set ABSOLUTE_PATH] 获取安全操作者文案。当前它必须显示 3/6 与三组真实输入，不得回显路径、人员引用、Profile 值或自由文本 blocker。该文案不能代填角色或 Executor 决策，也不能解除 preflight；补齐真实证据后仍须以 ruby scripts/calibration_preflight.rb 的 READY 为启动依据。
-更新：仓库统一验证入口现为 rake verify；完整项目状态入口为默认 rake（等价 rake status）。默认入口必须先输出 PMIND_LOCAL_DETERMINISTIC_VERIFICATION_PASS，再执行 calibration；当前正确最终状态是 PMIND_CALIBRATION_PREFLIGHT_BLOCKED gates=3/6 与 exit 2。不得只凭 rake verify 宣称企业落地通过，也不得把默认 exit 2 误报为测试失败。
-隔离工作区准备器和统一 preflight 已实现并验证，但未保留任何真实 Wave 运行副本，也未虚构人员或模型配置。下一步是分配四个互异角色并补齐、冻结 Executor Profile，再在仓库外创建同源双臂副本并要求 preflight 输出 READY；不要擅自提交、推送、安装依赖或写入外部系统。
+更新：可运行 ruby scripts/render_calibration_readiness_copy.rb [--workspace-set ABSOLUTE_PATH] 获取安全操作者文案。未提交路径时当前必须显示 5/6 与一组 workspace 输入；提交 verified workspace set 时显示 Workspace Set 层 6/6 READY，且不得回显路径、人员引用、Profile 值或自由文本 blocker。READY 只允许进入角色协调与 Runtime Arm Isolation 准备，不代表 scored launch、案例或产品效果通过。
+更新：仓库统一验证入口现为 rake verify；完整项目状态入口为 PMIND_CALIBRATION_WORKSPACE_SET=/absolute/path/calibration-001 rake（或 rake status）。入口必须先输出 PMIND_LOCAL_DETERMINISTIC_VERIFICATION_PASS，再执行 calibration；当前有 exact workspace 证据时正确最终状态是 PMIND_CALIBRATION_PREFLIGHT_READY gates=6/6 与 exit 0，未提交路径时是 5/6 BLOCKED 与 exit 2。两者都不得被误报为企业落地或产品效果通过。
+更新：四个角色已由用户确认对应四名不同真实参与者，身份映射线下保管；Executor Profile 与二进制摘要已冻结，Terra 可用性探测已真实响应；仓库外六个同源双臂副本已创建并验证，不含 oracle。可用 ruby scripts/render_calibration_role_briefing.rb --workspace-set ABSOLUTE_PATH --role ROLE 生成最小披露角色文案，但当前不得启动计分臂：本机验证表明 broad read + workspace write 可读 sibling arm，minimal named permission shell probe 虽能拒绝 sibling，却尚未证明同一配置可端到端约束 authenticated codex exec。下一步先选择并证明 actual Runtime Arm Isolation launch path，再严格按 arm order 运行、记录真实输出并由两名评审独立验收；不得自行扮演角色、读取另一实验臂或虚构 run_records。生产 Adapter 继续后置，Ruby 3.4 + RuboCop + Steep/RBS + 只读 GitHub Actions 按用户决策在 Wave 01 启动后实施。
 ```

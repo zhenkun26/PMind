@@ -16,12 +16,12 @@
 `blocked` 是合法产品状态，renderer 返回成功并展示：
 
 1. 标题 **校准尚未就绪**；
-2. 真实通过数，例如当前 `3/6`；
+2. 真实通过数，例如当前未提交外部 workspace set 时的 `5/6`；
 3. 已通过 gate 的安全标签；
 4. 按门禁顺序最多三组缺失输入；
 5. 明确禁止启动、写 `run_records`、安排盲评或报告 First-pass Delivery Success 的停止条件。
 
-三组真实输入形成后，文案要求基于重新计算的证据同步 Wave `start_gates/status/can_start/blocked_reasons`，禁止为了通过 preflight 预先置绿。若六个 gate 本身都已有证据但 manifest 尚未对齐，blocked 文案会给出一条 manifest 一致性动作，而不是空白清单。
+缺失的真实输入形成后，文案要求基于重新计算的证据同步 Wave `start_gates/status/can_start/blocked_reasons`，禁止为了通过 preflight 预先置绿。若六个 gate 本身都已有证据但 manifest 尚未对齐，blocked 文案会给出一条 manifest 一致性动作，而不是空白清单。
 
 缺失输入只按 gate 派生：
 
@@ -29,13 +29,13 @@
 - `executor_frozen=false`：请求执行器/模型/推理/工具与网络/时限/尝试次数六类真实决策，并要求两臂一致；
 - `isolated_workspaces_ready=false`：要求 Profile 冻结后在仓库外准备和验证六个不含 oracle、彼此隔离的工作区。
 
-已通过的 gate 不再提问。当前 workspace set 验证通过时，文案从三组自动收敛为两组；无效 workspace 仍展示同一安全行动，不回显提交路径或内部错误。
+已通过的 gate 不再提问。当前角色和 Profile 已冻结，因此未提交或无效 workspace 时只展示一组安全行动；verified workspace set 会收敛为 ready，且不回显提交路径或内部错误。
 
 ## ready 文案矩阵
 
-全部 `6/6` 时标题为 **校准启动门禁已通过**，只允许进入冻结的三案例协议，并复述四角色分离、同一 Profile、arm isolation、禁 oracle/改 Rubric/外部写入/生产数据/秘密和真实双评审边界。
+全部 `6/6` 时标题为 **校准启动门禁已通过**，只表示 Workspace Set 与冻结协议层可以进入角色协调和运行时隔离准备，并复述四角色分离、同一 Profile、禁 oracle/改 Rubric/外部写入/生产数据/秘密和真实双评审边界。
 
-ready 只表示可以开始，不表示任何案例、产品效果或商业化目标已通过。
+ready 不等于 Runtime Arm Isolation。计分启动前仍须用实际 launch path 证明当前 arm 可读写且仓库、oracle 和其他五个 arm 不可读；工作目录、提示词或普通 `workspace-write` 不能替代该证据。ready 也不表示任何案例、产品效果或商业化目标已通过。
 
 ## 安全输出
 
@@ -56,4 +56,4 @@ ruby scripts/render_calibration_readiness_copy.rb
 ruby scripts/render_calibration_readiness_copy.rb --workspace-set /absolute/path/calibration-001
 ```
 
-本能力把协作阻断变为最小输入清单，但不能自行解除任何门禁。真实推进仍需四个不同参与者、六项 Executor 决策和仓库外 workspace evidence。
+本能力把协作阻断变为最小输入清单，但不能自行解除任何门禁。当前四角色、Executor 与仓库外 workspace evidence 已分别形成；每次启动仍必须向 preflight 提交并复验 exact workspace set，并在单独的 Runtime Arm Isolation 边界通过后才可计分执行。
