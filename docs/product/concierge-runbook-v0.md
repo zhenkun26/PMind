@@ -323,6 +323,14 @@ ruby scripts/create_handoff_adapter_local_execution_verification_report.rb SESSI
 
 creator 会执行两次 exact verifier 重放和最终摘要比较，只在全部通过后独占创建一个 `0600` 报告。报告如实记录本次本地审计写入，不覆盖既有文件、不修改来源/bundle、不重新 dispatch，也不证明 provider、生产、校准或产品效果。
 
+报告创建后必须按 [Local Execution Verification Report Verification v0](handoff-adapter-local-execution-verification-report-verification-v0.md) 独立重放：
+
+```sh
+ruby scripts/verify_handoff_adapter_local_execution_verification_report.rb SESSION_REVISION.yaml DRAFT_PACKAGE.yaml COMPILATION_PROPOSAL.yaml COMPILATION_CONFIRMATION.yaml FINAL_PACKAGE.yaml HANDOFF_PROPOSAL.yaml HANDOFF_CONFIRMATION.yaml HANDOFF_ENVELOPE.yaml ADAPTER_PROFILE.yaml ADAPTER_SELECTION_PROPOSAL.yaml ADAPTER_SELECTION_CONFIRMATION.yaml PAYLOAD_DATA_ATTESTATION.yaml ADAPTER_EFFECT_AUTHORIZATION_PROPOSAL.yaml ADAPTER_EFFECT_AUTHORIZATION_CONFIRMATION.yaml ADAPTER_IMPLEMENTATION_ATTESTATION.yaml ADAPTER_RUNTIME_READINESS_ATTESTATION.yaml ADAPTER_DISPATCH_PROPOSAL.yaml ADAPTER_DISPATCH_CONFIRMATION.yaml ADAPTER_DISPATCH_EXECUTION_PREFLIGHT.yaml EXECUTION_ROOT VERIFICATION_REPORT.yaml
+```
+
+verifier 读取报告自身的 historical `verified_at`，重建 exact 字段和文件名，接受等价 YAML 排版但拒绝语义、权限、symlink、父目录、来源或 bundle 漂移。成功仍只闭合本地审计链，不升级为 provider 或效果证据。
+
 ### 8. Quality Gate 与 Handoff
 
 - 运行结构、Evidence、风险和 Acceptance Criteria 检查。

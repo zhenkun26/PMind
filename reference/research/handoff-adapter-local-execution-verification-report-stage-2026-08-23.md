@@ -52,4 +52,4 @@ Two of the three environment-dependent verification categories remain degraded. 
 
 ## Remaining risk and next boundary
 
-The creator assumes a caller-owned non-adversarial local filesystem; the double replay narrows drift but is not a cross-process transactional snapshot. The next smallest local boundary is an independent persisted Verification Report verifier. Provider-specific receipt verification remains gated on a real provider contract, tenant identity, remote evidence, shared idempotency, credentials, cost policy, and explicit authorization.
+The creator assumes a caller-owned non-adversarial local filesystem; the double replay narrows drift but is not a cross-process transactional snapshot. The next local boundary is now implemented as an independent persisted Verification Report verifier. Provider-specific receipt verification remains gated on a real provider contract, tenant identity, remote evidence, shared idempotency, credentials, cost policy, and explicit authorization.

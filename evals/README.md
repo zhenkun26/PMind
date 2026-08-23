@@ -104,6 +104,7 @@ The experiment is paired:
 - `docs/product/handoff-adapter-local-execution-receipt-verification-v0.md`: independent historical bundle replay, exact-byte/permission/time audit, and zero-write safe-copy contract;
 - `docs/product/handoff-adapter-local-execution-verification-report-v0.md`: actual double-replay audit event, isolated no-overwrite persistence, truthful local-write accounting, and safe-copy contract;
 - `schemas/handoff-adapter-local-execution-verification-report-v0.yaml`: machine-readable exact evidence bindings, passed-check matrix, audit timing, and false provider/credential/network/process/cost boundary;
+- `docs/product/handoff-adapter-local-execution-verification-report-verification-v0.md`: independent persisted-report replay, deterministic field/filename/time audit, and zero-write safe-copy contract;
 - `schemas/clarification-session-v0.yaml`: machine-readable Intake, nine-gap, question-round, Compile Gate, and lineage contract;
 - `docs/product/review-lenses-v0.md`: six-lens Quality Gate;
 - `docs/product/concierge-runbook-v0.md`: manual operating and paired-test protocol;
@@ -150,6 +151,7 @@ The experiment is paired:
 - `scripts/execute_handoff_adapter_local_reference.rb`: atomic no-overwrite executor for the current, exact, local-file-only nineteen-file subset; writes only under an explicit isolated root and emits an immutable Receipt.
 - `scripts/verify_handoff_adapter_local_execution_receipt.rb`: read-only persisted local bundle verifier shared by independent audit and execution idempotency replay.
 - `scripts/create_handoff_adapter_local_execution_verification_report.rb`: double-replay creator for one immutable `0600` report under an explicit isolated audit root.
+- `scripts/verify_handoff_adapter_local_execution_verification_report.rb`: read-only persisted-report verifier that rebuilds exact semantics without entering the creator write path.
 
 The executable runner will be selected only after the manual protocol and
 Rubric are calibrated. No framework is assumed or installed at this stage.
@@ -184,6 +186,7 @@ ruby test/preview_handoff_adapter_dispatch_execution_preflight_test.rb
 ruby test/execute_handoff_adapter_local_reference_test.rb
 ruby test/verify_handoff_adapter_local_execution_receipt_test.rb
 ruby test/create_handoff_adapter_local_execution_verification_report_test.rb
+ruby test/verify_handoff_adapter_local_execution_verification_report_test.rb
 ruby scripts/calibration_preflight.rb
 ```
 

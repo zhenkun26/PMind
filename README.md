@@ -47,6 +47,7 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Handoff Adapter Local Reference Execution contract](docs/product/handoff-adapter-local-reference-execution-v0.md)
 - [Handoff Adapter Local Execution Receipt Verification contract](docs/product/handoff-adapter-local-execution-receipt-verification-v0.md)
 - [Handoff Adapter Local Execution Verification Report contract](docs/product/handoff-adapter-local-execution-verification-report-v0.md)
+- [Handoff Adapter Local Execution Verification Report Verification contract](docs/product/handoff-adapter-local-execution-verification-report-verification-v0.md)
 - [Machine-readable product schemas](schemas/README.md)
 - [Seed calibration readiness](evals/calibration/README.md)
 - [Calibration Fixtures](evals/fixtures/README.md)
@@ -210,6 +211,10 @@ Envelope, and Receipt bytes, and exclusively persist one `0600` Verification
 Report under a separate audit root. This records a real local audit event, not
 a provider delivery, production certification, calibration result, or product
 effect.
+The persisted-report verifier then replays the same exact evidence and rebuilds
+the report through a shared deterministic contract without entering the
+creator's write path. It accepts equivalent YAML formatting and rejects
+semantic, permission, filename, parent-isolation, source, or bundle drift.
 
 The repository also contains a no-overwrite preparer for creating six isolated
 calibration arm copies outside the repository. See

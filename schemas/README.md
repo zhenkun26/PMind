@@ -180,6 +180,12 @@ ruby scripts/verify_handoff_adapter_local_execution_receipt.rb path/to/new-sessi
 ruby scripts/create_handoff_adapter_local_execution_verification_report.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml path/to/adapter-runtime-readiness-attestation.yaml path/to/adapter-dispatch-proposal.yaml path/to/adapter-dispatch-confirmation.yaml path/to/adapter-dispatch-execution-preflight.yaml path/to/isolated-execution-root path/to/isolated-audit-root
 ```
 
+只读重放 exact 来源与 bundle，并按 persisted report 自身时间重建全部字段、验证 `0600`/非 symlink/隔离父目录/确定性文件名，全程不进入 creator 写路径：
+
+```sh
+ruby scripts/verify_handoff_adapter_local_execution_verification_report.rb path/to/new-session.yaml path/to/draft-package.yaml path/to/compilation-proposal.yaml path/to/compilation-confirmation.yaml path/to/final-package.yaml path/to/handoff-proposal.yaml path/to/handoff-confirmation.yaml path/to/handoff-envelope.yaml path/to/adapter-profile.yaml path/to/adapter-selection-proposal.yaml path/to/adapter-selection-confirmation.yaml path/to/payload-data-attestation.yaml path/to/adapter-effect-authorization-proposal.yaml path/to/adapter-effect-authorization-confirmation.yaml path/to/adapter-implementation-attestation.yaml path/to/adapter-runtime-readiness-attestation.yaml path/to/adapter-dispatch-proposal.yaml path/to/adapter-dispatch-confirmation.yaml path/to/adapter-dispatch-execution-preflight.yaml path/to/isolated-execution-root path/to/execution-verification-report.yaml
+```
+
 只读校验 Clarification Session，并可选择与其编译出的 Prompt Package 做 lineage 交叉校验：
 
 ```sh

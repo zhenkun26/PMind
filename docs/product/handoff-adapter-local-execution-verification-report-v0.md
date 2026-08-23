@@ -48,4 +48,4 @@ ruby scripts/create_handoff_adapter_local_execution_verification_report.rb SESSI
 
 报告证明的是一个真实、带时间和字节绑定的本地审计事件，而不是 provider receipt authenticity、远端接收、生产身份/租户、共享幂等、费用记账、校准运行、用户采纳或 First-pass Delivery Success。
 
-下一最小边界是对 persisted Verification Report 自身做独立只读验证：重放来源与 bundle、校验报告 Schema/文件权限/确定性字段和审计时间，并拒绝等价 YAML 中的语义漂移。生产 provider verifier 仍需真实 provider-specific evidence 与新的明确授权。
+下一最小边界已由 [Local Execution Verification Report Verification v0](handoff-adapter-local-execution-verification-report-verification-v0.md) 实现：它重放来源与 bundle、校验报告 Schema/文件权限/确定性字段和审计时间，接受等价 YAML 排版但拒绝语义漂移。生产 provider verifier 仍需真实 provider-specific evidence 与新的明确授权。
