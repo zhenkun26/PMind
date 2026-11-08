@@ -53,7 +53,9 @@ Public repository: [zhenkun26/PMind](https://github.com/zhenkun26/PMind)
 - [Calibration Fixtures](evals/fixtures/README.md)
 - [Calibration Readiness Copy contract](docs/product/calibration-readiness-copy-v0.md)
 
-Run all deterministic local repository gates without installing dependencies:
+Run all deterministic local repository gates with Ruby and Rake already available
+(the recorded environment uses Ruby 2.6 with system-provided Rake), without
+installing additional dependencies:
 
 ```sh
 rake verify
@@ -65,8 +67,10 @@ Run the stricter project status, which continues into calibration readiness:
 rake
 ```
 
-The default command currently exits `2` after local verification passes because
-calibration remains truthfully blocked at 3/6. See
+The default command without an external workspace-set path exits `2` after local
+verification passes, with calibration preflight at 5/6. Supplying the exact
+verified external workspace set yields 6/6 at the Workspace Set layer; scored
+launch remains blocked on separate Runtime Arm Isolation verification. See
 [Repository Verification Runner](docs/agents/repository-verification.md).
 
 Validate only the current Eval contracts and calibration manifest:
@@ -239,9 +243,10 @@ prepared copy is not by itself an executor sandbox or a completed experiment.
 `scripts/calibration_preflight.rb` combines those receipts with the tracked
 Executor Profile and four-role separation gates before any run may start.
 `scripts/render_calibration_readiness_copy.rb` projects that six-gate result
-into privacy-minimized operator copy: the current truthful 3/6 state asks only
-for four opaque role assignments, six frozen Executor decisions, and an
-external verified workspace set, without echoing paths or internal blockers.
+into privacy-minimized operator copy without echoing paths or internal blockers.
+The current Workspace Set result is 6/6 with the exact verified external evidence,
+or 5/6 when its path is omitted. Neither result proves Runtime Arm Isolation or
+authorizes scored launch; see the calibration readiness guide.
 
 ## Current boundaries
 
